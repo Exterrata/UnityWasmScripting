@@ -16,16 +16,18 @@ namespace WasmScripting {
 		public List<WasmVariable<string>> stringVariables;
 		public List<WasmVariable<Component>> componentVariables;
 		public List<WasmVariable<GameObject>> gameObjectVariables;
+
+		[HideInInspector] 
+		public string BehaviourName;
 		
-		public int InstanceId { get; private set; }
-		[NonSerialized] public string BehaviourName;
+		// Set by WasmVM
+		internal int InstanceId;
 		
 		private WasmVM _vm;
 
 		#region Unity Events
 		
 		private void Awake() {
-			InstanceId = GetInstanceID();
 			_vm = GetComponentInParent<WasmVM>();
 			if (_vm.Awaked) _vm.CallMethod(InstanceId, "Awake");
 		}
