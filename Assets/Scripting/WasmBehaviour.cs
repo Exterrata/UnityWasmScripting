@@ -1,31 +1,31 @@
 using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using UnityEngine;
-#if UNITY_EDITOR
-using System.IO;
-using UnityEditor;
-#endif
 
 namespace WasmScripting {
 	[DefaultExecutionOrder(50)]
     public class WasmBehaviour : MonoBehaviour {
+	    
 #if UNITY_EDITOR
-        public MonoScript script;
+        public UnityEditor.MonoScript script;
 #endif
+	    
 		public List<WasmVariable<int>> intVariables;
 		public List<WasmVariable<bool>> boolVariables;
 		public List<WasmVariable<float>> floatVariables;
 		public List<WasmVariable<string>> stringVariables;
 		public List<WasmVariable<Component>> componentVariables;
 		public List<WasmVariable<GameObject>> gameObjectVariables;
-		[SerializeField]
-		internal string behaviourName;
-		internal int InstanceId;
+
+		[HideInInspector]
+		public string BehaviourName;
+		internal int InstanceId; // Set by WasmVM
+		
 		private WasmVM _vm;
+
+		#region Unity Events
 		
 		private void Awake() {
-			InstanceId = GetInstanceID();
 			_vm = GetComponentInParent<WasmVM>();
 			if (_vm.Awaked) _vm.CallMethod(InstanceId, UnityEvent.Awake);
 		}
@@ -49,56 +49,4 @@ namespace WasmScripting {
 		public string name;
 		public T value;
 	}
-
-#if UNITY_EDITOR
-	[CustomEditor(typeof(WasmBehaviour))]
-	public class WasmBehaviourInspector : Editor {
-		private const string ProjectRoot = @"C:\Users\Koneko\Documents\CVRProjects\Wasm\Assets";
-		private const string WasmProjectPath = @"C:\Users\Koneko\Documents\CVRProjects\Wasm\Assets\.WasmModule";
-		private const string BuiltModulePath = @"bin\Release\net9.0\wasi-wasm\publish\WasmModule.wasm";
-		
-		public override void OnInspectorGUI() {
-			base.OnInspectorGUI();
-			if (GUILayout.Button("Build Wasm Module")) {
-				WasmVM vm = ((Component)target).GetComponentInParent<WasmVM>();
-				WasmBehaviour[] behaviours = vm.GetComponentsInChildren<WasmBehaviour>();
-				
-				Directory.Delete(Path.Combine(WasmProjectPath, "Temp"), true);
-				Directory.CreateDirectory(Path.Combine(WasmProjectPath, "Temp"));
-
-				HashSet<string> scriptNames = new();
-				foreach (var behaviour in behaviours) {
-					MonoScript script = behaviour.script;
-					behaviour.behaviourName = script.GetClass().FullName;
-					
-					if (scriptNames.Add(script.name)) {
-						string srcPath = AssetDatabase.GetAssetPath(script);
-						string dstPath = Path.Combine(WasmProjectPath, "Temp", $"{behaviour.behaviourName}.cs");
-						File.Copy(srcPath, dstPath);
-					}
-				}
-
-				Process buildCmd = new Process {
-					StartInfo = new ProcessStartInfo {
-						FileName = @"C:\Windows\System32\cmd.exe",
-						Arguments = $"/c cd \"{WasmProjectPath}\" && build.bat",
-						UseShellExecute = false,
-						RedirectStandardOutput = true,
-						CreateNoWindow = true,
-						WorkingDirectory = WasmProjectPath
-					}
-				};
-
-				buildCmd.Start();
-				buildCmd.WaitForExit();
-
-				File.Copy(Path.Combine(WasmProjectPath, BuiltModulePath), Path.Combine(ProjectRoot, "WasmModule.wasm"), true);
-				
-				const string modulePath = "Assets/WasmModule.wasm";
-				AssetDatabase.ImportAsset(modulePath);
-				vm.moduleAsset = AssetDatabase.LoadAssetAtPath<WasmModuleAsset>(modulePath);
-			}
-		}
-	}
-#endif
 }

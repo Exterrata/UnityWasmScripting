@@ -34,6 +34,7 @@ namespace WasmScripting {
 			
 			foreach (WasmBehaviour behaviour in GetComponentsInChildren<WasmBehaviour>(true)) {
 				int id = behaviour.GetInstanceID();
+				behaviour.InstanceId = id;
 				CreateInstance(id, behaviour);
 			}
 
