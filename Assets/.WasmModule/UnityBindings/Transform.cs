@@ -3,20 +3,18 @@
 namespace UnityEngine;
 public class Transform(long id) : Component(id) {
 	public Vector3 position {
-		get => TransformInterop.GetPosition(ObjectId);
-		set => TransformInterop.SetPosition(ObjectId, value);
+		get => internal_transform_position_get(ObjectId);
+		set => internal_transform_position_set(ObjectId, value);
 	}
-}
 
-internal static class TransformInterop {
-	public static void SetPosition(long id, Vector3 position) {
-		Push(ref position);
-		transform_position_set(id);
-	}
-    
-	public static Vector3 GetPosition(long id) {
+	private static Vector3 internal_transform_position_get(long id) {
 		transform_position_get(id);
-		return Pop<Vector3>();
+		return ReadStruct<Vector3>(0);
+	}
+
+	private static void internal_transform_position_set(long id, Vector3 position) {
+		WriteStruct(position, 0);
+		transform_position_set(id);
 	}
     
 	[WasmImportLinkage, DllImport("unity")]

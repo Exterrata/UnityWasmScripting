@@ -1,60 +1,37 @@
-﻿using System;
+﻿using System.Runtime.CompilerServices;
 using System.Text;
-using Unity.Collections.LowLevel.Unsafe;
 using Wasmtime;
 
 namespace WasmScripting {
-	public class WasmPassthroughStack {
-		// NOTE: this stack implementation should be reworked.
-		// unity side should not have to ask wasm side for the current stack pointer, and vice versa.
-		
-		// NOTE: it will probably be better to remove stack entirely and directly pass pointers to allocated objects to bindings.
-		// it does mean manual memory management, but it should be fine if bindings are auto generated.
-		// it may also be more compatible with other languages.
-		
-		private readonly Func<long> _incrementStackPointer;
-		private readonly Func<long> _decrementStackPointer;
-		private readonly Func<int, int> _allocMethod;
-		private readonly Action<int> _freeMethod;
+	public class WasmPassthroughBuffer {
+		private readonly long _bufferBase;
 		private readonly Memory _memory;
 
-		public WasmPassthroughStack(Instance instance) {
-			instance.GetAction("scripting_alloc_passthrough_stack")!();
-			_incrementStackPointer = instance.GetFunction<long>("scripting_increment_stack_pointer");
-			_decrementStackPointer = instance.GetFunction<long>("scripting_decrement_stack_pointer");
-			_allocMethod = instance.GetFunction<int, int>("scripting_alloc")!;
-			_freeMethod = instance.GetAction<int>("scripting_free")!;
+		public WasmPassthroughBuffer(Instance instance) {
+			_bufferBase = instance.GetFunction<long>("scripting_alloc_passthrough_buffer")!();
 			_memory = instance.GetMemory("memory");
 		}
 
-		public void Push<T>(ref T obj) where T : unmanaged {
-			int size = UnsafeUtility.SizeOf<T>();
-			int address = _allocMethod(size);
-			_memory.Write(address, obj);
-			_memory.WriteInt32(_incrementStackPointer(), address);
+		[MethodImpl(MethodImplOptions.AggressiveInlining)]
+		public void WriteStruct<T>(ref T obj, int offsetBytes) where T : unmanaged {
+			_memory.Write(_bufferBase + offsetBytes, obj);
 		}
 
-		public T Pop<T>() where T : unmanaged {
-			int address = _memory.ReadInt32(_decrementStackPointer());
-			T obj = _memory.Read<T>(address);
-			_freeMethod(address);
-			return obj;
+		[MethodImpl(MethodImplOptions.AggressiveInlining)]
+		public T ReadStruct<T>(int offsetBytes) where T : unmanaged {
+			return _memory.Read<T>(_bufferBase + offsetBytes);
 		}
 
-		public void Push(string str) {
-			int length = str.Length * sizeof(char);
-			int address = _allocMethod(length);
-			_memory.WriteInt32(_incrementStackPointer(), address);
-			_memory.WriteInt32(_incrementStackPointer(), length);
-			_memory.WriteString(address, str, Encoding.Unicode);
+		[MethodImpl(MethodImplOptions.AggressiveInlining)]
+		public void WriteString(string str, int offsetBytes) {
+			_memory.WriteInt32(_bufferBase + offsetBytes, str.Length * sizeof(char));
+			_memory.WriteString(_bufferBase + offsetBytes + sizeof(int), str, Encoding.Unicode);
 		}
 		
-		public string Pop() {
-			int length = _memory.ReadInt32(_decrementStackPointer());
-			int address = _memory.ReadInt32(_decrementStackPointer());
-			string str = _memory.ReadString(address, length, Encoding.Unicode);
-			_freeMethod(address);
-			return str;
+		[MethodImpl(MethodImplOptions.AggressiveInlining)]
+		public string ReadString(int offsetBytes) {
+			int length = _memory.ReadInt32(_bufferBase);
+			return _memory.ReadString(_bufferBase + offsetBytes + sizeof(int), length, Encoding.Unicode);
 		}
 	}
 }

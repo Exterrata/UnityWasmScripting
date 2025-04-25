@@ -7,7 +7,7 @@ namespace WasmScripting {
 	[DefaultExecutionOrder(0)]
 	public class WasmVM : MonoBehaviour {
 		private Action<int, long> _createMethod;
-		private Action<int> _callMethod;
+		private Action<int, int> _callMethod;
 		private Instance _instance;
 		private Module _module;
 		private Store _store;
@@ -28,7 +28,7 @@ namespace WasmScripting {
 			_instance.GetAction("_initialize")?.Invoke();
 			
 			_createMethod = _instance.GetAction<int, long>("scripting_create_instance")!;
-			_callMethod = _instance.GetAction<int>("scripting_call")!;
+			_callMethod = _instance.GetAction<int, int>("scripting_call")!;
 			
 			_store.SetData(new StoreData(gameObject, _instance));
 			
@@ -43,7 +43,7 @@ namespace WasmScripting {
 
 		private void Start() {
 			foreach (WasmBehaviour behaviour in GetComponentsInChildren<WasmBehaviour>()) {
-				CallMethod(behaviour.InstanceId, "Awake");
+				CallMethod(behaviour.InstanceId, UnityEvent.Awake);
 			}
 
 			Awaked = true;
@@ -51,14 +51,12 @@ namespace WasmScripting {
 
 		private void CreateInstance(int id, WasmBehaviour behaviour) {
 			StoreData data = (StoreData)_store.GetData()!;
-			data.Stack.Push(behaviour.BehaviourName);
+			data.Buffer.WriteString(behaviour.behaviourName, 0);
 			_createMethod(id, data.AccessManager.ToWrapped(behaviour).Id);
 		}
 
-		public void CallMethod(int id, string name) {
-			StoreData data = (StoreData)_store.GetData()!;
-			data.Stack.Push(name);
-			_callMethod(id);
+		public void CallMethod(int id, UnityEvent @event) {
+			_callMethod(id, (int)@event);
 		}
 
 		private void OnDestroy() {
@@ -78,11 +76,11 @@ namespace WasmScripting {
 
 	public readonly struct StoreData {
 		public readonly WasmAccessManager AccessManager;
-		public readonly WasmPassthroughStack Stack;
+		public readonly WasmPassthroughBuffer Buffer;
 		
 		public StoreData(GameObject root, Instance instance) {
 			AccessManager = new(root);
-			Stack = new(instance);
+			Buffer = new(instance);
 		}
 	}
 }

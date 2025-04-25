@@ -1,4 +1,4 @@
 ﻿namespace UnityEngine;
 public class MonoBehaviour(long id) : Component(id) {
-	public MonoBehaviour() : this(0) => throw new NotSupportedException();
+	public MonoBehaviour() : this(0) { }
 }

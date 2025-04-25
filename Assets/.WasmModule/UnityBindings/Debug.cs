@@ -3,17 +3,17 @@
 namespace UnityEngine;
 public static class Debug {
 	public static void Log(object obj) {
-		Push(obj.ToString()!);
+		WriteString(obj.ToString()!, 0);
 		debug_log();
 	}
 	
 	public static void LogWarning(object obj) {
-		Push(obj.ToString()!);
+		WriteString(obj.ToString()!, 0);
 		debug_logWarning();
 	}
 	
 	public static void LogError(object obj) {
-		Push(obj.ToString()!);
+		WriteString(obj.ToString()!, 0);
 		debug_logError();
 	}
     

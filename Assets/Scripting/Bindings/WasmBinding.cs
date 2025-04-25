@@ -15,15 +15,15 @@ namespace WasmScripting {
 		protected static long IdFrom(StoreData data, object obj) => data.AccessManager.ToWrapped(obj).Id;
 
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
-		protected static void Push<T>(StoreData data, ref T obj) where T : unmanaged => data.Stack.Push(ref obj);
+		protected static void WriteStruct<T>(StoreData data, ref T obj, int offsetBytes) where T : unmanaged => data.Buffer.WriteStruct(ref obj, offsetBytes);
 
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
-		protected static T Pop<T>(StoreData data) where T : unmanaged => data.Stack.Pop<T>();
+		protected static T ReadStruct<T>(StoreData data, int offsetBytes) where T : unmanaged => data.Buffer.ReadStruct<T>(offsetBytes);
 		
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
-		protected static void Push(StoreData data, string str) => data.Stack.Push(str);
+		protected static void WriteString(StoreData data, string str, int offsetBytes) => data.Buffer.WriteString(str, offsetBytes);
 
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
-		protected static string Pop(StoreData data) => data.Stack.Pop();
+		protected static string ReadString(StoreData data, int offsetBytes) => data.Buffer.ReadString(offsetBytes);
 	}
 }

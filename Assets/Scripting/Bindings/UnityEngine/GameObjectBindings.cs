@@ -1,64 +1,72 @@
-﻿using UnityEngine;
+﻿using Unity.Collections.LowLevel.Unsafe;
+using UnityEngine;
 using Wasmtime;
 
 namespace WasmScripting.UnityEngine {
 	public class GameObjectBindings : WasmBinding {
 		public static void BindMethods(Linker linker) {
-			//linker.DefineFunction("unity", "gameObject_ctor", (Caller caller, int objectId) => {
-			//	
-			//});
-			
-			linker.DefineFunction("unity", "gameObject_activeInHierarchy_get", (Caller caller, int objectId) => {
+			linker.DefineFunction("unity", "gameObject_ctor0", (Caller caller) => {
 				StoreData data = GetData(caller);
-				return IdTo<GameObject>(data, objectId).activeInHierarchy;
+				return IdFrom(data, new GameObject());
 			});
 			
-			linker.DefineFunction("unity", "gameObject_activeSelf_get", (Caller caller, int objectId) => {
+			linker.DefineFunction("unity", "gameObject_ctor1", (Caller caller) => {
 				StoreData data = GetData(caller);
-				return IdTo<GameObject>(data, objectId).activeSelf;
+				return IdFrom(data, new GameObject(ReadString(data, 0)));
 			});
 			
-			linker.DefineFunction("unity", "gameObject_isStatic_get", (Caller caller, int objectId) => {
+			linker.DefineFunction("unity", "gameObject_activeInHierarchy_get", (Caller caller, long objectId) => {
 				StoreData data = GetData(caller);
-				return IdTo<GameObject>(data, objectId).isStatic;
+				return IdTo<GameObject>(data, objectId).activeInHierarchy ? 1 : 0;
 			});
 			
-			linker.DefineFunction("unity", "gameObject_isStatic_set", (Caller caller, int objectId, bool isStatic) => {
+			linker.DefineFunction("unity", "gameObject_activeSelf_get", (Caller caller, long objectId) => {
 				StoreData data = GetData(caller);
-				IdTo<GameObject>(data, objectId).isStatic = isStatic;
+				return IdTo<GameObject>(data, objectId).activeSelf ? 1 : 0;
 			});
 			
-			linker.DefineFunction("unity", "gameObject_layer_get", (Caller caller, int objectId) => {
+			linker.DefineFunction("unity", "gameObject_isStatic_get", (Caller caller, long objectId) => {
+				StoreData data = GetData(caller);
+				return IdTo<GameObject>(data, objectId).isStatic ? 1 : 0;
+			});
+			
+			linker.DefineFunction("unity", "gameObject_isStatic_set", (Caller caller, long objectId, int isStatic) => {
+				StoreData data = GetData(caller);
+				IdTo<GameObject>(data, objectId).isStatic = isStatic != 0;
+			});
+			
+			linker.DefineFunction("unity", "gameObject_layer_get", (Caller caller, long objectId) => {
 				StoreData data = GetData(caller);
 				return IdTo<GameObject>(data, objectId).layer;
 			});
 			
-			linker.DefineFunction("unity", "gameObject_layer_set", (Caller caller, int objectId, int layer) => {
+			linker.DefineFunction("unity", "gameObject_layer_set", (Caller caller, long objectId, int layer) => {
 				StoreData data = GetData(caller);
 				IdTo<GameObject>(data, objectId).layer = layer;
 			});
 			
-			linker.DefineFunction("unity", "gameObject_scene_get", (Caller caller, int objectId) => {
+			linker.DefineFunction("unity", "gameObject_scene_get", (Caller caller, long objectId) => {
 				StoreData data = GetData(caller);
 				return IdFrom(data, IdTo<GameObject>(data, objectId).scene);
 			});
 			
-			linker.DefineFunction("unity", "gameObject_sceneCullingMask_get", (Caller caller, int objectId) => {
+			linker.DefineFunction("unity", "gameObject_sceneCullingMask_get", (Caller caller, long objectId) => {
 				StoreData data = GetData(caller);
-				return IdTo<GameObject>(data, objectId).sceneCullingMask;
+				ulong sceneCullingMask = IdTo<GameObject>(data, objectId).sceneCullingMask;
+				return UnsafeUtility.As<ulong, long>(ref sceneCullingMask);
 			});
 			
-			linker.DefineFunction("unity", "gameObject_tag_get", (Caller caller, int objectId) => {
+			linker.DefineFunction("unity", "gameObject_tag_get", (Caller caller, long objectId) => {
 				StoreData data = GetData(caller);
-				GetData(caller).Stack.Push(IdTo<GameObject>(data, objectId).tag);
+				data.Buffer.WriteString(IdTo<GameObject>(data, objectId).tag, 0);
 			});
 			
-			linker.DefineFunction("unity", "gameObject_tag_set", (Caller caller, int objectId) => {
+			linker.DefineFunction("unity", "gameObject_tag_set", (Caller caller, long objectId) => {
 				StoreData data = GetData(caller);
-				IdTo<GameObject>(data, objectId).tag = Pop(data);
+				IdTo<GameObject>(data, objectId).tag = ReadString(data, 0);
 			});
 			
-			linker.DefineFunction("unity", "gameObject_transform_get", (Caller caller, int objectId) => {
+			linker.DefineFunction("unity", "gameObject_transform_get", (Caller caller, long objectId) => {
 				StoreData data = GetData(caller);
 				return IdFrom(data, IdTo<GameObject>(data, objectId).transform);
 			});

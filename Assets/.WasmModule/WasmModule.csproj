@@ -1,0 +1,29 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+    
+    <PropertyGroup>
+        <OutputType>Library</OutputType>
+        <TargetFramework>net9.0</TargetFramework>
+        <ImplicitUsings>enable</ImplicitUsings>
+        <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+        
+        <SelfContained>true</SelfContained>
+        <PublishTrimmed>true</PublishTrimmed>
+        <RuntimeIdentifier>wasi-wasm</RuntimeIdentifier>
+        
+        <!--
+        Comment these out if you need to debug your wasm codes stack trace.
+        These greatly increase built module size though so only leave these out for testing.
+        -->
+        <!--
+        <DebugType>none</DebugType>
+        <DebugSymbols>false</DebugSymbols>
+        <InvariantGlobalization>true</InvariantGlobalization>
+        -->
+    </PropertyGroup>
+    
+    <ItemGroup>
+        <TrimmerRootAssembly Include="WasmModule" />
+        <PackageReference Include="Microsoft.DotNet.ILCompiler.LLVM" Version="9.0.0-preview.7.24406.1" />
+        <PackageReference Include="runtime.win-x64.Microsoft.DotNet.ILCompiler.LLVM" Version="9.0.0-preview.7.24406.1" />
+    </ItemGroup>
+</Project>

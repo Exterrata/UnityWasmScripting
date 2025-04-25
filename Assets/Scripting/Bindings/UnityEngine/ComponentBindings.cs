@@ -6,12 +6,12 @@ namespace WasmScripting.UnityEngine {
 		public static void BindMethods(Linker linker) {
 			linker.DefineFunction("unity", "component_tag_get", (Caller caller, long objectId) => {
 				StoreData data = GetData(caller);
-				data.Stack.Push(IdTo<Component>(data, objectId).tag);
+				data.Buffer.WriteString(IdTo<Component>(data, objectId).tag, 0);
 			});
 			
 			linker.DefineFunction("unity", "component_tag_set", (Caller caller, long objectId) => {
 				StoreData data = GetData(caller);
-				IdTo<Component>(data, objectId).tag = Pop(data);
+				IdTo<Component>(data, objectId).tag = ReadString(data, 0);
 			});
 			
 			linker.DefineFunction("unity", "component_transform_get", (Caller caller, long objectId) => {

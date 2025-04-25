@@ -3,32 +3,22 @@
 namespace UnityEngine;
 public class Component(long id) : Object(id) {
 
-    public GameObject gameObject => ComponentInterop.GetGameObject(ObjectId);
-    public Transform transform => ComponentInterop.GetTransform(ObjectId);
+    public GameObject gameObject => new(component_gameObject_get(id));
+    public Transform transform => new(component_transform_get(id));
     
     public string tag {
-        get => ComponentInterop.GetTag(ObjectId);
-        set => ComponentInterop.SetTag(ObjectId, value);
+        get => internal_component_tag_get(ObjectId);
+        set => internal_component_tag_set(ObjectId, value);
     }
-}
 
-internal static class ComponentInterop {
-    public static string GetTag(long id) {
+    private static string internal_component_tag_get(long id) {
         component_tag_get(id);
-        return Pop();
+        return ReadString(0);
     }
-    
-    public static void SetTag(long id, string name) {
-        Push(name);
+
+    private static void internal_component_tag_set(long id, string name) {
+        WriteString(name, 0);
         component_tag_set(id);
-    }
-    
-    public static GameObject GetGameObject(long id) {
-        return new(component_gameObject_get(id));
-    }
-    
-    public static Transform GetTransform(long id) {
-        return new(component_transform_get(id));
     }
     
     [WasmImportLinkage, DllImport("unity")]

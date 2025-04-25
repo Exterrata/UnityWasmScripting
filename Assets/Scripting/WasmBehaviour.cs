@@ -19,28 +19,29 @@ namespace WasmScripting {
 		public List<WasmVariable<string>> stringVariables;
 		public List<WasmVariable<Component>> componentVariables;
 		public List<WasmVariable<GameObject>> gameObjectVariables;
-		internal string BehaviourName;
+		[SerializeField]
+		internal string behaviourName;
 		internal int InstanceId;
 		private WasmVM _vm;
 		
 		private void Awake() {
 			InstanceId = GetInstanceID();
 			_vm = GetComponentInParent<WasmVM>();
-			if (_vm.Awaked) _vm.CallMethod(InstanceId, "Awake");
+			if (_vm.Awaked) _vm.CallMethod(InstanceId, UnityEvent.Awake);
 		}
 
-		private void Start() => _vm.CallMethod(InstanceId, "Start");
-		private void Update() => _vm.CallMethod(InstanceId, "Update");
-		private void LateUpdate() => _vm.CallMethod(InstanceId, "LateUpdate");
-		private void FixedUpdate() => _vm.CallMethod(InstanceId, "FixedUpdate");
-		private void OnEnable() => _vm.CallMethod(InstanceId, "OnEnable");
-		private void OnDisable() => _vm.CallMethod(InstanceId, "OnDisable");
+		private void Start() => _vm.CallMethod(InstanceId, UnityEvent.Start);
+		private void Update() => _vm.CallMethod(InstanceId, UnityEvent.Update);
+		private void LateUpdate() => _vm.CallMethod(InstanceId, UnityEvent.LateUpdate);
+		private void FixedUpdate() => _vm.CallMethod(InstanceId, UnityEvent.FixedUpdate);
+		private void OnEnable() => _vm.CallMethod(InstanceId, UnityEvent.OnEnable);
+		private void OnDisable() => _vm.CallMethod(InstanceId, UnityEvent.OnDisable);
 		private void OnDestroy() {
-			if (_vm.Initialized) _vm.CallMethod(InstanceId, "OnDestroy");
+			if (_vm.Initialized) _vm.CallMethod(InstanceId, UnityEvent.OnDestroy);
 		}
-		private void OnPreCull() => _vm.CallMethod(InstanceId, "OnPreCull");
-		private void OnPreRender() => _vm.CallMethod(InstanceId, "OnPreRender");
-		private void OnPostRender() => _vm.CallMethod(InstanceId, "OnPostRender");
+		private void OnPreCull() => _vm.CallMethod(InstanceId, UnityEvent.OnPreCull);
+		private void OnPreRender() => _vm.CallMethod(InstanceId, UnityEvent.OnPreRender);
+		private void OnPostRender() => _vm.CallMethod(InstanceId, UnityEvent.OnPostRender);
 	}
 	
 	[Serializable]
@@ -68,11 +69,11 @@ namespace WasmScripting {
 				HashSet<string> scriptNames = new();
 				foreach (var behaviour in behaviours) {
 					MonoScript script = behaviour.script;
-					behaviour.BehaviourName = script.GetClass().FullName;
+					behaviour.behaviourName = script.GetClass().FullName;
 					
 					if (scriptNames.Add(script.name)) {
 						string srcPath = AssetDatabase.GetAssetPath(script);
-						string dstPath = Path.Combine(WasmProjectPath, "Temp", $"{behaviour.BehaviourName}.cs");
+						string dstPath = Path.Combine(WasmProjectPath, "Temp", $"{behaviour.behaviourName}.cs");
 						File.Copy(srcPath, dstPath);
 					}
 				}

@@ -6,17 +6,17 @@ namespace WasmScripting.UnityEngine {
 		public static void BindMethods(Linker linker) {
 			linker.DefineFunction("unity", "object_name_get", (Caller caller, long objectId) => {
 				StoreData data = GetData(caller);
-				Push(data, IdTo<Object>(data, objectId).name);
+				WriteString(data, IdTo<Object>(data, objectId).name, 0);
 			});
 			
 			linker.DefineFunction("unity", "object_name_set", (Caller caller, long objectId) => {
 				StoreData data = GetData(caller);
-				IdTo<Object>(data, objectId).name = Pop(data);
+				IdTo<Object>(data, objectId).name = ReadString(data, 0);
 			});
 			
 			linker.DefineFunction("unity", "object_toString", (Caller caller, long objectId) => {
 				StoreData data = GetData(caller);
-				Push(data, IdTo<Object>(data, objectId).ToString());
+				WriteString(data, IdTo<Object>(data, objectId).ToString(), 0);
 			});
 			
 			linker.DefineFunction("unity", "object_destroy", (Caller caller, long objectId) => {

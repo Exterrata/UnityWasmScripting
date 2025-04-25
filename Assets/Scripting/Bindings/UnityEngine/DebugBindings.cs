@@ -6,22 +6,22 @@ namespace WasmScripting.UnityEngine {
 		public static void BindMethods(Linker linker) {
 			linker.DefineFunction("unity", "debug_log", (Caller caller) => {
 				StoreData data = GetData(caller);
-				Debug.Log(Pop(data));
+				Debug.Log(ReadString(data, 0));
 			});
 			
 			linker.DefineFunction("unity", "debug_logWarning", (Caller caller) => {
 				StoreData data = GetData(caller);
-				Debug.LogWarning(Pop(data));
+				Debug.LogWarning(ReadString(data, 0));
 			});
 			
 			linker.DefineFunction("unity", "debug_logError", (Caller caller) => {
 				StoreData data = GetData(caller);
-				Debug.LogError(Pop(data));
+				Debug.LogError(ReadString(data, 0));
 			});
 			
 			linker.DefineFunction("unity", "debug_logException", (Caller caller) => {
 				StoreData data = GetData(caller);
-				Debug.LogError(Pop(data));
+				Debug.LogError(ReadString(data, 0));
 			});
 		}
 	}

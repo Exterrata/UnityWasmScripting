@@ -7,13 +7,13 @@ namespace WasmScripting.UnityEngine {
 			linker.DefineFunction("unity", "transform_position_get", (Caller caller, long objectId) => {
 				StoreData data = GetData(caller);
 				Vector3 position = IdTo<Transform>(data, objectId).position;
-				Push(data, ref position);
+				WriteStruct(data, ref position, 0);
 			});
             
 			linker.DefineFunction("unity", "transform_position_set", (Caller caller, long objectId) => {
 				StoreData data = GetData(caller);
 				Transform transform = IdTo<Transform>(data, objectId);
-				transform.position = Pop<Vector3>(data);
+				transform.position = ReadStruct<Vector3>(data, 0);
 			});
 		}
 	}

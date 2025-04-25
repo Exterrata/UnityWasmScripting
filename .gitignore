@@ -156,3 +156,8 @@ sysinfo.txt
 
 # Nuget Unity packages
 /[Aa]ssets/Packages
+
+*.wasm
+
+!/[Aa]ssets/.WasmModule/WasmModule.csproj
+*.wasm

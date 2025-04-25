@@ -5,30 +5,28 @@ public class Object(long id) {
     protected readonly long ObjectId = id;
 
     public string name {
-        get => ObjectInterop.GetName(ObjectId);
-        set => ObjectInterop.SetName(ObjectId, value);
+        get => internal_object_name_get(ObjectId);
+        set => internal_object_name_set(ObjectId, value);
     }
 
-    public override string ToString() => ObjectInterop.ToString(ObjectId);
+    public override string ToString() => internal_object_toString(ObjectId);
 
-    public static void Destroy(Object obj) => ObjectInterop.object_destroy(obj.ObjectId);
-    public static void Instantiate(Object obj) => ObjectInterop.object_instantiate(obj.ObjectId);
-}
+    public static void Destroy(Object obj) => object_destroy(obj.ObjectId);
+    public static void Instantiate(Object obj) => object_instantiate(obj.ObjectId);
 
-internal static class ObjectInterop {
-    public static string GetName(long id) {
+    private static string internal_object_name_get(long id) {
         object_name_get(id);
-        return Pop();
+        return ReadString(0);
     }
-    
-    public static void SetName(long id, string name) {
-        Push(name);
+
+    private static void internal_object_name_set(long id, string name) {
+        WriteString(name, 0);
         object_name_set(id);
     }
-    
-    public static string ToString(long id) {
+
+    private static string internal_object_toString(long id) {
         object_toString(id);
-        return Pop();
+        return ReadString(0);
     }
     
     [WasmImportLinkage, DllImport("unity")]
@@ -41,8 +39,8 @@ internal static class ObjectInterop {
     private static extern void object_toString(long id);
 
     [WasmImportLinkage, DllImport("unity")]
-    public static extern void object_destroy(long id);
+    private static extern void object_destroy(long id);
 
     [WasmImportLinkage, DllImport("unity")]
-    public static extern void object_instantiate(long id);
+    private static extern void object_instantiate(long id);
 }

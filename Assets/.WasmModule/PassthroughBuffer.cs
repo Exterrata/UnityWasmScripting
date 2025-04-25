@@ -23,11 +23,11 @@ public static unsafe class PassthroughBuffer {
 	public static string ReadString(int offsetBytes) {
 		int size = (int)*(_bufferBase + offsetBytes++);
 		if (offsetBytes + size > BufferSize) throw new WasmBufferOverflowException();
-		return new string((char*)(_bufferBase + offsetBytes), 0, size);
+		return new string((char*)(_bufferBase + offsetBytes), 0, size / sizeof(char));
 	}
 	
 	[UnmanagedCallersOnly(EntryPoint = "scripting_alloc_passthrough_buffer")]
-	public static IntPtr* AllocPassthroughStack() => _bufferBase = (IntPtr*)Marshal.AllocHGlobal(BufferSize);
+	public static long AllocPassthroughStack() => (long)(_bufferBase = (IntPtr*)Marshal.AllocHGlobal(BufferSize));
 
 	public class WasmBufferOverflowException : Exception;
 }
