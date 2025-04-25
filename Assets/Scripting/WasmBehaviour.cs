@@ -18,7 +18,7 @@ namespace WasmScripting {
 		public List<WasmVariable<GameObject>> gameObjectVariables;
 
 		[HideInInspector]
-		public string BehaviourName;
+		public string behaviourName;
 		internal int InstanceId; // Set by WasmVM
 		
 		private WasmVM _vm;
@@ -49,4 +49,6 @@ namespace WasmScripting {
 		public string name;
 		public T value;
 	}
+	
+	#endregion Unity Events
 }

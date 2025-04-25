@@ -28,11 +28,11 @@ namespace WasmScripting {
             HashSet<string> scriptNames = new();
             foreach (var behaviour in behaviours) {
                 MonoScript script = behaviour.script;
-                behaviour.BehaviourName = script.GetClass().FullName;
+                behaviour.behaviourName = script.GetClass().FullName;
 					    
                 if (scriptNames.Add(script.name)) {
                     string srcPath = AssetDatabase.GetAssetPath(script);
-                    string dstPath = Path.Combine(WasmProjectPath, "Temp", $"{behaviour.BehaviourName}.cs");
+                    string dstPath = Path.Combine(WasmProjectPath, "Temp", $"{behaviour.behaviourName}.cs");
                     File.Copy(srcPath, dstPath);
                 }
             }
