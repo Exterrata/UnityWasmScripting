@@ -10,6 +10,10 @@ namespace WasmScripting {
 			GameObjectBindings.BindMethods(linker);
 			ComponentBindings.BindMethods(linker);
 			TransformBindings.BindMethods(linker);
+			ColliderBindings.BindMethods(linker);
+			PhysicsBindings.BindMethods(linker);
+			ColliderBindings.BindMethods(linker);
+			RaycastHitBindings.BindMethods(linker);
 		}
 	}
 }

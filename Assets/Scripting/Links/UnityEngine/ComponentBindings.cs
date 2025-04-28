@@ -23,6 +23,13 @@ namespace WasmScripting.UnityEngine {
 				StoreData data = GetData(caller);
 				return IdFrom(data, IdTo<Component>(data, objectId).gameObject);
 			});
+
+			linker.DefineFunction("unity", "component_func_getcomponent_string", (Caller Caller, long objectId) =>
+			{
+				StoreData data = GetData(Caller);
+				string componentType = ReadString(data, 0);
+				return IdFrom(data, IdTo<Component>(data, objectId).GetComponent(componentType));
+			});
 		}
 	}
 }

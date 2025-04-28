@@ -14,6 +14,14 @@ public class Component(long id) : Object(id)
         get => internal_component_tag_get(WrappedId);
         set => internal_component_tag_set(WrappedId, value);
     }
+
+    public Component GetComponent(string component) => internal_component_getcomponent_string(WrappedId, component);
+
+    public T GetComponent<T>() where T : Component
+    {
+        string componentType = typeof(T).Name; // TODO: handle case where T inherits WasmBehaviour, needs custom lookup
+        return GetComponent(componentType) as T;
+    }
     
     #endregion Implementation
 
@@ -27,6 +35,12 @@ public class Component(long id) : Object(id)
     private static void internal_component_tag_set(long id, string name) {
         WriteString(name, 0);
         component_tag_set(id);
+    }
+
+    private static Component internal_component_getcomponent_string(long id, string componentType)
+    {
+        WriteString(componentType, 0);
+        return new(component_func_getcomponent_string(id));
     }
 
     #endregion Marshaling
@@ -44,6 +58,9 @@ public class Component(long id) : Object(id)
 
     [WasmImportLinkage, DllImport("unity")]
     private static extern void component_tag_set(long id);
-    
+
+    [WasmImportLinkage, DllImport("unity")]
+    private static extern long component_func_getcomponent_string(long id);
+
     #endregion Imports
 }
