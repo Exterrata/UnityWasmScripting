@@ -263,7 +263,7 @@ namespace WasmScripting
                 }
 
                 // Build the WASM module
-                Process buildCmd = CreateCmdProcess(wasmProjectPath, $"/c cd \"{wasmProjectPath}\" && build.bat");
+                Process buildCmd = CreateCmdProcess(wasmProjectPath, $"cd \"{wasmProjectPath}\" && build.bat");
                 buildCmd.Start();
                 buildCmd.WaitForExit();
 
@@ -323,7 +323,7 @@ namespace WasmScripting
                 StartInfo = new ProcessStartInfo 
                 {
                     FileName = @"C:\Windows\System32\cmd.exe",
-                    Arguments = arguments,
+                    Arguments = $"{(hideWindow ? "/c" : "/k")} {arguments}",
                     UseShellExecute = !hideWindow,
                     RedirectStandardOutput = hideWindow,
                     CreateNoWindow = hideWindow,
