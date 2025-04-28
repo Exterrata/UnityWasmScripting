@@ -6,6 +6,15 @@ using Wasmtime;
 namespace WasmScripting {
 	[DefaultExecutionOrder(0)]
 	public class WasmVM : MonoBehaviour {
+
+		public enum WasmVMContext
+		{
+			GameObject, // Avatars, Spawnables
+			Scene		// World (entire scene)
+		}
+		
+		public WasmVMContext context = WasmVMContext.GameObject;
+		
 		private Action<int, long> _createMethod;
 		private Action<int, int> _callMethod;
 		private Instance _instance;
