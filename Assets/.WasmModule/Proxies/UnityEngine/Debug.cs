@@ -1,7 +1,11 @@
 ﻿using System.Runtime.InteropServices;
 
 namespace UnityEngine;
-public static class Debug {
+
+public static class Debug 
+{
+	#region Implementation
+	
 	public static void Log(object obj) {
 		WriteString(obj.ToString()!, 0);
 		debug_log();
@@ -16,7 +20,11 @@ public static class Debug {
 		WriteString(obj.ToString()!, 0);
 		debug_logError();
 	}
-    
+	
+	#endregion Implementation
+
+	#region Imports
+
 	[WasmImportLinkage, DllImport("unity")]
 	private static extern void debug_log();
     
@@ -25,4 +33,6 @@ public static class Debug {
     
 	[WasmImportLinkage, DllImport("unity")]
 	private static extern void debug_logError();
+
+	#endregion Imports
 }

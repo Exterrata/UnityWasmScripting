@@ -1,15 +1,23 @@
 ﻿using System.Runtime.InteropServices;
 
 namespace UnityEngine;
-public class Component(long id) : Object(id) {
 
+public class Component(long id) : Object(id) 
+{
+    #region Implementation
+    
     public GameObject gameObject => new(component_gameObject_get(id));
     public Transform transform => new(component_transform_get(id));
     
-    public string tag {
-        get => internal_component_tag_get(ObjectId);
-        set => internal_component_tag_set(ObjectId, value);
+    public string tag
+    {
+        get => internal_component_tag_get(WrappedId);
+        set => internal_component_tag_set(WrappedId, value);
     }
+    
+    #endregion Implementation
+
+    #region Marshaling
 
     private static string internal_component_tag_get(long id) {
         component_tag_get(id);
@@ -20,6 +28,10 @@ public class Component(long id) : Object(id) {
         WriteString(name, 0);
         component_tag_set(id);
     }
+
+    #endregion Marshaling
+
+    #region Imports
     
     [WasmImportLinkage, DllImport("unity")]
     private static extern long component_gameObject_get(long id);
@@ -32,4 +44,6 @@ public class Component(long id) : Object(id) {
 
     [WasmImportLinkage, DllImport("unity")]
     private static extern void component_tag_set(long id);
+    
+    #endregion Imports
 }

@@ -2,30 +2,38 @@
 using System.Runtime.InteropServices;
 
 namespace UnityEngine;
-public class GameObject(long id) : Object(id) {
+
+public class GameObject(long id) : Object(id) 
+{
+	#region Implementation
+	
 	public GameObject() : this(gameObject_ctor0()) {}
 	public GameObject(string name) : this(internal_gameObject_ctor1(name)) {}
 
-	public bool activeInHierarchy => gameObject_activeInHierarchy_get(ObjectId) != 0;
-	public bool activeSelf => gameObject_activeSelf_get(ObjectId) != 0;
-	public Transform transform => new(gameObject_transform_get(ObjectId));
+	public bool activeInHierarchy => gameObject_activeInHierarchy_get(WrappedId) != 0;
+	public bool activeSelf => gameObject_activeSelf_get(WrappedId) != 0;
+	public Transform transform => new(gameObject_transform_get(WrappedId));
 	//public Scene scene => new(gameObject_scene_get(ObjectId));
-	public ulong sceneCullingMask => internal_gameObject_sceneCullingMask_get(ObjectId);
+	public ulong sceneCullingMask => internal_gameObject_sceneCullingMask_get(WrappedId);
 
 	public bool isStatic {
-		get => gameObject_isStatic_get(ObjectId) != 0;
-		set => gameObject_isStatic_set(ObjectId, value ? 1 : 0);
+		get => gameObject_isStatic_get(WrappedId) != 0;
+		set => gameObject_isStatic_set(WrappedId, value ? 1 : 0);
 	}
 	
 	public int layer {
-		get => gameObject_layer_get(ObjectId);
-		set => gameObject_layer_set(ObjectId, value);
+		get => gameObject_layer_get(WrappedId);
+		set => gameObject_layer_set(WrappedId, value);
 	}
 	
 	public string tag {
-		get => internal_gameObject_tag_get(ObjectId);
-		set => internal_gameObject_tag_set(ObjectId, value);
+		get => internal_gameObject_tag_get(WrappedId);
+		set => internal_gameObject_tag_set(WrappedId, value);
 	}
+	
+	#endregion Implementation
+	
+	#region Marshaling
 
 	private static long internal_gameObject_ctor1(string name) {
 		WriteString(name, 0);
@@ -46,6 +54,10 @@ public class GameObject(long id) : Object(id) {
 		long sceneCullingMask = gameObject_sceneCullingMask_get(objectId);
 		return Unsafe.As<long, ulong>(ref sceneCullingMask);
 	}
+	
+	#endregion Marshaling
+
+	#region Imports
 	
 	[WasmImportLinkage, DllImport("unity")]
 	private static extern long gameObject_ctor0();
@@ -85,4 +97,6 @@ public class GameObject(long id) : Object(id) {
 	
 	[WasmImportLinkage, DllImport("unity")]
 	private static extern long gameObject_transform_get(long id);
+	
+	#endregion Imports
 }
