@@ -1,19 +1,26 @@
 ﻿using System.Runtime.InteropServices;
+using WasmModule.Proxies;
 
 namespace UnityEngine;
-public class Object(long id) {
-    protected readonly long ObjectId = id;
 
+public class Object(long id) : ProxyObject(id)
+{
+    #region Implementation
+    
     public string name {
-        get => internal_object_name_get(ObjectId);
-        set => internal_object_name_set(ObjectId, value);
+        get => internal_object_name_get(WrappedId);
+        set => internal_object_name_set(WrappedId, value);
     }
 
-    public override string ToString() => internal_object_toString(ObjectId);
+    public override string ToString() => internal_object_toString(WrappedId);
 
-    public static void Destroy(Object obj) => object_destroy(obj.ObjectId);
-    public static void Instantiate(Object obj) => object_instantiate(obj.ObjectId);
+    public static void Destroy(Object obj) => object_destroy(obj.WrappedId);
+    public static void Instantiate(Object obj) => object_instantiate(obj.WrappedId);
+    
+    #endregion Implementation
 
+    #region Marshaling
+    
     private static string internal_object_name_get(long id) {
         object_name_get(id);
         return ReadString(0);
@@ -29,6 +36,10 @@ public class Object(long id) {
         return ReadString(0);
     }
     
+    #endregion Marshaling
+
+    #region Imports
+    
     [WasmImportLinkage, DllImport("unity")]
     private static extern void object_name_get(long id);
 
@@ -43,4 +54,6 @@ public class Object(long id) {
 
     [WasmImportLinkage, DllImport("unity")]
     private static extern void object_instantiate(long id);
+    
+    #endregion Imports
 }
