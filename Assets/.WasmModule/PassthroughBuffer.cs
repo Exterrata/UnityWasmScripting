@@ -8,10 +8,10 @@ public static unsafe class PassthroughBuffer {
 	private static IntPtr* _bufferBase;
 
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
-	public static void WriteStruct<T>(T obj, int offsetBytes) where T : struct => Unsafe.Write(_bufferBase + offsetBytes, obj);
+	public static void WriteStruct<T>(T obj, int offsetBytes) where T : struct => Unsafe.Write((byte*)_bufferBase + offsetBytes, obj);
 	
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
-	public static T ReadStruct<T>(int offsetBytes) where T : struct => Unsafe.Read<T>(_bufferBase + offsetBytes);
+	public static T ReadStruct<T>(int offsetBytes) where T : struct => Unsafe.Read<T>((byte*)_bufferBase + offsetBytes);
 
 	public static void WriteString(string str, int offsetBytes) {
 		int size = str.Length * sizeof(char);

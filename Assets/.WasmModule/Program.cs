@@ -1,13 +1,14 @@
 ﻿using System.Reflection;
 using System.Runtime.InteropServices;
 using UnityEngine;
+using WasmModule.Proxies;
 using Object = UnityEngine.Object;
 
 namespace WasmModule;
 public static class Program {
     private static readonly Dictionary<long, MonoBehaviour> Behaviours = new();
     private static readonly Dictionary<Type, Dictionary<UnityEvent, MethodInfo>> Callbacks = new();
-    private static readonly FieldInfo ObjectIdField = typeof(Object).GetField("ObjectId", BindingFlags.Instance | BindingFlags.NonPublic);
+    private static readonly FieldInfo ObjectIdField = typeof(ProxyObject).GetField("WrappedId", BindingFlags.Instance | BindingFlags.NonPublic);
     
 	[UnmanagedCallersOnly(EntryPoint = "scripting_create_instance")]
 	public static void CreateInstance(int id, long objectId) {
@@ -31,12 +32,11 @@ public static class Program {
 
     [UnmanagedCallersOnly(EntryPoint = "scripting_call")]
     public static void Call(int id, int @event) {
-        string methodName = ReadString(0);
         try {
             MonoBehaviour behaviour = Behaviours[id];
             if (Callbacks[behaviour.GetType()].TryGetValue((UnityEvent)@event, out MethodInfo method)) method.Invoke(behaviour, null);
         } catch (Exception e) {
-            Debug.LogError($"Error Calling Method `{methodName}`: {e}");
+            Debug.LogError($"Error Calling Method `{(UnityEvent)@event}`: {e}");
         }
     }
 

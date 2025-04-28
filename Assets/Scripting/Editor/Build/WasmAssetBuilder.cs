@@ -21,17 +21,17 @@ namespace WasmScripting
 
         #region Public API
 
-        public static void CompileWasmProgramForObject(GameObject go)
+        public static void CompileWasmProgramForObject(GameObject go, bool force = false)
         {
             WasmVM vm = go.GetComponentInParent<WasmVM>(true);
             if (vm == null 
                 || vm.context != WasmVM.WasmVMContext.GameObject)
                 return;
 
-            CompileWasmProgramForVM(vm);
+            CompileWasmProgramForVM(vm, force);
         }
 
-        public static void CompileWasmProgramForScene()
+        public static void CompileWasmProgramForScene(bool force = false)
         {
             WasmVM sceneVM = null;
             WasmVM[] allVMs = Object.FindObjectsOfType<WasmVM>(true);
@@ -48,7 +48,7 @@ namespace WasmScripting
             if (sceneVM == null)
                 return;
 
-            CompileWasmProgramForVM(sceneVM);
+            CompileWasmProgramForVM(sceneVM, force);
         }
 
         public static void CompileAllWasmPrograms()
@@ -219,7 +219,7 @@ namespace WasmScripting
 
         #region Private Methods
 
-        private static void CompileWasmProgramForVM(WasmVM vm)
+        private static void CompileWasmProgramForVM(WasmVM vm, bool force = false)
         {
             if (vm == null)
                 return;
@@ -229,7 +229,7 @@ namespace WasmScripting
                 return;
                 
             // Check if scripts have changed before compiling
-            if (!HasScriptsChanged(vm, behaviours))
+            if (!force && !HasScriptsChanged(vm, behaviours))
             {
                 // Skip compilation if no changes detected
                 Debug.Log($"No changes detected for VM {vm.name}. Skipping compilation.");

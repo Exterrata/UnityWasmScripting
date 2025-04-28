@@ -40,7 +40,7 @@ public class Component(long id) : Object(id)
     private static Component internal_component_getcomponent_string(long id, string componentType)
     {
         WriteString(componentType, 0);
-        return new(component_getcomponent_string(id));
+        return new(component_func_getcomponent_string(id));
     }
 
     #endregion Marshaling
@@ -60,7 +60,7 @@ public class Component(long id) : Object(id)
     private static extern void component_tag_set(long id);
 
     [WasmImportLinkage, DllImport("unity")]
-    private static extern long component_getcomponent_string(long id);
+    private static extern long component_func_getcomponent_string(long id);
 
     #endregion Imports
 }
