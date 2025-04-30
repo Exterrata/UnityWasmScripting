@@ -60,11 +60,13 @@ namespace WasmScripting {
 		public BoundType(Type type) {
 			Type = type;
 			foreach (MemberInfo memberInfo in type.GetMembers((BindingFlags)30)) {
-				if (memberInfo is FieldInfo) {
+				if (memberInfo is FieldInfo fieldInfo) {
 					string nameGet = ScriptingWhitelistUtils.GetMemberId(memberInfo);
-					string nameSet = ScriptingWhitelistUtils.GetMemberId(memberInfo, true);
 					BoundMembers.Add(nameGet, new(nameGet, memberInfo));
-					BoundMembers.Add(nameSet, new(nameSet, memberInfo));
+					if (!fieldInfo.IsLiteral && !fieldInfo.IsInitOnly) {
+						string nameSet = ScriptingWhitelistUtils.GetMemberId(memberInfo, true);
+						BoundMembers.Add(nameSet, new(nameSet, memberInfo));
+					}
 				} else if (memberInfo is PropertyInfo property) {
 					if (property.CanRead) {
 						string name = ScriptingWhitelistUtils.GetMemberId(memberInfo);
@@ -121,8 +123,9 @@ namespace WasmScripting {
 				parts.AddRange(func.GetParameters().Select(p => TypeToIdentifier(p.ParameterType)));
 				parts.Add(TypeToIdentifier(func.ReturnType));
 			}
-			else if (memberInfo is FieldInfo) {
-				parts.Add(setter ? "set" : "get");
+			else if (memberInfo is FieldInfo fieldInfo) {
+				if (fieldInfo.IsLiteral) parts.Add("const");
+				else parts.Add(setter ? "set" : "get");
 				parts.Add(memberInfo.Name);
 			} else if (memberInfo is PropertyInfo property) {
 				parts.Add(setter ? "set" : "get");
