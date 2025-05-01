@@ -29,17 +29,17 @@ public class Component(long id) : Object(id)
 
     private static string internal_component_tag_get(long id) {
         component_tag_get(id);
-        return ReadString(0);
+        return ReadString();
     }
 
     private static void internal_component_tag_set(long id, string name) {
-        WriteString(name, 0);
+        WriteString(name);
         component_tag_set(id);
     }
 
     private static Component internal_component_getcomponent_string(long id, string componentType)
     {
-        WriteString(componentType, 0);
+        WriteString(componentType);
         return new(component_func_getcomponent_string(id));
     }
 

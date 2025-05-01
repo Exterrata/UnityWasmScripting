@@ -38,7 +38,7 @@ public struct RaycastHit
 
     private static Collider internal_raycast_collider_get(RaycastHit hit)
     {
-        WriteStruct(hit, 0);
+        WriteStruct(hit);
         return new(raycast_get_collider());
     }
 

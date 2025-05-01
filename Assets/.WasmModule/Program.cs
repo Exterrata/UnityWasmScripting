@@ -11,8 +11,9 @@ public static class Program {
     private static readonly FieldInfo ObjectIdField = typeof(ProxyObject).GetField("WrappedId", BindingFlags.Instance | BindingFlags.NonPublic);
     
 	[UnmanagedCallersOnly(EntryPoint = "scripting_create_instance")]
-	public static void CreateInstance(int id, long objectId) {
-        string name = ReadString(0);
+	public static void CreateInstance(int id, long objectId)
+    {
+        string name = ReadString();
         try {
             Type type = Type.GetType(name);
             MonoBehaviour obj = Activator.CreateInstance(type) as MonoBehaviour;

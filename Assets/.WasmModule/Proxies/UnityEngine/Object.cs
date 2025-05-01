@@ -23,17 +23,17 @@ public class Object(long id) : ProxyObject(id)
     
     private static string internal_object_name_get(long id) {
         object_name_get(id);
-        return ReadString(0);
+        return ReadString();
     }
 
     private static void internal_object_name_set(long id, string name) {
-        WriteString(name, 0);
+        WriteString(name);
         object_name_set(id);
     }
 
     private static string internal_object_toString(long id) {
         object_toString(id);
-        return ReadString(0);
+        return ReadString();
     }
     
     #endregion Marshaling

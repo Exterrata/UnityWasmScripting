@@ -17,11 +17,11 @@ public class Transform(long id) : Component(id)
 	
 	private static Vector3 internal_transform_position_get(long id) {
 		transform_position_get(id);
-		return ReadStruct<Vector3>(0);
+		return ReadStruct<Vector3>();
 	}
 
 	private static void internal_transform_position_set(long id, Vector3 position) {
-		WriteStruct(position, 0);
+		WriteStruct(position);
 		transform_position_set(id);
 	}
 	

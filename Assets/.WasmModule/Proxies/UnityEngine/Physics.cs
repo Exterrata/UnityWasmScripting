@@ -31,15 +31,16 @@ public static class Physics
         QueryTriggerInteraction queryTriggerInteraction
     )
     {
-        WriteStruct(origin, 0);
-        WriteStruct(direction, Unsafe.SizeOf<Vector3>());
-        WriteStruct(hitInfo, 2 * Unsafe.SizeOf<Vector3>());
+        int offsetBytesWrite = 0;
+        WriteStruct(origin, ref offsetBytesWrite);
+        WriteStruct(direction, ref offsetBytesWrite);
+        WriteStruct(hitInfo, ref offsetBytesWrite);
         int result = physics_func_raycast_vector3_vector3_raycasthit_float_int_querytriggerinteraction(
             maxDistance,
             layerMask,
             queryTriggerInteraction
         );
-        hitInfo = ReadStruct<RaycastHit>(0);
+        hitInfo = ReadStruct<RaycastHit>();
         return result != 0;
     }
 
