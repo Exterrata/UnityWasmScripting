@@ -36,17 +36,17 @@ public class GameObject(long id) : Object(id)
 	#region Marshaling
 
 	private static long internal_gameObject_ctor1(string name) {
-		WriteString(name, 0);
+		WriteString(name);
 		return gameObject_ctor1();
 	}
 
 	private static string internal_gameObject_tag_get(long objectId) {
 		gameObject_tag_get(objectId);
-		return ReadString(0);
+		return ReadString();
 	}
 
 	private static void internal_gameObject_tag_set(long objectId, string tag) {
-		WriteString(tag, 0);
+		WriteString(tag);
 		gameObject_tag_set(objectId);
 	}
 

@@ -7,17 +7,17 @@ public static class Debug
 	#region Implementation
 	
 	public static void Log(object obj) {
-		WriteString(obj.ToString()!, 0);
+		WriteString(obj.ToString()!);
 		debug_log();
 	}
 	
 	public static void LogWarning(object obj) {
-		WriteString(obj.ToString()!, 0);
+		WriteString(obj.ToString()!);
 		debug_logWarning();
 	}
 	
 	public static void LogError(object obj) {
-		WriteString(obj.ToString()!, 0);
+		WriteString(obj.ToString()!);
 		debug_logError();
 	}
 	
