@@ -58,8 +58,9 @@ namespace WasmScripting {
 
 		public override void SaveChanges() {
 			if (!hasUnsavedChanges) return;
-			string whitelistPath = Path.Combine(@"C:\Users\Koneko\Documents\CVRProjects\Wasm\Assets", WhitelistPath);
-			File.WriteAllText(whitelistPath, JsonConvert.SerializeObject(ScriptingWhitelist));
+			string projectPath = UnityWasmScriptingSettingsManager.GetProjectRoot();
+			string whitelistPath = Path.Combine(projectPath, WhitelistPath);
+			File.WriteAllText(whitelistPath, JsonConvert.SerializeObject(ScriptingWhitelist, Formatting.Indented));
 			base.SaveChanges();
 		}
 
@@ -69,7 +70,8 @@ namespace WasmScripting {
 		}
 
 		private static void LoadWhitelist() {
-			string whitelistPath = Path.Combine(@"C:\Users\Koneko\Documents\CVRProjects\Wasm\Assets", WhitelistPath);
+			string projectPath = UnityWasmScriptingSettingsManager.GetProjectRoot();
+			string whitelistPath = Path.Combine(projectPath, WhitelistPath);
 			if (File.Exists(whitelistPath)) {
 				string json = File.ReadAllText(whitelistPath);
 				ScriptingWhitelist = JsonConvert.DeserializeObject<ScriptingWhitelist>(json);
