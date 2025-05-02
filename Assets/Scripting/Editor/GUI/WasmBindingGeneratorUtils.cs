@@ -4,7 +4,7 @@ using System.IO;
 using System.Linq;
 using System.Reflection;
 using System.Text.RegularExpressions;
-using Unity.Plastic.Newtonsoft.Json;
+using Newtonsoft.Json;
 using UnityEditor;
 using UnityEngine;
 
@@ -50,10 +50,13 @@ namespace WasmScripting {
 			matching.AddRange(all.Where(item => regex.IsMatch(item.ToString())));
 		}
 
-		private static void SaveWhitelist() {
-			if (Event.current.control && Event.current.keyCode == KeyCode.S) {
+		private static void SaveWhitelist()
+		{
+			if (!Event.current.control || Event.current.keyCode != KeyCode.S) 
+				return;
+			
+			if (HasOpenInstances<WasmBindingGenerator>()) 
 				GetWindow<WasmBindingGenerator>().SaveChanges();
-			}
 		}
 
 		public override void SaveChanges() {
