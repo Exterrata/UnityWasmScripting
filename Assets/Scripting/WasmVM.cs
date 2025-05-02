@@ -1,26 +1,19 @@
 ﻿using System;
 using System.Collections;
+using System.Text;
 using UnityEngine;
 using Wasmtime;
 
 namespace WasmScripting {
 	[DefaultExecutionOrder(0)]
 	public class WasmVM : MonoBehaviour {
-
-		public enum WasmVMContext
-		{
-			GameObject, // Avatars, Spawnables
-			Scene		// World (entire scene)
-		}
-		
-		public WasmVMContext context = WasmVMContext.GameObject;
-		
-		private Action<int, long> _createMethod;
+		private Action<int, long, long> _createMethod;
 		private Action<int, int> _callMethod;
 		private Instance _instance;
 		private Module _module;
 		private Store _store;
 		
+		public WasmVMContext context = WasmVMContext.GameObject;
 		public WasmModuleAsset moduleAsset;
 		public ulong fuelPerFrame = 1000000000;
 		
@@ -36,7 +29,7 @@ namespace WasmScripting {
 			_store.Fuel = fuelPerFrame;
 			_instance.GetAction("_initialize")?.Invoke();
 			
-			_createMethod = _instance.GetAction<int, long>("scripting_create_instance")!;
+			_createMethod = _instance.GetAction<int, long, long>("scripting_create_instance")!;
 			_callMethod = _instance.GetAction<int, int>("scripting_call")!;
 			
 			_store.SetData(new StoreData(gameObject, _instance));
@@ -61,8 +54,11 @@ namespace WasmScripting {
 
 		private void CreateInstance(int id, WasmBehaviour behaviour) {
 			StoreData data = (StoreData)_store.GetData()!;
-			data.Buffer.WriteString(behaviour.behaviourName, 0);
-			_createMethod(id, data.AccessManager.ToWrapped(behaviour).Id);
+			string name = behaviour.behaviourName;
+			long strPtr = data.Alloc((name.Length + 1) * sizeof(char));
+			data.Memory.WriteString(strPtr, name, Encoding.Unicode);
+			data.Memory.WriteInt16(strPtr + name.Length * 2, 0);
+			_createMethod(id, data.AccessManager.ToWrapped(behaviour).Id, strPtr);
 		}
 
 		public void CallMethod(int id, UnityEvent @event) {
@@ -86,11 +82,18 @@ namespace WasmScripting {
 
 	public readonly struct StoreData {
 		public readonly WasmAccessManager AccessManager;
-		public readonly WasmPassthroughBuffer Buffer;
+		public readonly Func<int, long> Alloc;
+		public readonly Memory Memory;
 		
 		public StoreData(GameObject root, Instance instance) {
 			AccessManager = new(root);
-			Buffer = new(instance);
+			Alloc = instance.GetFunction<int, long>("scripting_alloc");
+			Memory = instance.GetMemory("memory");
 		}
+	}
+	
+	public enum WasmVMContext {
+		GameObject, // Avatars, Spawnables
+		Scene		// World (entire scene)
 	}
 }

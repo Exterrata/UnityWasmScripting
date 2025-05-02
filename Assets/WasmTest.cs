@@ -11,13 +11,10 @@ public class WasmTest : MonoBehaviour {
 
     private readonly Vector3 down = new(0, -1, 0);
     
-    private void Update() 
-    {
-         // Raycast(Vector3 origin, Vector3 direction, out RaycastHit hitInfo, float maxDistance = Mathf.Infinity, int layerMask = DefaultRaycastLayers, QueryTriggerInteraction queryTriggerInteraction = QueryTriggerInteraction.UseGlobal) 
-
+    private void Update() {
          Vector3 pos = transform.position;
-         // Debug.Log(pos);
-         // Debug.Log(down);
+         Debug.Log(pos);
+         Debug.Log(down);
          
          bool hasHitGround = Physics.Raycast(
              pos,
@@ -27,6 +24,8 @@ public class WasmTest : MonoBehaviour {
              -1,
              QueryTriggerInteraction.UseGlobal
          );
+         
+         Debug.Log(hitInfo.colliderInstanceID);
          
         if (hasHitGround) {
             Debug.Log($"Hit: {hitInfo.collider.name}");

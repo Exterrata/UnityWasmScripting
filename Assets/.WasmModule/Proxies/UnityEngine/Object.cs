@@ -1,4 +1,5 @@
-﻿using System.Runtime.InteropServices;
+﻿using System.Runtime.CompilerServices;
+using System.Runtime.InteropServices;
 using WasmModule.Proxies;
 
 namespace UnityEngine;
@@ -21,19 +22,27 @@ public class Object(long id) : ProxyObject(id)
 
     #region Marshaling
     
-    private static string internal_object_name_get(long id) {
-        object_name_get(id);
-        return ReadString(0);
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    private static unsafe string internal_object_name_get(long id) {
+        long strPtr = object_name_get(id);
+        string str = new((char*)strPtr);
+        Marshal.FreeHGlobal((IntPtr)strPtr);
+        return str;
     }
 
-    private static void internal_object_name_set(long id, string name) {
-        WriteString(name, 0);
-        object_name_set(id);
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    private static unsafe void internal_object_name_set(long id, string name) {
+        fixed (char* str = name) {
+            object_name_set(id, (long)str, name.Length * sizeof(char));
+        }
     }
 
-    private static string internal_object_toString(long id) {
-        object_toString(id);
-        return ReadString(0);
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    private static unsafe string internal_object_toString(long id) {
+        long strPtr = object_toString(id);
+        string str = new((char*)strPtr);
+        Marshal.FreeHGlobal((IntPtr)strPtr);
+        return str;
     }
     
     #endregion Marshaling
@@ -41,13 +50,13 @@ public class Object(long id) : ProxyObject(id)
     #region Imports
     
     [WasmImportLinkage, DllImport("unity")]
-    private static extern void object_name_get(long id);
+    private static extern long object_name_get(long id);
 
     [WasmImportLinkage, DllImport("unity")]
-    private static extern void object_name_set(long id);
+    private static extern void object_name_set(long id, long strPtr, int strSize);
 
     [WasmImportLinkage, DllImport("unity")]
-    private static extern void object_toString(long id);
+    private static extern long object_toString(long id);
 
     [WasmImportLinkage, DllImport("unity")]
     private static extern void object_destroy(long id);

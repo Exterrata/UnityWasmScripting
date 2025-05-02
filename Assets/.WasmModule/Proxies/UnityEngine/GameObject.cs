@@ -35,21 +35,27 @@ public class GameObject(long id) : Object(id)
 	
 	#region Marshaling
 
-	private static long internal_gameObject_ctor1(string name) {
-		WriteString(name, 0);
-		return gameObject_ctor1();
+	[MethodImpl(MethodImplOptions.AggressiveInlining)]
+	private static unsafe long internal_gameObject_ctor1(string name) {
+		fixed (char* str = name) {
+			return gameObject_ctor1((long)str, name.Length * sizeof(char));
+		}
 	}
 
-	private static string internal_gameObject_tag_get(long objectId) {
-		gameObject_tag_get(objectId);
-		return ReadString(0);
+	[MethodImpl(MethodImplOptions.AggressiveInlining)]
+	private static unsafe string internal_gameObject_tag_get(long objectId) {
+		long strPtr = gameObject_tag_get(objectId);
+		return new((char*)strPtr);
 	}
 
-	private static void internal_gameObject_tag_set(long objectId, string tag) {
-		WriteString(tag, 0);
-		gameObject_tag_set(objectId);
+	[MethodImpl(MethodImplOptions.AggressiveInlining)]
+	private static unsafe void internal_gameObject_tag_set(long objectId, string tag) {
+		fixed (char* str = tag) {
+			gameObject_tag_set(objectId, (long)str, tag.Length * sizeof(char));
+		}
 	}
 
+	[MethodImpl(MethodImplOptions.AggressiveInlining)]
 	private static ulong internal_gameObject_sceneCullingMask_get(long objectId) {
 		long sceneCullingMask = gameObject_sceneCullingMask_get(objectId);
 		return Unsafe.As<long, ulong>(ref sceneCullingMask);
@@ -63,7 +69,7 @@ public class GameObject(long id) : Object(id)
 	private static extern long gameObject_ctor0();
 	
 	[WasmImportLinkage, DllImport("unity")]
-	private static extern long gameObject_ctor1();
+	private static extern long gameObject_ctor1(long strPtr, int strSize);
 	
 	[WasmImportLinkage, DllImport("unity")]
 	private static extern int gameObject_activeInHierarchy_get(long id);
@@ -90,10 +96,10 @@ public class GameObject(long id) : Object(id)
 	private static extern long gameObject_sceneCullingMask_get(long id);
 	
 	[WasmImportLinkage, DllImport("unity")]
-	private static extern void gameObject_tag_get(long id);
+	private static extern long gameObject_tag_get(long id);
 	
 	[WasmImportLinkage, DllImport("unity")]
-	private static extern void gameObject_tag_set(long id);
+	private static extern void gameObject_tag_set(long id, long strPtr, int strSize);
 	
 	[WasmImportLinkage, DllImport("unity")]
 	private static extern long gameObject_transform_get(long id);

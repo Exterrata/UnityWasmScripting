@@ -1,6 +1,5 @@
-﻿using System.Reflection;
-using System.Runtime.CompilerServices;
-using UnityEngine;
+﻿using System.Runtime.CompilerServices;
+using System.Text;
 using Wasmtime;
 
 namespace WasmScripting {
@@ -13,17 +12,16 @@ namespace WasmScripting {
 
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
 		protected static long IdFrom(StoreData data, object obj) => data.AccessManager.ToWrapped(obj).Id;
-
-		[MethodImpl(MethodImplOptions.AggressiveInlining)]
-		protected static void WriteStruct<T>(StoreData data, ref T obj, int offsetBytes) where T : unmanaged => data.Buffer.WriteStruct(ref obj, offsetBytes);
-
-		[MethodImpl(MethodImplOptions.AggressiveInlining)]
-		protected static T ReadStruct<T>(StoreData data, int offsetBytes) where T : unmanaged => data.Buffer.ReadStruct<T>(offsetBytes);
 		
+		/// <summary>
+		/// Writes a null terminated string
+		/// </summary>
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
-		protected static void WriteString(StoreData data, string str, int offsetBytes) => data.Buffer.WriteString(str, offsetBytes);
-
-		[MethodImpl(MethodImplOptions.AggressiveInlining)]
-		protected static string ReadString(StoreData data, int offsetBytes) => data.Buffer.ReadString(offsetBytes);
+		protected static long WriteString(StoreData data, string str) {
+			long strPtr = data.Alloc((str.Length + 1) * sizeof(char));
+			data.Memory.WriteString(strPtr, str, Encoding.Unicode);
+			data.Memory.WriteInt16(strPtr + str.Length * 2, 0);
+			return strPtr;
+		}
 	}
 }

@@ -22,34 +22,36 @@ public static class Physics
 
     #region Marshaling
 
-    private static bool internal_physics_func_raycast_vector3_vector3_raycasthit_float_int_querytriggerinteraction(
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    private static unsafe bool internal_physics_func_raycast_vector3_vector3_raycasthit_float_int_querytriggerinteraction(
         Vector3 origin,
         Vector3 direction,
         out RaycastHit hitInfo,
         float maxDistance,
         int layerMask,
         QueryTriggerInteraction queryTriggerInteraction
-    )
-    {
-        WriteStruct(origin, 0);
-        WriteStruct(direction, Unsafe.SizeOf<Vector3>());
-        WriteStruct(hitInfo, 2 * Unsafe.SizeOf<Vector3>());
+    ) {
+        hitInfo = default;
         int result = physics_func_raycast_vector3_vector3_raycasthit_float_int_querytriggerinteraction(
+            (long)Unsafe.AsPointer(ref origin),
+            (long)Unsafe.AsPointer(ref direction),
+            (long)Unsafe.AsPointer(ref hitInfo),
             maxDistance,
             layerMask,
             queryTriggerInteraction
         );
-        hitInfo = ReadStruct<RaycastHit>(0);
-        return result != 0;
+        return Unsafe.As<int, bool>(ref result);
     }
-
+    
     #endregion Marshaling
     
     #region Imports
     
     [WasmImportLinkage, DllImport("unity")]
-    private static extern int physics_func_raycast_vector3_vector3_raycasthit_float_int_querytriggerinteraction
-    (
+    private static extern int physics_func_raycast_vector3_vector3_raycasthit_float_int_querytriggerinteraction(
+        long originPtr,
+        long directionPtr,
+        long hitInfoPtr,
         float maxDistance,
         int layerMask,
         QueryTriggerInteraction queryTriggerInteraction

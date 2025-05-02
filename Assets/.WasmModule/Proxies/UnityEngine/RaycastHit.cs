@@ -1,4 +1,5 @@
-﻿using System.Runtime.InteropServices;
+﻿using System.Runtime.CompilerServices;
+using System.Runtime.InteropServices;
 
 namespace UnityEngine;
 
@@ -6,14 +7,27 @@ public struct RaycastHit
 {
     #region Implementation
     
-    public Collider collider => internal_raycast_collider_get(this);
+    internal Vector3 m_Point;
+    internal Vector3 m_Normal;
+    internal uint m_FaceID;
+    internal float m_Distance;
+    internal Vector2 m_UV;
+    internal int m_Collider;
     
-    // public int colliderInstanceID =>
-    //
-    // public Vector3 point =>
-    //
-    // public Vector3 normal =>
-    //
+    public Collider collider => internal_raycast_collider_get(this);
+
+    public int colliderInstanceID => m_Collider;
+    
+    public Vector3 point {
+        get => this.m_Point;
+        set => this.m_Point = value;
+    }
+
+    public Vector3 normal {
+        get => this.m_Normal;
+        set => this.m_Normal = value;
+    }
+    
     // public Vector3 barycentricCoordinate =>
     //
     // public float distance =>
@@ -36,10 +50,9 @@ public struct RaycastHit
 
     #region Marshaling
 
-    private static Collider internal_raycast_collider_get(RaycastHit hit)
+    private static unsafe Collider internal_raycast_collider_get(RaycastHit hit)
     {
-        WriteStruct(hit, 0);
-        return new(raycast_get_collider());
+        return new(raycast_get_collider((long)Unsafe.AsPointer(ref hit)));
     }
 
     #endregion Marshaling
@@ -47,7 +60,7 @@ public struct RaycastHit
     #region Imports
 
     [WasmImportLinkage, DllImport("unity")]
-    private static extern long raycast_get_collider();
+    private static extern long raycast_get_collider(long raycastHitPtr);
 
     #endregion Imports
 }

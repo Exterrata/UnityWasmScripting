@@ -2,7 +2,6 @@
 using System.Runtime.InteropServices;
 using UnityEngine;
 using WasmModule.Proxies;
-using Object = UnityEngine.Object;
 
 namespace WasmModule;
 public static class Program {
@@ -11,8 +10,9 @@ public static class Program {
     private static readonly FieldInfo ObjectIdField = typeof(ProxyObject).GetField("WrappedId", BindingFlags.Instance | BindingFlags.NonPublic);
     
 	[UnmanagedCallersOnly(EntryPoint = "scripting_create_instance")]
-	public static void CreateInstance(int id, long objectId) {
-        string name = ReadString(0);
+	public static unsafe void CreateInstance(int id, long objectId, long strPtr) {
+        string name = new((char*)strPtr);
+        Marshal.FreeHGlobal((IntPtr)strPtr);
         try {
             Type type = Type.GetType(name);
             MonoBehaviour obj = Activator.CreateInstance(type) as MonoBehaviour;
@@ -41,10 +41,7 @@ public static class Program {
     }
 
     [UnmanagedCallersOnly(EntryPoint = "scripting_alloc")]
-    public static IntPtr Alloc(int length) => Marshal.AllocHGlobal(length);
-
-    [UnmanagedCallersOnly(EntryPoint = "scripting_free")]
-    public static void Free(IntPtr address) => Marshal.FreeHGlobal(address);
+    public static long Alloc(int length) => Marshal.AllocHGlobal(length);
     
     public enum UnityEvent {
         Awake,

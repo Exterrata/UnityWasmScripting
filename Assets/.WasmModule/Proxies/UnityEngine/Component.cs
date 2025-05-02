@@ -1,4 +1,5 @@
-﻿using System.Runtime.InteropServices;
+﻿using System.Runtime.CompilerServices;
+using System.Runtime.InteropServices;
 
 namespace UnityEngine;
 
@@ -27,20 +28,24 @@ public class Component(long id) : Object(id)
 
     #region Marshaling
 
-    private static string internal_component_tag_get(long id) {
-        component_tag_get(id);
-        return ReadString(0);
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    private static unsafe string internal_component_tag_get(long id) {
+        long strPtr = component_tag_get(id);
+        return new((char*)strPtr);
     }
 
-    private static void internal_component_tag_set(long id, string name) {
-        WriteString(name, 0);
-        component_tag_set(id);
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    private static unsafe void internal_component_tag_set(long id, string name) {
+        fixed (char* str = name) {
+            component_tag_set(id, (long)str, name.Length * sizeof(char));
+        }
     }
 
-    private static Component internal_component_getcomponent_string(long id, string componentType)
-    {
-        WriteString(componentType, 0);
-        return new(component_func_getcomponent_string(id));
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    private static unsafe Component internal_component_getcomponent_string(long id, string componentType) {
+        fixed (char* str = componentType) {
+            return new(component_func_getcomponent_string(id, (long)str, componentType.Length));
+        }
     }
 
     #endregion Marshaling
@@ -54,13 +59,13 @@ public class Component(long id) : Object(id)
     private static extern long component_transform_get(long id);
     
     [WasmImportLinkage, DllImport("unity")]
-    private static extern void component_tag_get(long id);
+    private static extern long component_tag_get(long id);
 
     [WasmImportLinkage, DllImport("unity")]
-    private static extern void component_tag_set(long id);
+    private static extern void component_tag_set(long id, long strPtr, int strSize);
 
     [WasmImportLinkage, DllImport("unity")]
-    private static extern long component_func_getcomponent_string(long id);
+    private static extern long component_func_getcomponent_string(long id, long strPtr, int strSize);
 
     #endregion Imports
 }

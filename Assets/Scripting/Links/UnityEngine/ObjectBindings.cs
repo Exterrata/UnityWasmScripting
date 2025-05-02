@@ -1,4 +1,5 @@
-﻿using UnityEngine;
+﻿using System.Text;
+using UnityEngine;
 using Wasmtime;
 
 namespace WasmScripting.UnityEngine {
@@ -6,17 +7,20 @@ namespace WasmScripting.UnityEngine {
 		public static void BindMethods(Linker linker) {
 			linker.DefineFunction("unity", "object_name_get", (Caller caller, long objectId) => {
 				StoreData data = GetData(caller);
-				WriteString(data, IdTo<Object>(data, objectId).name, 0);
+				string str = IdTo<Object>(data, objectId).name;
+				return WriteString(data, str);
 			});
 			
-			linker.DefineFunction("unity", "object_name_set", (Caller caller, long objectId) => {
+			linker.DefineFunction("unity", "object_name_set", (Caller caller, long objectId, long strPtr, int strSize) => {
 				StoreData data = GetData(caller);
-				IdTo<Object>(data, objectId).name = ReadString(data, 0);
+				string str = data.Memory.ReadString(strPtr, strSize, Encoding.Unicode);
+				IdTo<Object>(data, objectId).name = str;
 			});
 			
 			linker.DefineFunction("unity", "object_toString", (Caller caller, long objectId) => {
 				StoreData data = GetData(caller);
-				WriteString(data, IdTo<Object>(data, objectId).ToString(), 0);
+				string str = IdTo<Object>(data, objectId).ToString();
+				return WriteString(data, str);
 			});
 			
 			linker.DefineFunction("unity", "object_destroy", (Caller caller, long objectId) => {

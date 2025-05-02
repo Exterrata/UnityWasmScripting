@@ -25,7 +25,7 @@ namespace WasmScripting
         {
             WasmVM vm = go.GetComponentInParent<WasmVM>(true);
             if (vm == null 
-                || vm.context != WasmVM.WasmVMContext.GameObject)
+                || vm.context != WasmVMContext.GameObject)
                 return;
 
             CompileWasmProgramForVM(vm, force);
@@ -38,7 +38,7 @@ namespace WasmScripting
             
             foreach (WasmVM vm in allVMs)
             {
-                if (vm.context != WasmVM.WasmVMContext.Scene)
+                if (vm.context != WasmVMContext.Scene)
                     continue;
                 
                 sceneVM = vm;
@@ -296,7 +296,7 @@ namespace WasmScripting
 
         private static WasmBehaviour[] GetRelevantBehaviours(WasmVM vm)
         {
-            if (vm.context == WasmVM.WasmVMContext.GameObject)
+            if (vm.context == WasmVMContext.GameObject)
                 return vm.GetComponentsInChildren<WasmBehaviour>(true);
 
             // Scene context
@@ -308,7 +308,7 @@ namespace WasmScripting
                 // Check if this behaviour is not under any GameObject VM
                 WasmVM parentVM = behaviour.GetComponentInParent<WasmVM>(true);
                 if (parentVM == null 
-                    || parentVM.context != WasmVM.WasmVMContext.GameObject)
+                    || parentVM.context != WasmVMContext.GameObject)
                     sceneBehaviours.Add(behaviour);
             }
                 

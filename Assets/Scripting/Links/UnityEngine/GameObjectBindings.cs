@@ -1,4 +1,5 @@
-﻿using Unity.Collections.LowLevel.Unsafe;
+﻿using System.Text;
+using Unity.Collections.LowLevel.Unsafe;
 using UnityEngine;
 using Wasmtime;
 
@@ -10,9 +11,10 @@ namespace WasmScripting.UnityEngine {
 				return IdFrom(data, new GameObject());
 			});
 			
-			linker.DefineFunction("unity", "gameObject_ctor1", (Caller caller) => {
+			linker.DefineFunction("unity", "gameObject_ctor1", (Caller caller, long strPtr, int strSize) => {
 				StoreData data = GetData(caller);
-				return IdFrom(data, new GameObject(ReadString(data, 0)));
+				string str = data.Memory.ReadString(strPtr, strSize, Encoding.Unicode);
+				return IdFrom(data, new GameObject(str));
 			});
 			
 			linker.DefineFunction("unity", "gameObject_activeInHierarchy_get", (Caller caller, long objectId) => {
@@ -58,12 +60,14 @@ namespace WasmScripting.UnityEngine {
 			
 			linker.DefineFunction("unity", "gameObject_tag_get", (Caller caller, long objectId) => {
 				StoreData data = GetData(caller);
-				data.Buffer.WriteString(IdTo<GameObject>(data, objectId).tag, 0);
+				string str = IdTo<GameObject>(data, objectId).tag;
+				return WriteString(data, str);
 			});
 			
-			linker.DefineFunction("unity", "gameObject_tag_set", (Caller caller, long objectId) => {
+			linker.DefineFunction("unity", "gameObject_tag_set", (Caller caller, long objectId, long strPtr, int strSize) => {
 				StoreData data = GetData(caller);
-				IdTo<GameObject>(data, objectId).tag = ReadString(data, 0);
+				string str = data.Memory.ReadString(strPtr, strSize, Encoding.Unicode);
+				IdTo<GameObject>(data, objectId).tag = str;
 			});
 			
 			linker.DefineFunction("unity", "gameObject_transform_get", (Caller caller, long objectId) => {
