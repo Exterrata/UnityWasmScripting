@@ -13,6 +13,13 @@ public static class UnityWasmScriptingSettingsManager
     private static UnityWasmScriptingSettings s_Instance;
     private static readonly string k_SettingsPath = $"Assets/Resources/{ProjectName}Settings.asset";
 
+    [InitializeOnLoadMethod]
+    private static void Init()
+    {
+        // Ensure the settings asset is created and loaded
+        GetOrCreateSettings();
+    }
+    
     #region Settings Access
     
     public static UnityWasmScriptingSettings GetOrCreateSettings()
