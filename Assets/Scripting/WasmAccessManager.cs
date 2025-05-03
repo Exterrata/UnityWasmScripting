@@ -6,7 +6,7 @@ namespace WasmScripting {
 		private GameObject _accessRoot;
 		private readonly Dictionary<long, WrappedObject> _idToWrapped = new();
 		private readonly Dictionary<object, WrappedObject> _objectToWrapped = new();
-		private long _currentId;
+		private long _currentId = 1; // Start at 1 because 0 is reserved for null
 
 		public WasmAccessManager(GameObject root) {
 			_accessRoot = root;
