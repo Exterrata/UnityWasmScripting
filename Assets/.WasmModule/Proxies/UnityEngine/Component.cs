@@ -7,8 +7,8 @@ public class Component(long id) : Object(id)
 {
     #region Implementation
     
-    public GameObject gameObject => new(component_gameObject_get(id));
-    public Transform transform => new(component_transform_get(id));
+    public GameObject gameObject => new(component_gameObject_get(WrappedId));
+    public Transform transform => new(component_transform_get(WrappedId));
     
     public string tag
     {
