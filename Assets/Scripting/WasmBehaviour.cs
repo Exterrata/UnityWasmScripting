@@ -27,7 +27,7 @@ namespace WasmScripting {
 		
 		private void Awake() {
 			_vm = GetComponentInParent<WasmVM>();
-			if (_vm.Awaked) _vm.CallMethod(InstanceId, UnityEvent.Awake);
+			if (_vm.Awakened) _vm.CallMethod(InstanceId, UnityEvent.Awake);
 		}
 
 		private void Start() => _vm.CallMethod(InstanceId, UnityEvent.Start);
