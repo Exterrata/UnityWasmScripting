@@ -44,7 +44,7 @@ public class Component(long id) : Object(id)
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     private static unsafe Component internal_component_getcomponent_string(long id, string componentType) {
         fixed (char* str = componentType) {
-            return new(component_func_getcomponent_string(id, (long)str, componentType.Length));
+            return new(component_func_getcomponent_string(id, (long)str, componentType.Length * sizeof(char)));
         }
     }
 
