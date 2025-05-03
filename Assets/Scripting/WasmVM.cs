@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections;
 using System.Text;
+using System.Linq;
 using UnityEngine;
 using Wasmtime;
 
@@ -18,13 +19,18 @@ namespace WasmScripting {
 		public ulong fuelPerFrame = 1000000000;
 		
 		public bool Initialized { get; private set; }
-		public bool Awaked { get; private set; }
+		public bool Awakened { get; private set; }
 
-		public void Awake() {
-			_module = Module.FromBytes(WasmManager.Engine, "Scripting", moduleAsset.bytes);
-			
+		private void Awake()
+		{
+		    _module = Module.FromBytes(WasmManager.Engine, "Scripting", moduleAsset.bytes);
+
 			_store = new(WasmManager.Engine);
-			_instance = WasmManager.Linker.Instantiate(_store, _module);
+
+			// Prevents Instantiate erroring when there's missing links (has to run before Instantiate)
+			FillNonLinkedWithEmptyStubs(_module, _store);
+
+		    _instance = WasmManager.Linker.Instantiate(_store, _module);
 
 			_store.Fuel = fuelPerFrame;
 			_instance.GetAction("_initialize")?.Invoke();
@@ -49,7 +55,7 @@ namespace WasmScripting {
 				CallMethod(behaviour.InstanceId, UnityEvent.Awake);
 			}
 
-			Awaked = true;
+			Awakened = true;
 		}
 
 		private void CreateInstance(int id, WasmBehaviour behaviour) {
@@ -78,6 +84,30 @@ namespace WasmScripting {
 				yield return waitInstruction;
 			}
 		}
+
+		/// <summary>
+		/// Fill all the non-linked functions with empty stubs so they won't explode
+		/// Note: If the function returns a bool, it will be false (which is amazing)
+		/// </summary>
+		private static void FillNonLinkedWithEmptyStubs(Module module, Store store)
+		{
+			foreach (var import in module.Imports)
+			{
+				// Ignore non-function types
+				if (import is not FunctionImport funcImport) continue;
+
+				var moduleName = import.ModuleName;
+				var functionName = import.Name;
+
+				// Skip if already defined in the linker
+				if (WasmManager.Linker.GetFunction(store, moduleName, functionName) == null)
+				{
+					ValueKind[] paramTypes = funcImport.Parameters.ToArray();
+					ValueKind[] resultTypes = funcImport.Results.ToArray();
+					WasmManager.Linker.DefineFunction(moduleName, functionName, (_, _, _) => { }, paramTypes, resultTypes);
+				}
+			}
+		}
 	}
 
 	public readonly struct StoreData {
@@ -91,7 +121,7 @@ namespace WasmScripting {
 			Memory = instance.GetMemory("memory");
 		}
 	}
-	
+
 	public enum WasmVMContext {
 		GameObject, // Avatars, Spawnables
 		Scene		// World (entire scene)
