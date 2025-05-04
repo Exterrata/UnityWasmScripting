@@ -11,8 +11,8 @@ namespace WasmScripting {
 		protected static T IdTo<T>(StoreData data, long id) where T : class => data.AccessManager.ToWrapped(id).Target as T;
 
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
-		protected static long IdFrom(StoreData data, object obj) => data.AccessManager.ToWrapped(obj).Id;
-		
+		protected static long IdFrom(StoreData data, object obj) => obj == null ? 0 : data.AccessManager.ToWrapped(obj).Id;
+
 		/// <summary>
 		/// Writes a null terminated string
 		/// </summary>

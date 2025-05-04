@@ -3,26 +3,19 @@ using System.Runtime.InteropServices;
 
 namespace UnityEngine;
 
-public class Component(long id) : Object(id) 
+public partial class Component(long id) : Object(id) 
 {
     #region Implementation
     
-    public GameObject gameObject => new(component_gameObject_get(id));
-    public Transform transform => new(component_transform_get(id));
+    public GameObject gameObject => new(component_gameObject_get(WrappedId));
+    public Transform transform => new(component_transform_get(WrappedId));
     
     public string tag
     {
         get => internal_component_tag_get(WrappedId);
         set => internal_component_tag_set(WrappedId, value);
     }
-
-    public Component GetComponent(string component) => internal_component_getcomponent_string(WrappedId, component);
-
-    public T GetComponent<T>() where T : Component
-    {
-        string componentType = typeof(T).Name; // TODO: handle case where T inherits WasmBehaviour, needs custom lookup
-        return GetComponent(componentType) as T;
-    }
+    
     
     #endregion Implementation
 
@@ -40,14 +33,7 @@ public class Component(long id) : Object(id)
             component_tag_set(id, (long)str, name.Length * sizeof(char));
         }
     }
-
-    [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    private static unsafe Component internal_component_getcomponent_string(long id, string componentType) {
-        fixed (char* str = componentType) {
-            return new(component_func_getcomponent_string(id, (long)str, componentType.Length));
-        }
-    }
-
+    
     #endregion Marshaling
 
     #region Imports
@@ -63,9 +49,6 @@ public class Component(long id) : Object(id)
 
     [WasmImportLinkage, DllImport("unity")]
     private static extern void component_tag_set(long id, long strPtr, int strSize);
-
-    [WasmImportLinkage, DllImport("unity")]
-    private static extern long component_func_getcomponent_string(long id, long strPtr, int strSize);
-
+    
     #endregion Imports
 }
