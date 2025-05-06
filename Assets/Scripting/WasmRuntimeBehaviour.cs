@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using UnityEngine;
+using WasmScripting.Enums;
 
 namespace WasmScripting {
 	[DefaultExecutionOrder(50)]
@@ -41,14 +42,14 @@ namespace WasmScripting {
 		#region Unity Events
 		
 		private void Awake() {
-			if (_vm.Awakened) _vm.CallMethod(InstanceId, UnityEvent.Awake);
+			if (_vm.Awakened) _vm.CallMethod(InstanceId, UnityEvents.Awake);
 		}
 
-		private void Start() => _vm.CallMethod(InstanceId, UnityEvent.Start);
-		private void OnEnable() => _vm.CallMethod(InstanceId, UnityEvent.OnEnable);
-		private void OnDisable() => _vm.CallMethod(InstanceId, UnityEvent.OnDisable);
+		private void Start() => _vm.CallMethod(InstanceId, UnityEvents.Start);
+		private void OnEnable() => _vm.CallMethod(InstanceId, UnityEvents.OnEnable);
+		private void OnDisable() => _vm.CallMethod(InstanceId, UnityEvents.OnDisable);
 		private void OnDestroy() {
-			if (_vm.Initialized) _vm.CallMethod(InstanceId, UnityEvent.OnDestroy);
+			if (_vm.Initialized) _vm.CallMethod(InstanceId, UnityEvents.OnDestroy);
 		}
 		
 		#endregion Unity Events

@@ -1,6 +1,7 @@
 using System;
 using System.Text;
 using UnityEngine;
+using WasmScripting.Enums;
 using Wasmtime;
 
 namespace WasmScripting {
@@ -45,7 +46,7 @@ namespace WasmScripting {
 
 		private void Start() {
 			foreach (WasmRuntimeBehaviour behaviour in GetComponentsInChildren<WasmRuntimeBehaviour>()) {
-				CallMethod(behaviour.InstanceId, UnityEvent.Awake);
+				CallMethod(behaviour.InstanceId, UnityEvents.Awake);
 			}
 
 			Awakened = true;
@@ -64,7 +65,7 @@ namespace WasmScripting {
 			_createMethod(id, data.AccessManager.ToWrapped(runtimeBehaviour).Id, strPtr, strLength);
 		}
 
-		public void CallMethod(int id, UnityEvent @event) {
+		public void CallMethod(int id, UnityEvents @event) {
 			_callMethod(id, (int)@event);
 		}
 
