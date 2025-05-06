@@ -65,10 +65,6 @@ namespace WasmScripting {
 			data.Memory.WriteString(strPtr, name, Encoding.Unicode);
 			data.Memory.WriteInt16(strPtr + name.Length * 2, 0);
 			_createMethod(id, data.AccessManager.ToWrapped(behaviour).Id, strPtr);
-
-			long ptr = data.Alloc(127684);
-			Span<int> span = data.Memory.GetSpan<int>((int)ptr);
-			
 		}
 
 		public void CallMethod(int id, UnityEvent @event) {
