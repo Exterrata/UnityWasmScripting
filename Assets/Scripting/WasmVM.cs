@@ -2,13 +2,14 @@ using System;
 using System.Text;
 using System.Linq;
 using UnityEngine;
+using WasmScripting.Enums;
 using Wasmtime;
 
 namespace WasmScripting {
 	[DefaultExecutionOrder(0)]
 	public class WasmVM : MonoBehaviour {
 		private Action<int, long, long, int> _createMethod;
-		private Action<int, int> _callMethod;
+		private Action<int, long> _callMethod;
 		private Instance _instance;
 		private Module _module;
 		private Store _store;
@@ -33,7 +34,7 @@ namespace WasmScripting {
 			_instance.GetAction("_initialize")?.Invoke();
 			
 			_createMethod = _instance.GetAction<int, long, long, int>("scripting_create_instance")!;
-			_callMethod = _instance.GetAction<int, int>("scripting_call")!;
+			_callMethod = _instance.GetAction<int, long>("scripting_call")!;
 			
 			_store.SetData(new StoreData(gameObject, _instance));
 			
@@ -47,9 +48,8 @@ namespace WasmScripting {
 		}
 
 		private void Start() {
-			foreach (WasmBehaviour behaviour in GetComponentsInChildren<WasmBehaviour>()) {
-				CallMethod(behaviour.InstanceId, UnityEvent.Awake);
-			}
+			foreach (WasmBehaviour behaviour in GetComponentsInChildren<WasmBehaviour>())
+				behaviour.CallUnityEvent(UnityEvents.Awake);
 
 			Awakened = true;
 		}
@@ -67,8 +67,8 @@ namespace WasmScripting {
 			_createMethod(id, data.AccessManager.ToWrapped(behaviour).Id, strPtr, strLength);
 		}
 
-		public void CallMethod(int id, UnityEvent @event) {
-			_callMethod(id, (int)@event);
+		public void CallUnityEvent(int id, UnityEvents @event) {
+			_callMethod(id, (long)@event);
 		}
 
 		private void OnDestroy() {
