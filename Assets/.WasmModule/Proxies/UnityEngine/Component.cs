@@ -16,8 +16,11 @@ public partial class Component(long id) : Object(id)
         set => internal_component_tag_set(WrappedId, value);
     }
     
-    public Component GetComponent(string name) => internal_component_getComponent(WrappedId, name);
+    public Component GetComponent(string name) => internal_component_getComponent_string(WrappedId, name);
     
+    public Component GetComponent(Type type) => internal_component_getComponent_type(WrappedId, type);
+    
+    public T GetComponent<T>() where T : Component => internal_component_getComponent_type(WrappedId, typeof(T)) as T;
     
     #endregion Implementation
 
@@ -36,16 +39,26 @@ public partial class Component(long id) : Object(id)
         }
     }
 
-    private static unsafe Component internal_component_getComponent(long wrappedId, string name) {
+    private static unsafe Component internal_component_getComponent_string(long wrappedId, string name) {
         int componentType = default;
         fixed (char* str = name) {
-            long id = component_getComponent(wrappedId, (long)str, name.Length * sizeof(char), (long)&componentType);
+            long id = component_getComponent_string(wrappedId, (long)str, name.Length * sizeof(char), (long)&componentType);
             
             Component component = RuntimeHelpers.GetUninitializedObject(TypeMap.GetType(componentType)) as Component;
             component.WrappedId = id;
 
             return component;
         }
+    }
+
+    private static unsafe Component internal_component_getComponent_type(long wrappedId, Type type) {
+        int componentType = default;
+        long id = component_getComponent_type(wrappedId, TypeMap.GetId(type), (long)&componentType);
+            
+        Component component = RuntimeHelpers.GetUninitializedObject(TypeMap.GetType(componentType)) as Component;
+        component.WrappedId = id;
+
+        return component;
     }
     
     #endregion Marshaling
@@ -65,7 +78,10 @@ public partial class Component(long id) : Object(id)
     private static extern void component_tag_set(long id, long strPtr, int strSize);
     
     [WasmImportLinkage, DllImport("unity")]
-    private static extern long component_getComponent(long wrappedId, long componentStr, int componentStrLength, long outComponentType);
+    private static extern long component_getComponent_string(long wrappedId, long componentStr, int componentStrLength, long outComponentType);
+    
+    [WasmImportLinkage, DllImport("unity")]
+    private static extern long component_getComponent_type(long wrappedId, int componentTypeId, long outComponentType);
     
     #endregion Imports
 }

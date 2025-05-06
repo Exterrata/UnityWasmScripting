@@ -8,8 +8,8 @@ public static class Program {
     private static readonly Dictionary<Type, Dictionary<UnityEvent, MethodInfo>> Callbacks = new();
     
 	[UnmanagedCallersOnly(EntryPoint = "scripting_create_instance")]
-	public static unsafe void CreateInstance(int id, long objectId, long strPtr) {
-        string name = new((char*)strPtr);
+	public static unsafe void CreateInstance(int id, long objectId, long strPtr, int strLength) {
+        string name = new((char*)strPtr, 0, strLength);
         Marshal.FreeHGlobal((IntPtr)strPtr);
         try {
             Type type = Type.GetType(name);
