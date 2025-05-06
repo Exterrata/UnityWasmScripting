@@ -1,9 +1,9 @@
 using System;
+using Koneko.UIBuilder.InternalBridge;
 using UnityEngine;
 using UnityEngine.UIElements;
-using UI.Bridge;
 
-namespace UI {
+namespace Koneko.UIBuilder {
     public class StyleSheetBuilder {
         private readonly CustomStyleSheetBuilder _builder = new();
 

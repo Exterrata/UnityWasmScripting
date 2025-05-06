@@ -1,7 +1,7 @@
 ﻿using System;
 using UnityEngine.UIElements;
 
-namespace UI.Bridge {
+namespace Koneko.UIBuilder.InternalBridge {
 	public static class UIHelpers {
 		public static void SetPseudoState(this VisualElement element, PseudoStates pseudoStates) {
 			element.pseudoStates = (UnityEngine.UIElements.PseudoStates)(int)pseudoStates;

@@ -1,7 +1,7 @@
 ﻿using JetBrains.Annotations;
 using UnityEngine.UIElements;
 
-namespace UI {
+namespace Koneko.UIBuilder {
 	[PublicAPI]
 	public static partial class UIElementBuilder {
 		public static VisualElement Element(params UIOperation[] operations) {

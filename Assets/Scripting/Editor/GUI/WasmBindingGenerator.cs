@@ -1,8 +1,8 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using static UI.UIElementBuilder;
-using UI;
+using static Koneko.UIBuilder.UIElementBuilder;
+using Koneko.UIBuilder;
 using UnityEditor;
 using UnityEditor.UIElements;
 using UnityEngine;
