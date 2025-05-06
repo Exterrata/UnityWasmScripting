@@ -1,4 +1,5 @@
-﻿using System.Text;
+﻿using System;
+using System.Text;
 using UnityEngine;
 using Wasmtime;
 
@@ -27,12 +28,23 @@ namespace WasmScripting.UnityEngine {
 				return IdFrom(data, IdTo<Component>(data, wrappedId).gameObject);
 			});
 
-			linker.DefineFunction("unity", "component_getComponent", (Caller caller, long wrappedId, long componentStr, int componentStrLength, long outComponentType) => {
+			linker.DefineFunction("unity", "component_getComponent_string", (Caller caller, long wrappedId, long componentStr, int componentStrLength, long outComponentType) => {
 				StoreData data = GetData(caller);
 				Component component = IdTo<Component>(data, wrappedId);
 
 				string componentName = data.Memory.ReadString(componentStr, componentStrLength, Encoding.Unicode);
 				Component outComponent = component.GetComponent(componentName);
+				
+				data.Memory.WriteInt32(outComponentType, TypeMap.GetId(outComponent.GetType()));
+				return IdFrom(data, outComponent);
+			});
+
+			linker.DefineFunction("unity", "component_getComponent_type", (Caller caller, long wrappedId, int componentTypeId, long outComponentType) => {
+				StoreData data = GetData(caller);
+				Component component = IdTo<Component>(data, wrappedId);
+
+				Type componentType = TypeMap.GetType(componentTypeId);
+				Component outComponent = component.GetComponent(componentType);
 				
 				data.Memory.WriteInt32(outComponentType, TypeMap.GetId(outComponent.GetType()));
 				return IdFrom(data, outComponent);

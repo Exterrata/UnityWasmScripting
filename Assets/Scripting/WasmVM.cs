@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Text;
 using System.Linq;
 using UnityEngine;
@@ -7,7 +7,7 @@ using Wasmtime;
 namespace WasmScripting {
 	[DefaultExecutionOrder(0)]
 	public class WasmVM : MonoBehaviour {
-		private Action<int, long, long> _createMethod;
+		private Action<int, long, long, int> _createMethod;
 		private Action<int, int> _callMethod;
 		private Instance _instance;
 		private Module _module;
@@ -32,7 +32,7 @@ namespace WasmScripting {
 			_store.Fuel = fuelPerFrame;
 			_instance.GetAction("_initialize")?.Invoke();
 			
-			_createMethod = _instance.GetAction<int, long, long>("scripting_create_instance")!;
+			_createMethod = _instance.GetAction<int, long, long, int>("scripting_create_instance")!;
 			_callMethod = _instance.GetAction<int, int>("scripting_call")!;
 			
 			_store.SetData(new StoreData(gameObject, _instance));
@@ -61,10 +61,10 @@ namespace WasmScripting {
 		private void CreateInstance(int id, WasmBehaviour behaviour) {
 			StoreData data = (StoreData)_store.GetData()!;
 			string name = behaviour.behaviourName;
-			long strPtr = data.Alloc((name.Length + 1) * sizeof(char));
+			int strLength = name.Length;
+			long strPtr = data.Alloc(strLength * sizeof(char));
 			data.Memory.WriteString(strPtr, name, Encoding.Unicode);
-			data.Memory.WriteInt16(strPtr + name.Length * 2, 0);
-			_createMethod(id, data.AccessManager.ToWrapped(behaviour).Id, strPtr);
+			_createMethod(id, data.AccessManager.ToWrapped(behaviour).Id, strPtr, strLength);
 		}
 
 		public void CallMethod(int id, UnityEvent @event) {
