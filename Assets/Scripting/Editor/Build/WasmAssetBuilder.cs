@@ -152,10 +152,10 @@ namespace WasmScripting
             return BitConverter.ToString(hashBytes).Replace("-", "").ToLowerInvariant();
         }
         
-        private static string ComputeVMHash(WasmVM vm, WasmBehaviour[] behaviours)
+        private static string ComputeVMHash(WasmVM vm, WasmRuntimeBehaviour[] behaviours)
         {
             // Sort behaviours for consistent hashing
-            List<WasmBehaviour> sortedBehaviours = new List<WasmBehaviour>(behaviours);
+            List<WasmRuntimeBehaviour> sortedBehaviours = new List<WasmRuntimeBehaviour>(behaviours);
             sortedBehaviours.Sort((a, b) => 
                 string.Compare((a.script?.name ?? string.Empty), 
                     b.script?.name ?? string.Empty, StringComparison.Ordinal));
@@ -172,7 +172,7 @@ namespace WasmScripting
             // Process each behaviour script
             HashSet<string> processedPaths = new HashSet<string>();
                     
-            foreach (WasmBehaviour behaviour in sortedBehaviours)
+            foreach (WasmRuntimeBehaviour behaviour in sortedBehaviours)
             {
                 if (behaviour.script == null)
                     continue;
@@ -196,7 +196,7 @@ namespace WasmScripting
             return BitConverter.ToString(hashBytes).Replace("-", "").ToLowerInvariant();
         }
         
-        private static bool HasScriptsChanged(WasmVM vm, WasmBehaviour[] behaviours)
+        private static bool HasScriptsChanged(WasmVM vm, WasmRuntimeBehaviour[] behaviours)
         {
             if (behaviours.Length == 0)
                 return false;
@@ -224,7 +224,7 @@ namespace WasmScripting
             if (vm == null)
                 return;
 
-            WasmBehaviour[] behaviours = GetRelevantBehaviours(vm);
+            WasmRuntimeBehaviour[] behaviours = GetRelevantBehaviours(vm);
             if (behaviours.Length == 0)
                 return;
                 
@@ -248,7 +248,7 @@ namespace WasmScripting
 
                 // Copy relevant scripts
                 HashSet<string> scriptNames = new HashSet<string>();
-                foreach (WasmBehaviour behaviour in behaviours)
+                foreach (WasmRuntimeBehaviour behaviour in behaviours)
                 {
                     MonoScript script = behaviour.script;
                     behaviour.behaviourName = script.GetClass().FullName;
@@ -294,16 +294,16 @@ namespace WasmScripting
             }
         }
 
-        private static WasmBehaviour[] GetRelevantBehaviours(WasmVM vm)
+        private static WasmRuntimeBehaviour[] GetRelevantBehaviours(WasmVM vm)
         {
             if (vm.context == WasmVMContext.GameObject)
-                return vm.GetComponentsInChildren<WasmBehaviour>(true);
+                return vm.GetComponentsInChildren<WasmRuntimeBehaviour>(true);
 
             // Scene context
-            List<WasmBehaviour> sceneBehaviours = new List<WasmBehaviour>();
-            WasmBehaviour[] allBehaviours = Object.FindObjectsOfType<WasmBehaviour>(true);
+            List<WasmRuntimeBehaviour> sceneBehaviours = new List<WasmRuntimeBehaviour>();
+            WasmRuntimeBehaviour[] allBehaviours = Object.FindObjectsOfType<WasmRuntimeBehaviour>(true);
                 
-            foreach (WasmBehaviour behaviour in allBehaviours)
+            foreach (WasmRuntimeBehaviour behaviour in allBehaviours)
             {
                 // Check if this behaviour is not under any GameObject VM
                 WasmVM parentVM = behaviour.GetComponentInParent<WasmVM>(true);

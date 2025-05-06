@@ -5,6 +5,6 @@ namespace WasmScripting.Proxies
     public class OnRenderImageForwarder : BaseEventForwarder
     {
         private void OnRenderImage(RenderTexture source, RenderTexture destination)
-            => targetBehaviour.ForwardedOnRenderImage(source, destination);
+            => targetRuntimeBehaviour.ForwardedOnRenderImage(source, destination);
     }
 }

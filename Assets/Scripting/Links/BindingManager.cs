@@ -16,5 +16,23 @@ namespace WasmScripting {
 			RaycastHitBindings.BindMethods(linker);
 			RendererBindings.BindMethods(linker);
 		}
+		
+		/// <summary>
+		/// Fill all the non-linked functions with empty stubs so they won't explode
+		/// Note: If the function returns a bool, it will be false (which is amazing)
+		/// </summary>
+		public static void FillNonLinkedWithEmptyStubs(Module module, Store store) {
+			foreach (Import import in module.Imports) {
+				// Ignore non-function types
+				if (import is not FunctionImport funcImport) continue;
+
+				string moduleName = import.ModuleName;
+				string functionName = import.Name;
+
+				// Skip if already defined in the linker
+				if (WasmManager.Linker.GetFunction(store, moduleName, functionName) == null) 
+					WasmManager.Linker.DefineFunction(moduleName, functionName, (_, _, _) => { }, funcImport.Parameters, funcImport.Results);
+			}
+		}
 	}
 }

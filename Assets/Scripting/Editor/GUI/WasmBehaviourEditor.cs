@@ -3,7 +3,7 @@ using UnityEngine;
 
 namespace WasmScripting 
 {
-    [CustomEditor(typeof(WasmBehaviour))]
+    [CustomEditor(typeof(WasmRuntimeBehaviour))]
     public class WasmBehaviourInspector : Editor 
     {
         public override void OnInspectorGUI() 
@@ -13,7 +13,7 @@ namespace WasmScripting
             if (!GUILayout.Button("Build Wasm Module"))
                 return;
             
-            WasmBuilder.CompileWasmProgramForObject(((WasmBehaviour)target).gameObject, true);
+            WasmBuilder.CompileWasmProgramForObject(((WasmRuntimeBehaviour)target).gameObject, true);
         }
     }
 }

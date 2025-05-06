@@ -8,6 +8,6 @@ namespace WasmScripting.Proxies
     /// </summary>
     public class BaseEventForwarder : MonoBehaviour
     {
-        public WasmBehaviour targetBehaviour;
+        public WasmRuntimeBehaviour targetRuntimeBehaviour;
     }
 }
