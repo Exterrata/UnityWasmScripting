@@ -1,5 +1,6 @@
 ﻿using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
+using WasmModule;
 
 namespace UnityEngine;
 
@@ -10,11 +11,12 @@ public partial class Component(long id) : Object(id)
     public GameObject gameObject => new(component_gameObject_get(WrappedId));
     public Transform transform => new(component_transform_get(WrappedId));
     
-    public string tag
-    {
+    public string tag {
         get => internal_component_tag_get(WrappedId);
         set => internal_component_tag_set(WrappedId, value);
     }
+    
+    public Component GetComponent(string name) => internal_component_getComponent(WrappedId, name);
     
     
     #endregion Implementation
@@ -33,6 +35,18 @@ public partial class Component(long id) : Object(id)
             component_tag_set(id, (long)str, name.Length * sizeof(char));
         }
     }
+
+    private static unsafe Component internal_component_getComponent(long wrappedId, string name) {
+        int componentType = default;
+        fixed (char* str = name) {
+            long id = component_getComponent(wrappedId, (long)str, name.Length * sizeof(char), (long)&componentType);
+            
+            Component component = RuntimeHelpers.GetUninitializedObject(TypeMap.GetType(componentType)) as Component;
+            component.WrappedId = id;
+
+            return component;
+        }
+    }
     
     #endregion Marshaling
 
@@ -49,6 +63,9 @@ public partial class Component(long id) : Object(id)
 
     [WasmImportLinkage, DllImport("unity")]
     private static extern void component_tag_set(long id, long strPtr, int strSize);
+    
+    [WasmImportLinkage, DllImport("unity")]
+    private static extern long component_getComponent(long wrappedId, long componentStr, int componentStrLength, long outComponentType);
     
     #endregion Imports
 }

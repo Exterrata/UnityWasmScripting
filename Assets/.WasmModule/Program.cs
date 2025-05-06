@@ -1,13 +1,11 @@
 ﻿using System.Reflection;
 using System.Runtime.InteropServices;
 using UnityEngine;
-using WasmModule.Proxies;
 
 namespace WasmModule;
 public static class Program {
     private static readonly Dictionary<long, MonoBehaviour> Behaviours = new();
     private static readonly Dictionary<Type, Dictionary<UnityEvent, MethodInfo>> Callbacks = new();
-    private static readonly FieldInfo ObjectIdField = typeof(ProxyObject).GetField("WrappedId", BindingFlags.Instance | BindingFlags.NonPublic);
     
 	[UnmanagedCallersOnly(EntryPoint = "scripting_create_instance")]
 	public static unsafe void CreateInstance(int id, long objectId, long strPtr) {
@@ -16,7 +14,7 @@ public static class Program {
         try {
             Type type = Type.GetType(name);
             MonoBehaviour obj = Activator.CreateInstance(type) as MonoBehaviour;
-            ObjectIdField.SetValue(obj, objectId);
+            obj!.WrappedId = objectId;
             Behaviours[id] = obj;
             if (Callbacks.ContainsKey(type)) return;
             Dictionary<UnityEvent, MethodInfo> callbacks = new();

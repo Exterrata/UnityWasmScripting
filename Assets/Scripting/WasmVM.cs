@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections;
 using System.Text;
 using System.Linq;
 using UnityEngine;
@@ -16,15 +15,13 @@ namespace WasmScripting {
 		
 		public WasmVMContext context = WasmVMContext.GameObject;
 		public WasmModuleAsset moduleAsset;
-		public ulong fuelPerFrame = 1000000000;
+		public ulong fuelPerFrame = 10000000;
 		
 		public bool Initialized { get; private set; }
 		public bool Awakened { get; private set; }
 
-		private void Awake()
-		{
+		private void Awake() {
 		    _module = Module.FromBytes(WasmManager.Engine, "Scripting", moduleAsset.bytes);
-
 			_store = new(WasmManager.Engine);
 
 			// Prevents Instantiate erroring when there's missing links (has to run before Instantiate)
@@ -46,7 +43,6 @@ namespace WasmScripting {
 				CreateInstance(id, behaviour);
 			}
 
-			StartCoroutine(ResetFuel());
 			Initialized = true;
 		}
 
@@ -58,6 +54,10 @@ namespace WasmScripting {
 			Awakened = true;
 		}
 
+		private void Update() {
+			_store.Fuel = fuelPerFrame;
+		}
+
 		private void CreateInstance(int id, WasmBehaviour behaviour) {
 			StoreData data = (StoreData)_store.GetData()!;
 			string name = behaviour.behaviourName;
@@ -65,6 +65,10 @@ namespace WasmScripting {
 			data.Memory.WriteString(strPtr, name, Encoding.Unicode);
 			data.Memory.WriteInt16(strPtr + name.Length * 2, 0);
 			_createMethod(id, data.AccessManager.ToWrapped(behaviour).Id, strPtr);
+
+			long ptr = data.Alloc(127684);
+			Span<int> span = data.Memory.GetSpan<int>((int)ptr);
+			
 		}
 
 		public void CallMethod(int id, UnityEvent @event) {
@@ -75,14 +79,6 @@ namespace WasmScripting {
 			Initialized = false;
 			_store.Dispose();
 			_module.Dispose();
-		}
-
-		private IEnumerator ResetFuel() {
-			YieldInstruction waitInstruction = new WaitForEndOfFrame();
-			while (true) {
-				_store.Fuel = fuelPerFrame;
-				yield return waitInstruction;
-			}
 		}
 
 		/// <summary>

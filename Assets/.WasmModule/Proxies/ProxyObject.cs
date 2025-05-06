@@ -9,5 +9,5 @@ public class ProxyObject(long id)
     /// This ID is used to identify the object in the Wasm context.
     /// This is not the same as the instance ID in Unity.
     /// </remarks>
-    protected readonly long WrappedId = id;
+    internal long WrappedId = id;
 }

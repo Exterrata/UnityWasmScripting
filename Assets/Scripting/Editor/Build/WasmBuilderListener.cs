@@ -12,8 +12,8 @@ namespace WasmScripting
 
         private static void OnPlayModeStateChanged(PlayModeStateChange state)
         {
-            if (state == PlayModeStateChange.ExitingEditMode)
-                WasmBuilder.CompileAllWasmPrograms();
+            //if (state == PlayModeStateChange.ExitingEditMode)
+            //    WasmBuilder.CompileAllWasmPrograms();
         }
     }
 }

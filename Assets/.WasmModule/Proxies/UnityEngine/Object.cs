@@ -24,9 +24,12 @@ public class Object(long id) : ProxyObject(id)
     
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     private static unsafe string internal_object_name_get(long id) {
-        long strPtr = object_name_get(id);
-        string str = new((char*)strPtr);
-        Marshal.FreeHGlobal((IntPtr)strPtr);
+        char* outString = default;
+        int outSize = default;
+        
+        object_name_get(id, (long)&outString, (long)&outSize);
+        string str = new(outString, 0, outSize);
+        Marshal.FreeHGlobal((IntPtr)outString);
         return str;
     }
 
@@ -39,8 +42,11 @@ public class Object(long id) : ProxyObject(id)
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     private static unsafe string internal_object_toString(long id) {
-        long strPtr = object_toString(id);
-        string str = new((char*)strPtr);
+        char* strPtr = default;
+        int strSize = default;
+        
+        object_toString(id, (long)&strPtr, (long)&strSize);
+        string str = new(strPtr, 0, strSize);
         Marshal.FreeHGlobal((IntPtr)strPtr);
         return str;
     }
@@ -50,13 +56,13 @@ public class Object(long id) : ProxyObject(id)
     #region Imports
     
     [WasmImportLinkage, DllImport("unity")]
-    private static extern long object_name_get(long id);
+    private static extern void object_name_get(long id, long outString, long outSize);
 
     [WasmImportLinkage, DllImport("unity")]
     private static extern void object_name_set(long id, long strPtr, int strSize);
 
     [WasmImportLinkage, DllImport("unity")]
-    private static extern long object_toString(long id);
+    private static extern void object_toString(long id, long outString, long outSize);
 
     [WasmImportLinkage, DllImport("unity")]
     private static extern void object_destroy(long id);

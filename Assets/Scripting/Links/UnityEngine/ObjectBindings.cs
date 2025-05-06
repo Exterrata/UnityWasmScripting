@@ -5,10 +5,13 @@ using Wasmtime;
 namespace WasmScripting.UnityEngine {
 	public class ObjectBindings : WasmBinding {
 		public static void BindMethods(Linker linker) {
-			linker.DefineFunction("unity", "object_name_get", (Caller caller, long objectId) => {
+			linker.DefineFunction("unity", "object_name_get", (Caller caller, long objectId, long outString, long outSize) => {
 				StoreData data = GetData(caller);
 				string str = IdTo<Object>(data, objectId).name;
-				return WriteString(data, str);
+				long address = data.Alloc(str.Length * sizeof(char));
+				data.Memory.WriteString(address, str, Encoding.Unicode);
+				data.Memory.WriteInt64(outString, address);
+				data.Memory.WriteInt32(outSize, str.Length);
 			});
 			
 			linker.DefineFunction("unity", "object_name_set", (Caller caller, long objectId, long strPtr, int strSize) => {
@@ -17,10 +20,13 @@ namespace WasmScripting.UnityEngine {
 				IdTo<Object>(data, objectId).name = str;
 			});
 			
-			linker.DefineFunction("unity", "object_toString", (Caller caller, long objectId) => {
+			linker.DefineFunction("unity", "object_toString", (Caller caller, long objectId, long outString, long outSize) => {
 				StoreData data = GetData(caller);
 				string str = IdTo<Object>(data, objectId).ToString();
-				return WriteString(data, str);
+				long address = data.Alloc(str.Length * sizeof(char));
+				data.Memory.WriteString(address, str, Encoding.Unicode);
+				data.Memory.WriteInt64(outString, address);
+				data.Memory.WriteInt32(outSize, str.Length);
 			});
 			
 			linker.DefineFunction("unity", "object_destroy", (Caller caller, long objectId) => {
