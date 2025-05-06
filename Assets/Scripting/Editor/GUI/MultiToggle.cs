@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using JetBrains.Annotations;
-using UI;
+using Koneko.UIBuilder;
 using UnityEngine;
 using UnityEngine.U2D.Common;
 using UnityEngine.UIElements;

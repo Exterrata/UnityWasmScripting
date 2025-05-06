@@ -1,7 +1,7 @@
 ﻿using UnityEngine;
 using UnityEngine.UIElements;
 
-namespace UI.Bridge {
+namespace Koneko.UIBuilder.InternalBridge {
 	public static class MeshGenerationContextExtras {
 		private static readonly ITextHandle TextHandle = TextCoreHandle.New();
 		public static void DrawText(this MeshGenerationContext ctx, string text, Vector2 position, int fontSize, Color color) {

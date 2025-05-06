@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using JetBrains.Annotations;
-using UI.Bridge;
+using Koneko.UIBuilder.InternalBridge;
 using UnityEngine;
 using UnityEngine.UIElements;
 

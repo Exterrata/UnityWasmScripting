@@ -8,7 +8,7 @@ using UnityEngine.UIElements;
 using UnityEngine.UIElements.StyleSheets;
 using Cursor = UnityEngine.UIElements.Cursor;
 
-namespace UI.Bridge {
+namespace Koneko.UIBuilder.InternalBridge {
 	public class CustomStyleSheetBuilder {
 		private static readonly PropertyInfo[] StyleProperties = typeof(IStyle).GetProperties();
 		private readonly StyleSheetBuilder _builder = new();

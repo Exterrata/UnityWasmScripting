@@ -6,6 +6,15 @@ namespace WasmScripting {
 	[DefaultExecutionOrder(50)]
     public class WasmBehaviour : MonoBehaviour {
 	    
+	    /// <summary>
+	    /// The execution order of this behaviour among the other WasmBehaviours in the same WasmVM.
+	    /// </summary>
+	    public int WasmExecutionOrder = 0;
+	    
+	    public bool _hasUpdate;
+	    public bool _hasLateUpdate;
+	    public bool _hasFixedUpdate;
+	    
 #if UNITY_EDITOR
         public UnityEditor.MonoScript script;
 #endif
@@ -31,9 +40,9 @@ namespace WasmScripting {
 		}
 
 		private void Start() => _vm.CallMethod(InstanceId, UnityEvent.Start);
-		private void Update() => _vm.CallMethod(InstanceId, UnityEvent.Update);
-		private void LateUpdate() => _vm.CallMethod(InstanceId, UnityEvent.LateUpdate);
-		private void FixedUpdate() => _vm.CallMethod(InstanceId, UnityEvent.FixedUpdate);
+		// private void Update() => _vm.CallMethod(InstanceId, UnityEvent.Update);
+		// private void LateUpdate() => _vm.CallMethod(InstanceId, UnityEvent.LateUpdate);
+		// private void FixedUpdate() => _vm.CallMethod(InstanceId, UnityEvent.FixedUpdate);
 		private void OnEnable() => _vm.CallMethod(InstanceId, UnityEvent.OnEnable);
 		private void OnDisable() => _vm.CallMethod(InstanceId, UnityEvent.OnDisable);
 		private void OnDestroy() {

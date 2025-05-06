@@ -3,7 +3,7 @@ using System.Runtime.InteropServices;
 using UnityEngine;
 using UnityEngine.UIElements;
 
-namespace UI {
+namespace Koneko.UIBuilder {
 	public struct UIOperation {
 		public OperationType Type { get; }
 		public object Value { get; }

@@ -2,7 +2,7 @@
 using UnityEngine;
 using UnityEngine.UIElements;
 
-namespace UI {
+namespace Koneko.UIBuilder {
 	public static partial class UIElementBuilder {
 		public static StyleStruct AlignContent(Align value) => new(StyleType.AlignContent) {Align = value};
 		public static StyleStruct AlignItems(Align value) => new(StyleType.AlignItems) {Align = value};

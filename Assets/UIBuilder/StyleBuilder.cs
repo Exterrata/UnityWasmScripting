@@ -2,7 +2,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UIElements;
 
-namespace UI {
+namespace Koneko.UIBuilder {
 	public class StyleBuilder {
 		private readonly IStyle _style;
 
