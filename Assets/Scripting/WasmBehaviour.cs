@@ -6,14 +6,25 @@ namespace WasmScripting {
 	[DefaultExecutionOrder(50)]
     public class WasmBehaviour : MonoBehaviour {
 	    
+	    #region Versioning
+
+	    private const int LATEST_VERSION = 1;
+
+	    [SerializeField, HideInInspector] 
+	    private int version;
+	    
+	    private void Reset()
+	    {
+		    // Assign latest version if added in inspector / reset
+		    version = LATEST_VERSION; 
+	    }
+	    
+	    #endregion Versioning
+	    
 	    /// <summary>
 	    /// The execution order of this behaviour among the other WasmBehaviours in the same WasmVM.
 	    /// </summary>
 	    public int WasmExecutionOrder = 0;
-	    
-	    public bool _hasUpdate;
-	    public bool _hasLateUpdate;
-	    public bool _hasFixedUpdate;
 	    
 #if UNITY_EDITOR
         public UnityEditor.MonoScript script;
@@ -40,9 +51,9 @@ namespace WasmScripting {
 		}
 
 		private void Start() => _vm.CallMethod(InstanceId, UnityEvent.Start);
-		// private void Update() => _vm.CallMethod(InstanceId, UnityEvent.Update);
-		// private void LateUpdate() => _vm.CallMethod(InstanceId, UnityEvent.LateUpdate);
-		// private void FixedUpdate() => _vm.CallMethod(InstanceId, UnityEvent.FixedUpdate);
+		private void Update() => _vm.CallMethod(InstanceId, UnityEvent.Update);
+		private void LateUpdate() => _vm.CallMethod(InstanceId, UnityEvent.LateUpdate);
+		private void FixedUpdate() => _vm.CallMethod(InstanceId, UnityEvent.FixedUpdate);
 		private void OnEnable() => _vm.CallMethod(InstanceId, UnityEvent.OnEnable);
 		private void OnDisable() => _vm.CallMethod(InstanceId, UnityEvent.OnDisable);
 		private void OnDestroy() {
@@ -51,6 +62,34 @@ namespace WasmScripting {
 		private void OnPreCull() => _vm.CallMethod(InstanceId, UnityEvent.OnPreCull);
 		private void OnPreRender() => _vm.CallMethod(InstanceId, UnityEvent.OnPreRender);
 		private void OnPostRender() => _vm.CallMethod(InstanceId, UnityEvent.OnPostRender);
+		
+		#endregion Unity Events
+
+		#region Forwarded Events
+
+		internal void ForwardedOnAnimatorIK(int layerIndex) {}
+		
+		internal void ForwardedOnAnimatorMove() {}
+		
+		internal void ForwardedOnAudioFilterRead(float[] data, int channels) {}
+		
+		internal void ForwardedOnCollisionStay2D(Collision2D collision) {}
+		
+		internal void ForwardedOnCollisionStay(Collision collision) {}
+		
+		internal void ForwardedOnParticleCollision(GameObject other) {}
+		
+		internal void ForwardedOnRenderImage(RenderTexture source, RenderTexture destination) {}
+		
+		internal void ForwardedOnRenderObject() {}
+		
+		internal void ForwardedOnTriggerStay2D(Collider2D other) {}
+		
+		internal void ForwardedOnTriggerStay(Collider other) {}
+		
+		internal void ForwardedOnWillRenderObject() {}
+
+		#endregion Forwarded Events
 	}
 	
 	[Serializable]
@@ -58,6 +97,4 @@ namespace WasmScripting {
 		public string name;
 		public T value;
 	}
-	
-	#endregion Unity Events
 }
