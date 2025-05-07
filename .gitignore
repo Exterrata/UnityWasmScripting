@@ -159,3 +159,6 @@ sysinfo.txt
 
 !/[Aa]ssets/.WasmModule/WasmModule.csproj
 *.wasm
+
+.editorconfig
+ApplyFormatting.bat

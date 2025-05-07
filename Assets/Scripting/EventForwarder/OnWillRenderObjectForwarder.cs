@@ -1,8 +1,7 @@
-namespace WasmScripting.Proxies
+﻿namespace WasmScripting.Proxies
 {
     public class OnWillRenderObjectForwarder : BaseEventForwarder
     {
-        private void OnWillRenderObject()
-            => targetRuntimeBehaviour.ForwardedOnWillRenderObject();
+        private void OnWillRenderObject() => targetRuntimeBehaviour.ForwardedOnWillRenderObject();
     }
 }
