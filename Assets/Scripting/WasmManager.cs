@@ -15,6 +15,11 @@ namespace WasmScripting {
 			
 			// Ideally there would be separate linkers for: Avatars, Props, and Worlds each with there own binding set.
 			BindingManager.BindMethods(Linker);
+			
+			// todo: shove elsewhere
+			gameObject.AddComponent<LateEventManager>();
+			
+			DontDestroyOnLoad(this);
 		}
 
 		public void OnDestroy() {
