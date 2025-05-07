@@ -15,6 +15,8 @@ namespace WasmScripting {
 		
 		public ulong fuelPerFrame = 10000000;
 
+		public bool IsCrashed { get; private set; }
+
 		internal void Setup(WasmModuleAsset moduleAsset, WasmRuntimeBehaviour[] behaviours) {
 		    _module = Module.FromBytes(WasmManager.Engine, "Scripting", moduleAsset.bytes);
 			_store = new(WasmManager.Engine);
@@ -24,7 +26,7 @@ namespace WasmScripting {
 		    _instance = WasmManager.Linker.Instantiate(_store, _module);
 
 			_store.Fuel = fuelPerFrame;
-			_instance.GetAction("_initialize")?.Invoke();
+			// _instance.GetAction("_initialize")?.Invoke();
 			
 			_createMethod = _instance.GetAction<int, long, long, int>("scripting_create_instance")!;
 			_callMethod = _instance.GetAction<int, int>("scripting_call")!;
@@ -37,17 +39,45 @@ namespace WasmScripting {
 			}
 		}
 
-		private void CreateInstance(int id, WasmRuntimeBehaviour runtimeBehaviour) {
+		private void CreateInstance(int id, WasmBehaviour behaviour) {
 			StoreData data = (StoreData)_store.GetData()!;
-			string name = runtimeBehaviour.behaviourName;
+			string name = behaviour.behaviourName;
 			int strLength = name.Length;
 			long strPtr = data.Alloc(strLength * sizeof(char));
 			data.Memory.WriteString(strPtr, name, Encoding.Unicode);
-			_createMethod(id, data.AccessManager.ToWrapped(runtimeBehaviour).Id, strPtr, strLength);
+
+			try
+			{
+				_createMethod(id, data.AccessManager.ToWrapped(behaviour).Id, strPtr, strLength);
+			}
+			catch (TrapException e)
+			{
+				Debug.LogError($"WasmVM threw a trap exception: {e.Message}");
+				CrashVM();
+			}
+			catch (Exception e)
+			{
+				Debug.LogError($"WasmVM threw an exception: {e.Message}");
+			}
 		}
 
 		public void CallMethod(int id, UnityEventCall unityEvent) {
-			_callMethod(id, (int)unityEvent);
+			
+			if (IsCrashed) return;
+			
+			try
+			{
+				_callMethod(id, (int)unityEvent);
+			}
+			catch (TrapException e)
+			{
+				Debug.LogError($"WasmVM threw a trap exception: {e.Message}");
+				CrashVM();
+			}
+			catch (Exception e)
+			{
+				Debug.LogError($"WasmVM threw an exception: {e.Message}");
+			}
 		}
 
 		private void Update() {
@@ -65,6 +95,12 @@ namespace WasmScripting {
 		~WasmVM() {
 			_store.Dispose();
 			_module.Dispose();
+		}
+
+		private void CrashVM()
+		{
+			enabled = false;
+			IsCrashed = true;
 		}
 	}
 
