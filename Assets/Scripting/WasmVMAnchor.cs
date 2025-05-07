@@ -1,9 +1,7 @@
 ﻿using System.Runtime.CompilerServices;
 using JetBrains.Annotations;
 using UnityEngine;
-using WasmScripting.Enums;
 
-[assembly: InternalsVisibleTo("Assembly-CSharp-Editor")]
 namespace WasmScripting {
 	[PublicAPI]
 	[DefaultExecutionOrder(-50)]

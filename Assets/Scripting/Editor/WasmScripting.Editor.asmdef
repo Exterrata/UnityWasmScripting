@@ -1,0 +1,20 @@
+{
+    "name": "WasmScripting.Editor",
+    "rootNamespace": "",
+    "references": [
+        "GUID:8619cb0b4508b4c4f8d9930c80b62ba6",
+        "GUID:e4b228dab700203488a7c7d474a25838",
+        "GUID:e39cda87275c74141bce206c6cb7dd99"
+    ],
+    "includePlatforms": [
+        "Editor"
+    ],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": false,
+    "precompiledReferences": [],
+    "autoReferenced": true,
+    "defineConstraints": [],
+    "versionDefines": [],
+    "noEngineReferences": false
+}

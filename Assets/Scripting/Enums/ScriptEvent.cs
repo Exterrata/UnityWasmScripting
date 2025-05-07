@@ -1,4 +1,7 @@
-﻿namespace WasmScripting.Enums {
+﻿using JetBrains.Annotations;
+
+namespace WasmScripting.Enums {
+	[PublicAPI]
 	public enum ScriptEvent {
 		Awake,
 		Start,
