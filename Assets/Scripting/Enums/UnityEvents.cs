@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Runtime.CompilerServices;
 using JetBrains.Annotations;
 
@@ -9,20 +9,20 @@ namespace WasmScripting.Enums
     {
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static bool HasEvent(long flags, UnityEvents @event) => (flags & (long)@event) != 0;
-        
+
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static long AddEvent(long flags, UnityEvents @event) => flags | (long)@event;
-        
+
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static long RemoveEvent(long flags, UnityEvents @event) => flags & ~(long)@event;
-        
+
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static long ToggleEvent(long flags, UnityEvents @event) => flags ^ (long)@event;
-        
+
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static long SetEvent(long flags, UnityEvents @event, bool value) => value ? AddEvent(flags, @event) : RemoveEvent(flags, @event);
     }
-    
+
     [PublicAPI, Flags]
     public enum UnityEvents : long
     {
