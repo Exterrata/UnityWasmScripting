@@ -4,15 +4,15 @@ namespace WasmScripting.Enums
 {
     public static class UnityEventsUtils
     {
-        public static bool HasEvent(long flags, UnityEvents @event) => (flags & (long)@event) != 0;
-        public static long AddEvent(long flags, UnityEvents @event) => flags | (long)@event;
-        public static long RemoveEvent(long flags, UnityEvents @event) => flags & ~(long)@event;
-        public static long ToggleEvent(long flags, UnityEvents @event) => flags ^ (long)@event;
-        public static long SetEvent(long flags, UnityEvents @event, bool value) => value 
+        public static bool HasEvent(long flags, AvailableUnityEvents @event) => (flags & (long)@event) != 0;
+        public static long AddEvent(long flags, AvailableUnityEvents @event) => flags | (long)@event;
+        public static long RemoveEvent(long flags, AvailableUnityEvents @event) => flags & ~(long)@event;
+        public static long ToggleEvent(long flags, AvailableUnityEvents @event) => flags ^ (long)@event;
+        public static long SetEvent(long flags, AvailableUnityEvents @event, bool value) => value 
             ? AddEvent(flags, @event) : RemoveEvent(flags, @event);
     }
     
-    public enum UnityEvents : long
+    public enum AvailableUnityEvents : long
     {
         Awake = 1L << 0,
         Start = 1L << 1,

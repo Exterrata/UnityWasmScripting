@@ -14,17 +14,13 @@ namespace WasmScripting {
 		private Store _store;
 		
 		public ulong fuelPerFrame = 10000000;
-		
-		public bool Initialized { get; private set; }
-		public bool Awakened { get; private set; }
 
-		private void Setup(WasmModuleAsset moduleAsset) {
+		internal void Setup(WasmModuleAsset moduleAsset, WasmRuntimeBehaviour[] behaviours) {
 		    _module = Module.FromBytes(WasmManager.Engine, "Scripting", moduleAsset.bytes);
 			_store = new(WasmManager.Engine);
 
 			// Prevents Instantiate erroring when there's missing links (has to run before Instantiate)
-			BindingManager.FillNonLinkedWithEmptyStubs(_module, _store);
-
+			BindingManager.FillNonLinkedWithEmptyStubs(_store, _module);
 		    _instance = WasmManager.Linker.Instantiate(_store, _module);
 
 			_store.Fuel = fuelPerFrame;
@@ -35,25 +31,10 @@ namespace WasmScripting {
 			
 			_store.SetData(new StoreData(gameObject, _instance));
 			
-			foreach (WasmRuntimeBehaviour behaviour in GetComponentsInChildren<WasmRuntimeBehaviour>(true)) {
-				int id = behaviour.GetInstanceID();
-				behaviour.InstanceId = id;
-				CreateInstance(id, behaviour);
+			foreach (WasmRuntimeBehaviour behaviour in behaviours) {
+				CreateInstance(behaviour.InstanceId, behaviour);
+				behaviour.enabled = true; // behaviours should be set disabled at this point and enabling them should trigger there Awake() method.
 			}
-
-			Initialized = true;
-		}
-
-		private void Start() {
-			foreach (WasmRuntimeBehaviour behaviour in GetComponentsInChildren<WasmRuntimeBehaviour>()) {
-				CallMethod(behaviour.InstanceId, UnityEvents.Awake);
-			}
-
-			Awakened = true;
-		}
-
-		private void Update() {
-			_store.Fuel = fuelPerFrame;
 		}
 
 		private void CreateInstance(int id, WasmRuntimeBehaviour runtimeBehaviour) {
@@ -65,12 +46,23 @@ namespace WasmScripting {
 			_createMethod(id, data.AccessManager.ToWrapped(runtimeBehaviour).Id, strPtr, strLength);
 		}
 
-		public void CallMethod(int id, UnityEvents @event) {
-			_callMethod(id, (int)@event);
+		public void CallMethod(int id, UnityEventCall unityEvent) {
+			_callMethod(id, (int)unityEvent);
 		}
 
-		private void OnDestroy() {
-			Initialized = false;
+		private void Update() {
+			_store.Fuel = fuelPerFrame;
+		}
+
+		private void LateUpdate() {
+			
+		}
+
+		private void FixedUpdate() {
+			
+		}
+
+		~WasmVM() {
 			_store.Dispose();
 			_module.Dispose();
 		}

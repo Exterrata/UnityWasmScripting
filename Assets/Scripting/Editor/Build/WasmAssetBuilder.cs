@@ -23,9 +23,9 @@ namespace WasmScripting
 
         public static void CompileWasmProgramForObject(GameObject go, bool force = false)
         {
-            WasmVM vm = go.GetComponentInParent<WasmVM>(true);
+            WasmVMAnchor vm = go.GetComponentInParent<WasmVMAnchor>(true);
             if (vm == null 
-                || vm.context != WasmVMContext.GameObject)
+                || vm.Context != WasmVMContext.GameObject)
                 return;
 
             CompileWasmProgramForVM(vm, force);
@@ -33,12 +33,12 @@ namespace WasmScripting
 
         public static void CompileWasmProgramForScene(bool force = false)
         {
-            WasmVM sceneVM = null;
-            WasmVM[] allVMs = Object.FindObjectsOfType<WasmVM>(true);
+            WasmVMAnchor sceneVM = null;
+            WasmVMAnchor[] allVMs = Object.FindObjectsOfType<WasmVMAnchor>(true);
             
-            foreach (WasmVM vm in allVMs)
+            foreach (WasmVMAnchor vm in allVMs)
             {
-                if (vm.context != WasmVMContext.Scene)
+                if (vm.Context != WasmVMContext.Scene)
                     continue;
                 
                 sceneVM = vm;
@@ -53,14 +53,14 @@ namespace WasmScripting
 
         public static void CompileAllWasmPrograms()
         {
-            WasmVM[] allVMs = Object.FindObjectsOfType<WasmVM>(true);
+            WasmVMAnchor[] allVMs = Object.FindObjectsOfType<WasmVMAnchor>(true);
             if (allVMs.Length == 0)
                 return;
 
             int current = 0;
             int total = allVMs.Length;
 
-            foreach (WasmVM vm in allVMs)
+            foreach (WasmVMAnchor vm in allVMs)
             {
                 if (!vm.gameObject.scene.IsValid())
                     continue; // Skip VMs not in active scene.
@@ -152,7 +152,7 @@ namespace WasmScripting
             return BitConverter.ToString(hashBytes).Replace("-", "").ToLowerInvariant();
         }
         
-        private static string ComputeVMHash(WasmVM vm, WasmRuntimeBehaviour[] behaviours)
+        private static string ComputeVMHash(WasmVMAnchor vm, WasmRuntimeBehaviour[] behaviours)
         {
             // Sort behaviours for consistent hashing
             List<WasmRuntimeBehaviour> sortedBehaviours = new List<WasmRuntimeBehaviour>(behaviours);
@@ -196,7 +196,7 @@ namespace WasmScripting
             return BitConverter.ToString(hashBytes).Replace("-", "").ToLowerInvariant();
         }
         
-        private static bool HasScriptsChanged(WasmVM vm, WasmRuntimeBehaviour[] behaviours)
+        private static bool HasScriptsChanged(WasmVMAnchor vm, WasmRuntimeBehaviour[] behaviours)
         {
             if (behaviours.Length == 0)
                 return false;
@@ -219,7 +219,7 @@ namespace WasmScripting
 
         #region Private Methods
 
-        private static void CompileWasmProgramForVM(WasmVM vm, bool force = false)
+        private static void CompileWasmProgramForVM(WasmVMAnchor vm, bool force = false)
         {
             if (vm == null)
                 return;
@@ -294,9 +294,9 @@ namespace WasmScripting
             }
         }
 
-        private static WasmRuntimeBehaviour[] GetRelevantBehaviours(WasmVM vm)
+        private static WasmRuntimeBehaviour[] GetRelevantBehaviours(WasmVMAnchor vm)
         {
-            if (vm.context == WasmVMContext.GameObject)
+            if (vm.Context == WasmVMContext.GameObject)
                 return vm.GetComponentsInChildren<WasmRuntimeBehaviour>(true);
 
             // Scene context
@@ -306,9 +306,9 @@ namespace WasmScripting
             foreach (WasmRuntimeBehaviour behaviour in allBehaviours)
             {
                 // Check if this behaviour is not under any GameObject VM
-                WasmVM parentVM = behaviour.GetComponentInParent<WasmVM>(true);
+                WasmVMAnchor parentVM = behaviour.GetComponentInParent<WasmVMAnchor>(true);
                 if (parentVM == null 
-                    || parentVM.context != WasmVMContext.GameObject)
+                    || parentVM.Context != WasmVMContext.GameObject)
                     sceneBehaviours.Add(behaviour);
             }
                 

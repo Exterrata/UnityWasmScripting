@@ -5,7 +5,7 @@ using UnityEngine;
 namespace WasmModule;
 public static class Program {
     private static readonly Dictionary<long, MonoBehaviour> Behaviours = new();
-    private static readonly Dictionary<Type, Dictionary<UnityEvent, MethodInfo>> Callbacks = new();
+    private static readonly Dictionary<Type, Dictionary<UnityEventCall, MethodInfo>> Callbacks = new();
     
 	[UnmanagedCallersOnly(EntryPoint = "scripting_create_instance")]
 	public static unsafe void CreateInstance(int id, long objectId, long strPtr, int strLength) {
@@ -17,10 +17,10 @@ public static class Program {
             obj!.WrappedId = objectId;
             Behaviours[id] = obj;
             if (Callbacks.ContainsKey(type)) return;
-            Dictionary<UnityEvent, MethodInfo> callbacks = new();
+            Dictionary<UnityEventCall, MethodInfo> callbacks = new();
             MethodInfo[] methods = type.GetMethods(BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic);
             foreach (MethodInfo method in methods) {
-                if (Enum.TryParse(method.Name, out UnityEvent @event)) callbacks[@event] = method;
+                if (Enum.TryParse(method.Name, out UnityEventCall unityEvent)) callbacks[unityEvent] = method;
             }
             Callbacks[type] = callbacks;
         } catch (Exception e) {
@@ -29,20 +29,19 @@ public static class Program {
     }
 
     [UnmanagedCallersOnly(EntryPoint = "scripting_call")]
-    public static void Call(int id, long @event) {
+    public static void Call(int id, int unityEvent) {
         try {
             MonoBehaviour behaviour = Behaviours[id];
-            if (Callbacks[behaviour.GetType()].TryGetValue((UnityEvent)@event, out MethodInfo method)) method.Invoke(behaviour, null);
+            if (Callbacks[behaviour.GetType()].TryGetValue((UnityEventCall)unityEvent, out MethodInfo method)) method.Invoke(behaviour, null);
         } catch (Exception e) {
-            Debug.LogError($"Error Calling Method `{(UnityEvent)@event}`: {e}");
+            Debug.LogError($"Error Calling Method `{(UnityEventCall)unityEvent}`: {e}");
         }
     }
 
     [UnmanagedCallersOnly(EntryPoint = "scripting_alloc")]
     public static long Alloc(int length) => Marshal.AllocHGlobal(length);
     
-    public enum UnityEvent : long
-    {
+    public enum AvailableUnityEvents : long {
         Awake = 1L << 0,
         Start = 1L << 1,
         Update = 1L << 2,
@@ -89,5 +88,53 @@ public static class Program {
         OnAnimatorIK = 1L << 43,
         OnAudioFilterRead = 1L << 44,
         // Up to 63: 1L << 63 is max
+    }
+    
+    public enum UnityEventCall {
+        Awake,
+        Start,
+        Update,
+        LateUpdate,
+        FixedUpdate,
+        OnEnable,
+        OnDisable,
+        OnDestroy,
+        OnPreCull,
+        OnPreRender,
+        OnPostRender,
+        OnRenderImage,
+        OnRenderObject,
+        OnWillRenderObject,
+        OnBecameVisible,
+        OnBecameInvisible,
+        OnTriggerEnter,
+        OnTriggerEnter2D,
+        OnTriggerStay,
+        OnTriggerStay2D,
+        OnTriggerExit,
+        OnTriggerExit2D,
+        OnParticleTrigger,
+        OnCollisionEnter,
+        OnCollisionEnter2D,
+        OnCollisionStay,
+        OnCollisionStay2D,
+        OnCollisionExit,
+        OnCollisionExit2D,
+        OnControllerColliderHit,
+        OnTransformChildrenChanged,
+        OnTransformParentChanged,
+        OnJointBreak,
+        OnJointBreak2D,
+        OnParticleCollision,
+        OnMouseEnter,
+        OnMouseOver,
+        OnMouseExit,
+        OnMouseDown,
+        OnMouseUp,
+        OnMouseUpAsButton,
+        OnMouseDrag,
+        OnAnimatorMove,
+        OnAnimatorIK,
+        OnAudioFilterRead,
     }
 }

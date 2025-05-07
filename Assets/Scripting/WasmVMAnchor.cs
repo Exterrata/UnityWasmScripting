@@ -1,23 +1,35 @@
-﻿using UnityEngine;
+﻿using System.Runtime.CompilerServices;
+using JetBrains.Annotations;
+using UnityEngine;
 
+[assembly: InternalsVisibleTo("Assembly-CSharp-Editor")]
 namespace WasmScripting {
+	[PublicAPI]
+	[DefaultExecutionOrder(-50)]
 	public class WasmVMAnchor : MonoBehaviour {
-		public WasmVMContext context;
+		internal WasmRuntimeBehaviour[] Behaviours;
+		internal WasmVMContext Context;
+		
 		public WasmModuleAsset moduleAsset;
 		
-		private void Start() {
+		// this would be done by the asset loading pipeline
+		private void Awake() {
+			Context = WasmVMContext.GameObject;
+			Behaviours = Context == WasmVMContext.Scene ? FindObjectsOfType<WasmRuntimeBehaviour>(true) : GetComponentsInChildren<WasmRuntimeBehaviour>(true);
+			Setup();
+		}
+
+		internal void Setup() {
 			WasmVM vm = gameObject.AddComponent<WasmVM>();
 
-			if (context == WasmVMContext.Scene) SetupScene();
-			else SetupGameObject();
-		}
-
-		private void SetupScene() {
+			foreach (WasmRuntimeBehaviour behaviour in Behaviours) {
+				behaviour.InstanceId = behaviour.GetInstanceID();
+				behaviour.VM = vm;
+			}
 			
-		}
-
-		private void SetupGameObject() {
-			WasmRuntimeBehaviour[] behaviours = GetComponentsInChildren<WasmRuntimeBehaviour>(true);
+			vm.Setup(moduleAsset, Behaviours);
+			
+			Destroy(this);
 		}
 	}
 

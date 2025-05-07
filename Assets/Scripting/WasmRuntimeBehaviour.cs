@@ -1,16 +1,17 @@
 using System;
 using System.Collections.Generic;
+using UnityEditor;
 using UnityEngine;
 using WasmScripting.Enums;
 
 namespace WasmScripting {
-	[DefaultExecutionOrder(50)]
+	[DefaultExecutionOrder(50)] // Has to run after the WasmVM.
     public class WasmRuntimeBehaviour : MonoBehaviour {
 	    
 	    #region Versioning
-
+		
 	    private const int LATEST_VERSION = 1;
-
+		
 	    [SerializeField, HideInInspector] 
 	    private int version;
 	    
@@ -28,57 +29,40 @@ namespace WasmScripting {
 		public List<WasmVariable<string>> stringVariables;
 		public List<WasmVariable<Component>> componentVariables;
 		public List<WasmVariable<GameObject>> gameObjectVariables;
-
 		public string behaviourName;
+		public long definedEvents;
 		
-		/// <summary>
-		/// The execution order of this behaviour among the other WasmBehaviours in the same WasmVM.
-		/// </summary>
-		public int executionOrder;
-		internal int InstanceId; // Set by WasmVM
+		internal int InstanceId;
+		internal WasmVM VM;
 		
-		private WasmVM _vm;
+		// this should be removed
+		#if UNITY_EDITOR
+		public MonoScript script;
+		#endif
 
-		#region Unity Events
+		#region Events
 		
-		private void Awake() {
-			if (_vm.Awakened) _vm.CallMethod(InstanceId, UnityEvents.Awake);
-		}
-
-		private void Start() => _vm.CallMethod(InstanceId, UnityEvents.Start);
-		private void OnEnable() => _vm.CallMethod(InstanceId, UnityEvents.OnEnable);
-		private void OnDisable() => _vm.CallMethod(InstanceId, UnityEvents.OnDisable);
-		private void OnDestroy() {
-			if (_vm.Initialized) _vm.CallMethod(InstanceId, UnityEvents.OnDestroy);
-		}
+		// Unity Events
+		private void Awake() => VM.CallMethod(InstanceId, UnityEventCall.Awake);
+		private void Start() => VM.CallMethod(InstanceId, UnityEventCall.Start);
+		private void OnEnable() => VM.CallMethod(InstanceId, UnityEventCall.OnEnable);
+		private void OnDisable() => VM.CallMethod(InstanceId, UnityEventCall.OnDisable);
+		private void OnDestroy() => VM.CallMethod(InstanceId, UnityEventCall.OnDestroy);
 		
-		#endregion Unity Events
-
-		#region Forwarded Events
-
+		// Forwarded Events
 		internal void ForwardedOnAnimatorIK(int layerIndex) {}
-		
 		internal void ForwardedOnAnimatorMove() {}
-		
 		internal void ForwardedOnAudioFilterRead(float[] data, int channels) {}
-		
 		internal void ForwardedOnCollisionStay2D(Collision2D collision) {}
-		
 		internal void ForwardedOnCollisionStay(Collision collision) {}
-		
 		internal void ForwardedOnParticleCollision(GameObject other) {}
-		
 		internal void ForwardedOnRenderImage(RenderTexture source, RenderTexture destination) {}
-		
 		internal void ForwardedOnRenderObject() {}
-		
 		internal void ForwardedOnTriggerStay2D(Collider2D other) {}
-		
 		internal void ForwardedOnTriggerStay(Collider other) {}
-		
 		internal void ForwardedOnWillRenderObject() {}
-
-		#endregion Forwarded Events
+		
+		#endregion Events
 	}
 	
 	[Serializable]
