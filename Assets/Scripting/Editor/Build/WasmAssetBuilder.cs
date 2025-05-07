@@ -254,7 +254,7 @@ namespace WasmScripting
                 {
                     MonoScript script = behaviour.script;
                     behaviour.behaviourName = script.GetClass().FullName;
-                    behaviour.unityEvents = ScanForUnityEvents(script);
+                    behaviour.definedEvents = ScanForUnityEvents(script);
                     
                     if (!scriptNames.Add(script.name)) 
                         continue;
@@ -344,7 +344,7 @@ namespace WasmScripting
             // Go through all the UnityEvents enum and check if there is a method using reflection
             
             long unityEvents = 0;
-            foreach (UnityEvents flag in Enum.GetValues(typeof(UnityEvents)))
+            foreach (AvailableUnityEvents flag in Enum.GetValues(typeof(AvailableUnityEvents)))
             {
                 // TODO: this also needs to check full signature, not just name
                 MethodInfo method = scriptType.GetMethod(flag.ToString(), BindingFlags);

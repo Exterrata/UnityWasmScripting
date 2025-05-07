@@ -47,8 +47,10 @@ namespace WasmScripting {
 		private void Start() => VM.CallMethod(InstanceId, UnityEventCall.Start);
 		private void OnEnable() => VM.CallMethod(InstanceId, UnityEventCall.OnEnable);
 		private void OnDisable() => VM.CallMethod(InstanceId, UnityEventCall.OnDisable);
-		private void OnDestroy() => VM.CallMethod(InstanceId, UnityEventCall.OnDestroy);
-		
+		private void OnDestroy() {
+			if (!VM.Disposed) VM.CallMethod(InstanceId, UnityEventCall.OnDestroy);
+		}
+
 		// Forwarded Events
 		internal void ForwardedOnAnimatorIK(int layerIndex) {}
 		internal void ForwardedOnAnimatorMove() {}

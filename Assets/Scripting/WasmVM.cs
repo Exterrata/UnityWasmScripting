@@ -16,6 +16,7 @@ namespace WasmScripting {
 		public ulong fuelPerFrame = 10000000;
 
 		public bool IsCrashed { get; private set; }
+		public bool Disposed { get; private set; }
 
 		internal void Setup(WasmModuleAsset moduleAsset, WasmRuntimeBehaviour[] behaviours) {
 		    _module = Module.FromBytes(WasmManager.Engine, "Scripting", moduleAsset.bytes);
@@ -39,7 +40,7 @@ namespace WasmScripting {
 			}
 		}
 
-		private void CreateInstance(int id, WasmBehaviour behaviour) {
+		private void CreateInstance(int id, WasmRuntimeBehaviour behaviour) {
 			StoreData data = (StoreData)_store.GetData()!;
 			string name = behaviour.behaviourName;
 			int strLength = name.Length;
@@ -92,7 +93,8 @@ namespace WasmScripting {
 			
 		}
 
-		~WasmVM() {
+		private void OnDestroy() {
+			Disposed = true;
 			_store.Dispose();
 			_module.Dispose();
 		}
