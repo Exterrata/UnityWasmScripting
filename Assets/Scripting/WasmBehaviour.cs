@@ -74,16 +74,8 @@ namespace WasmScripting
                     && flag != UnityEvents.OnDisable
                     && flag != UnityEvents.OnDestroy)
                     return;
-                
-                try
-                {
-                    _vm.CallUnityEvent(InstanceId, flag);
-                }
-                catch (Exception ex)
-                {
-                    Debug.LogError($"Error in {behaviourName}.{flag}: {ex.Message}");
-                    Debug.LogException(ex);
-                }
+
+                _vm.CallUnityEvent(InstanceId, flag);
             }
         }
         
