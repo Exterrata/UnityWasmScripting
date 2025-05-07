@@ -2,10 +2,12 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
+using System.Reflection;
 using System.Security.Cryptography;
 using System.Text;
 using UnityEditor;
 using UnityEngine;
+using WasmScripting.Enums;
 using Debug = UnityEngine.Debug;
 using Object = UnityEngine.Object;
 
@@ -252,7 +254,8 @@ namespace WasmScripting
                 {
                     MonoScript script = behaviour.script;
                     behaviour.behaviourName = script.GetClass().FullName;
-
+                    behaviour.unityEvents = ScanForUnityEvents(script);
+                    
                     if (!scriptNames.Add(script.name)) 
                         continue;
                     
@@ -330,6 +333,25 @@ namespace WasmScripting
                     WorkingDirectory = workingDirectory
                 }
             };
+        }
+        
+        private static BindingFlags BindingFlags => BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic;
+        
+        private static long ScanForUnityEvents(MonoScript script)
+        {
+            Type scriptType = script.GetClass();
+            
+            // Go through all the UnityEvents enum and check if there is a method using reflection
+            
+            long unityEvents = 0;
+            foreach (UnityEvents flag in Enum.GetValues(typeof(UnityEvents)))
+            {
+                // TODO: this also needs to check full signature, not just name
+                MethodInfo method = scriptType.GetMethod(flag.ToString(), BindingFlags);
+                unityEvents = UnityEventsUtils.SetEvent(unityEvents, flag, method != null);
+            }
+
+            return unityEvents;
         }
 
         #endregion Private Methods

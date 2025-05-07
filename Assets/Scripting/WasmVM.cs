@@ -20,6 +20,8 @@ namespace WasmScripting {
 		
 		public bool Initialized { get; private set; }
 		public bool Awakened { get; private set; }
+		
+		public bool IsCrashed { get; private set; }
 
 		private void Awake() {
 		    _module = Module.FromBytes(WasmManager.Engine, "Scripting", moduleAsset.bytes);
@@ -31,7 +33,7 @@ namespace WasmScripting {
 		    _instance = WasmManager.Linker.Instantiate(_store, _module);
 
 			_store.Fuel = fuelPerFrame;
-			_instance.GetAction("_initialize")?.Invoke();
+			// _instance.GetAction("_initialize")?.Invoke();
 			
 			_createMethod = _instance.GetAction<int, long, long, int>("scripting_create_instance")!;
 			_callMethod = _instance.GetAction<int, long>("scripting_call")!;
@@ -64,11 +66,39 @@ namespace WasmScripting {
 			int strLength = name.Length;
 			long strPtr = data.Alloc(strLength * sizeof(char));
 			data.Memory.WriteString(strPtr, name, Encoding.Unicode);
-			_createMethod(id, data.AccessManager.ToWrapped(behaviour).Id, strPtr, strLength);
+
+			try
+			{
+				_createMethod(id, data.AccessManager.ToWrapped(behaviour).Id, strPtr, strLength);
+			}
+			catch (TrapException e)
+			{
+				Debug.LogError($"WasmVM threw a trap exception: {e.Message}");
+				CrashVM();
+			}
+			catch (Exception e)
+			{
+				Debug.LogError($"WasmVM threw an exception: {e.Message}");
+			}
 		}
 
-		public void CallUnityEvent(int id, UnityEvents @event) {
-			_callMethod(id, (long)@event);
+		public void CallUnityEvent(int id, UnityEvents @event)
+		{
+			if (IsCrashed) return;
+			
+			try
+			{
+				_callMethod(id, (long)@event);
+			}
+			catch (TrapException e)
+			{
+				Debug.LogError($"WasmVM threw a trap exception: {e.Message}");
+				CrashVM();
+			}
+			catch (Exception e)
+			{
+				Debug.LogError($"WasmVM threw an exception: {e.Message}");
+			}
 		}
 
 		private void OnDestroy() {
@@ -77,6 +107,12 @@ namespace WasmScripting {
 			_module.Dispose();
 		}
 
+		private void CrashVM()
+		{
+			enabled = false;
+			IsCrashed = true;
+		}
+		
 		/// <summary>
 		/// Fill all the non-linked functions with empty stubs so they won't explode
 		/// Note: If the function returns a bool, it will be false (which is amazing)
