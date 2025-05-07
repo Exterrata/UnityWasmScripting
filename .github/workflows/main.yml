@@ -1,7 +1,7 @@
 name: Validate PR
 on:
   pull_request:
-    branches: [ formatting ]
+    branches: [ main ]
 jobs:
   check_formatting:
     runs-on: ubuntu-latest
