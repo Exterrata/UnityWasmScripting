@@ -1,4 +1,4 @@
-using UnityEngine;
+﻿using UnityEngine;
 
 namespace WasmScripting.Proxies
 {
@@ -8,7 +8,7 @@ namespace WasmScripting.Proxies
     /// </summary>
     public abstract class BaseEventForwarder : MonoBehaviour
     {
-        
+
         public WasmRuntimeBehaviour targetRuntimeBehaviour;
 
         public static T Create<T>(GameObject targetGO, WasmRuntimeBehaviour targetBehaviour) where T : BaseEventForwarder
@@ -18,4 +18,4 @@ namespace WasmScripting.Proxies
             return forwarder;
         }
     }
-}   
+}

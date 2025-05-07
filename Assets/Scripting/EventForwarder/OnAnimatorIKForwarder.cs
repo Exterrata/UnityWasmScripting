@@ -1,4 +1,4 @@
-namespace WasmScripting.Proxies
+﻿namespace WasmScripting.Proxies
 {
     public class OnAnimatorIKForwarder : BaseEventForwarder
     {

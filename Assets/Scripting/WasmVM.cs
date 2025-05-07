@@ -1,64 +1,75 @@
-using System;
+﻿using System;
 using System.Text;
 using UnityEngine;
 using Wasmtime;
 
-namespace WasmScripting {
-	[DefaultExecutionOrder(0)]
-	public partial class WasmVM : MonoBehaviour {
-		private Store _store;
-		private Module _module;
-		private Instance _instance;
-		private Action<long, long, int> _createInstance;
-		
-		public ulong fuelPerFrame = 10000000;
+namespace WasmScripting
+{
+    [DefaultExecutionOrder(0)]
+    public partial class WasmVM : MonoBehaviour
+    {
+        private Store _store;
+        private Module _module;
+        private Instance _instance;
+        private Action<long, long, int> _createInstance;
 
-		public bool IsCrashed { get; private set; }
-		public bool Disposed { get; private set; }
+        public ulong fuelPerFrame = 10000000;
 
-		internal void Setup(WasmModuleAsset moduleAsset, WasmRuntimeBehaviour[] behaviours) {
-		    _module = Module.FromBytes(WasmManager.Engine, "Scripting", moduleAsset.bytes);
-			_store = new(WasmManager.Engine);
+        public bool IsCrashed { get; private set; }
+        public bool Disposed { get; private set; }
 
-			// Prevents Instantiate erroring when there's missing links (has to run before Instantiate)
-			WasmManager.Linker.FillNonLinkedWithEmptyStubs(_store, _module);
-		    _instance = WasmManager.Linker.Instantiate(_store, _module);
+        internal void Setup(WasmModuleAsset moduleAsset, WasmRuntimeBehaviour[] behaviours)
+        {
+            _module = Module.FromBytes(WasmManager.Engine, "Scripting", moduleAsset.bytes);
+            _store = new(WasmManager.Engine);
 
-			_store.Fuel = fuelPerFrame;
-			_instance.GetAction("_initialize")?.Invoke();
-			
-			_createInstance = _instance.GetAction<long, long, int>("scripting_create_instance")!;
-			InitializeEvents();
-			
-			_store.SetData(new StoreData(gameObject, _instance));
-			
-			foreach (WasmRuntimeBehaviour behaviour in behaviours) {
-				CreateInstance(behaviour);
-			}
-		}
+            // Prevents Instantiate erroring when there's missing links (has to run before Instantiate)
+            WasmManager.Linker.FillNonLinkedWithEmptyStubs(_store, _module);
+            _instance = WasmManager.Linker.Instantiate(_store, _module);
 
-		private void CreateInstance(WasmRuntimeBehaviour behaviour) {
-			StoreData data = (StoreData)_store.GetData()!;
-			string name = behaviour.behaviourName;
-			int strLength = name.Length;
-			long strPtr = data.Alloc(strLength * sizeof(char));
-			data.Memory.WriteString(strPtr, name, Encoding.Unicode);
+            _store.Fuel = fuelPerFrame;
+            _instance.GetAction("_initialize")?.Invoke();
 
-			try {
-				_createInstance(data.AccessManager.ToWrapped(behaviour).Id, strPtr, strLength);
-			} catch (TrapException e) {
-				Debug.LogError($"WasmVM threw a trap exception: {e.Message}");
-				IsCrashed = true;
-				enabled = false;
-			} catch (Exception e) {
-				Debug.LogError($"WasmVM threw an exception: {e.Message}");
-			}
-		}
+            _createInstance = _instance.GetAction<long, long, int>("scripting_create_instance")!;
+            InitializeEvents();
 
-		private void OnDestroy() {
-			Disposed = true;
-			_store.Dispose();
-			_module.Dispose();
-		}
-	}
+            _store.SetData(new StoreData(gameObject, _instance));
+
+            foreach (WasmRuntimeBehaviour behaviour in behaviours)
+            {
+                CreateInstance(behaviour);
+            }
+        }
+
+        private void CreateInstance(WasmRuntimeBehaviour behaviour)
+        {
+            StoreData data = (StoreData)_store.GetData()!;
+            string name = behaviour.behaviourName;
+            int strLength = name.Length;
+            long strPtr = data.Alloc(strLength * sizeof(char));
+            data.Memory.WriteString(strPtr, name, Encoding.Unicode);
+
+            try
+            {
+                _createInstance(data.AccessManager.ToWrapped(behaviour).Id, strPtr, strLength);
+            }
+            catch (TrapException e)
+            {
+                Debug.LogError($"WasmVM threw a trap exception: {e.Message}");
+                IsCrashed = true;
+                enabled = false;
+            }
+            catch (Exception e)
+            {
+                Debug.LogError($"WasmVM threw an exception: {e.Message}");
+            }
+        }
+
+        private void OnDestroy()
+        {
+            Disposed = true;
+            _store.Dispose();
+            _module.Dispose();
+        }
+    }
 }
