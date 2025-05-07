@@ -1,3 +1,3 @@
 using System.Runtime.CompilerServices;
-[assembly: InternalsVisibleTo("Assembly-CSharp")]
-[assembly: InternalsVisibleTo("Assembly-CSharp-Editor")]
+[assembly: InternalsVisibleTo("UIBuilder")]
+[assembly: InternalsVisibleTo("WasmScripting.Editor")]

@@ -1,0 +1,16 @@
+{
+    "name": "WasmScripting",
+    "rootNamespace": "",
+    "references": [
+        "GUID:5c924f4850c8020488075ca1c564f7f6"
+    ],
+    "includePlatforms": [],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": false,
+    "precompiledReferences": [],
+    "autoReferenced": true,
+    "defineConstraints": [],
+    "versionDefines": [],
+    "noEngineReferences": false
+}

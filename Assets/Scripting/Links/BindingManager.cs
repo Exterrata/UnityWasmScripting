@@ -21,7 +21,7 @@ namespace WasmScripting {
 		/// Fill all the non-linked functions with empty stubs so they won't explode
 		/// Note: If the function returns a bool, it will be false (which is amazing)
 		/// </summary>
-		public static void FillNonLinkedWithEmptyStubs(Store store, Module module) {
+		public static void FillNonLinkedWithEmptyStubs(this Linker linker, Store store, Module module) {
 			foreach (Import import in module.Imports) {
 				// Ignore non-function types
 				if (import is not FunctionImport funcImport) continue;
@@ -30,8 +30,8 @@ namespace WasmScripting {
 				string functionName = import.Name;
 
 				// Skip if already defined in the linker
-				if (WasmManager.Linker.GetFunction(store, moduleName, functionName) == null) 
-					WasmManager.Linker.DefineFunction(moduleName, functionName, (_, _, _) => { }, funcImport.Parameters, funcImport.Results);
+				if (linker.GetFunction(store, moduleName, functionName) == null) 
+					linker.DefineFunction(moduleName, functionName, (_, _, _) => { }, funcImport.Parameters, funcImport.Results);
 			}
 		}
 	}

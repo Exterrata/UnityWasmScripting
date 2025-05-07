@@ -344,7 +344,7 @@ namespace WasmScripting
             // Go through all the UnityEvents enum and check if there is a method using reflection
             
             long unityEvents = 0;
-            foreach (AvailableUnityEvents flag in Enum.GetValues(typeof(AvailableUnityEvents)))
+            foreach (UnityEvents flag in Enum.GetValues(typeof(UnityEvents)))
             {
                 // TODO: this also needs to check full signature, not just name
                 MethodInfo method = scriptType.GetMethod(flag.ToString(), BindingFlags);

@@ -2,7 +2,6 @@
 using JetBrains.Annotations;
 using UnityEngine;
 
-[assembly: InternalsVisibleTo("Assembly-CSharp-Editor")]
 namespace WasmScripting {
 	[PublicAPI]
 	[DefaultExecutionOrder(-50)]
@@ -23,7 +22,6 @@ namespace WasmScripting {
 			WasmVM vm = gameObject.AddComponent<WasmVM>();
 
 			foreach (WasmRuntimeBehaviour behaviour in Behaviours) {
-				behaviour.InstanceId = behaviour.GetInstanceID();
 				behaviour.VM = vm;
 			}
 			

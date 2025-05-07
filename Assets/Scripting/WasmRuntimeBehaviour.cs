@@ -5,12 +5,12 @@ using UnityEngine;
 using WasmScripting.Enums;
 
 namespace WasmScripting {
-	[DefaultExecutionOrder(50)] // Has to run after the WasmVM.
+	[DefaultExecutionOrder(50)] // Has to execute after WasmVM.
     public class WasmRuntimeBehaviour : MonoBehaviour {
 	    
 	    #region Versioning
 		
-	    private const int LATEST_VERSION = 1;
+	    private const int LatestVersion = 1;
 		
 	    [SerializeField, HideInInspector] 
 	    private int version;
@@ -18,7 +18,7 @@ namespace WasmScripting {
 	    private void Reset()
 	    {
 		    // Assign latest version if added in inspector / reset
-		    version = LATEST_VERSION; 
+		    version = LatestVersion; 
 	    }
 	    
 	    #endregion Versioning
@@ -32,25 +32,36 @@ namespace WasmScripting {
 		public string behaviourName;
 		public long definedEvents;
 		
-		internal int InstanceId;
 		internal WasmVM VM;
 		
-		// this should be removed
+		// this should be removed and instead replace WasmBehaviour scripts with WasmRuntimeBehaviour at build time
 		#if UNITY_EDITOR
 		public MonoScript script;
 		#endif
-
+		
 		#region Events
 		
 		// Unity Events
-		private void Awake() => VM.CallMethod(InstanceId, UnityEventCall.Awake);
-		private void Start() => VM.CallMethod(InstanceId, UnityEventCall.Start);
-		private void OnEnable() => VM.CallMethod(InstanceId, UnityEventCall.OnEnable);
-		private void OnDisable() => VM.CallMethod(InstanceId, UnityEventCall.OnDisable);
-		private void OnDestroy() {
-			if (!VM.Disposed) VM.CallMethod(InstanceId, UnityEventCall.OnDestroy);
+		private void Awake() {
+			if (UnityEventsUtils.HasEvent(definedEvents, UnityEvents.Awake)) VM.CallScriptEvent(this, ScriptEvent.Awake);
 		}
 
+		private void Start() {
+			if (UnityEventsUtils.HasEvent(definedEvents, UnityEvents.Start)) VM.CallScriptEvent(this, ScriptEvent.Start);
+		}
+
+		private void OnEnable() {
+			if (UnityEventsUtils.HasEvent(definedEvents, UnityEvents.OnEnable)) VM.CallScriptEvent(this, ScriptEvent.OnEnable);
+		}
+
+		private void OnDisable() {
+			if (UnityEventsUtils.HasEvent(definedEvents, UnityEvents.OnDisable)) VM.CallScriptEvent(this, ScriptEvent.OnDisable);
+		}
+
+		private void OnDestroy() {
+			if (UnityEventsUtils.HasEvent(definedEvents, UnityEvents.OnDestroy) && !VM.Disposed) VM.CallScriptEvent(this, ScriptEvent.OnDestroy);
+		}
+		
 		// Forwarded Events
 		internal void ForwardedOnAnimatorIK(int layerIndex) {}
 		internal void ForwardedOnAnimatorMove() {}
