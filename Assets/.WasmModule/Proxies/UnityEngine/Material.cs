@@ -1,5 +1,6 @@
 ﻿namespace UnityEngine;
 
-public class Material(long id) : Object(id) {
-	
+public class Material(long id) : Object(id)
+{
+
 }

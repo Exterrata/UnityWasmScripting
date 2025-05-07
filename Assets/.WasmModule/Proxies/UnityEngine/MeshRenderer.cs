@@ -1,5 +1,6 @@
 ﻿namespace UnityEngine;
 
-public class MeshRenderer(long id) : Renderer(id) {
-	
+public class MeshRenderer(long id) : Renderer(id)
+{
+
 }
