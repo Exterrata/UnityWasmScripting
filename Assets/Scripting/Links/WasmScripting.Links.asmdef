@@ -1,9 +1,7 @@
 {
-    "name": "WasmScripting",
+    "name": "WasmScripting.Links",
     "rootNamespace": "",
-    "references": [
-        "GUID:5c924f4850c8020488075ca1c564f7f6"
-    ],
+    "references": [],
     "includePlatforms": [],
     "excludePlatforms": [],
     "allowUnsafeCode": false,
