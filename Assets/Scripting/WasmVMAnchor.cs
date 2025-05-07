@@ -1,6 +1,7 @@
 ﻿using System.Runtime.CompilerServices;
 using JetBrains.Annotations;
 using UnityEngine;
+using WasmScripting.Enums;
 
 [assembly: InternalsVisibleTo("Assembly-CSharp-Editor")]
 namespace WasmScripting {
@@ -23,7 +24,6 @@ namespace WasmScripting {
 			WasmVM vm = gameObject.AddComponent<WasmVM>();
 
 			foreach (WasmRuntimeBehaviour behaviour in Behaviours) {
-				behaviour.InstanceId = behaviour.GetInstanceID();
 				behaviour.VM = vm;
 			}
 			
