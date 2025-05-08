@@ -10,11 +10,19 @@ namespace WasmScripting
         public static Engine Engine { get; private set; }
         public static Linker Linker { get; private set; }
 
-        private void Awake()
-        {
-            Config = new Config().WithFuelConsumption(true).WithReferenceTypes(true).WithMultiValue(true);
-            Engine = new(Config);
-            Linker = new Linker(Engine);
+		private void Awake() {
+			Config = new Config().WithFuelConsumption(true).WithReferenceTypes(true).WithMultiValue(true);
+			Engine = new(Config);
+			Linker = new Linker(Engine);
+			
+			// Ideally there would be separate linkers for: Avatars, Props, and Worlds each with there own binding set.
+			BindingManager.BindMethods(Linker);
+			
+			// todo: shove elsewhere
+			gameObject.AddComponent<LateEventManager>();
+			
+			DontDestroyOnLoad(this);
+		}
 
             // Ideally there would be separate linkers for: Avatars, Props, and Worlds each with there own binding set.
             BindingManager.BindMethods(Linker);
