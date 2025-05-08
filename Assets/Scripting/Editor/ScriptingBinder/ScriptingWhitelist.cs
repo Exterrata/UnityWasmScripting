@@ -11,7 +11,8 @@ namespace WasmScripting
     {
         public List<BindingSet> BindingSets = new();
 
-        public BindingSet this[string key] => BindingSets.FirstOrDefault(context => context.Name == key);
+        public BindingSet this[string key] =>
+            BindingSets.FirstOrDefault(context => context.Name == key);
 
         public ScriptingWhitelist(List<Type> types, string[] sets)
         {
@@ -23,21 +24,32 @@ namespace WasmScripting
 
         public ScriptingWhitelist() { }
 
-        public void ForEach(IEnumerable<string> sets, Type type, IEnumerable<string> members, Action<BoundMember> op)
+        public void ForEach(
+            IEnumerable<string> sets,
+            Type type,
+            IEnumerable<string> members,
+            Action<BoundMember> op
+        )
         {
             HashSet<string> setNames = new(sets);
             HashSet<string> memberNames = new(members);
 
-            foreach (BoundType boundType in BindingSets.Where(s => setNames.Contains(s.Name)).Select(s => s.BoundTypes[type]))
+            foreach (
+                BoundType boundType in BindingSets
+                    .Where(s => setNames.Contains(s.Name))
+                    .Select(s => s.BoundTypes[type])
+            )
             {
                 foreach (BoundMember boundMember in boundType.BoundMembers.Values)
                 {
-                    if (memberNames.Contains(boundMember.Name)) op(boundMember);
+                    if (memberNames.Contains(boundMember.Name))
+                        op(boundMember);
                 }
             }
         }
 
-        public IEnumerable<BoundMember> Members(string set, Type type) => BindingSets.Find(s => s.Name == set).BoundTypes[type].BoundMembers.Values;
+        public IEnumerable<BoundMember> Members(string set, Type type) =>
+            BindingSets.Find(s => s.Name == set).BoundTypes[type].BoundMembers.Values;
     }
 
     [PublicAPI]
@@ -146,21 +158,29 @@ namespace WasmScripting
             else if (memberInfo is MethodInfo func)
             {
                 parts.Add("func");
-                parts.Add(func.IsGenericMethod ? $"{memberInfo.Name}_{func.GetGenericArguments().Length}" : memberInfo.Name);
+                parts.Add(
+                    func.IsGenericMethod
+                        ? $"{memberInfo.Name}_{func.GetGenericArguments().Length}"
+                        : memberInfo.Name
+                );
                 parts.AddRange(func.GetParameters().Select(p => TypeToIdentifier(p.ParameterType)));
                 parts.Add(TypeToIdentifier(func.ReturnType));
             }
             else if (memberInfo is FieldInfo fieldInfo)
             {
-                if (fieldInfo.IsLiteral) parts.Add("const");
-                else parts.Add(setter ? "set" : "get");
+                if (fieldInfo.IsLiteral)
+                    parts.Add("const");
+                else
+                    parts.Add(setter ? "set" : "get");
                 parts.Add(memberInfo.Name);
             }
             else if (memberInfo is PropertyInfo property)
             {
                 parts.Add(setter ? "set" : "get");
                 parts.Add(memberInfo.Name);
-                parts.AddRange(property.GetIndexParameters().Select(p => TypeToIdentifier(p.ParameterType)));
+                parts.AddRange(
+                    property.GetIndexParameters().Select(p => TypeToIdentifier(p.ParameterType))
+                );
             }
 
             return $"{declaringType}__{string.Join("__", parts.Where(p => p != null))}";
@@ -173,7 +193,8 @@ namespace WasmScripting
                 string ns = type.Namespace!.Replace('.', '_');
                 string name = type.Name;
                 int index = name.LastIndexOf('`');
-                if (index < 0) index = name.Length;
+                if (index < 0)
+                    index = name.Length;
                 IEnumerable<string> arguments = type.GetGenericArguments().Select(TypeToIdentifier);
                 return $"{ns}_{name[..index]}_{string.Join('_', arguments)}";
             }
@@ -190,7 +211,7 @@ namespace WasmScripting
         FieldGetter,
         FieldSetter,
         PropertyGetter,
-        PropertySetter
+        PropertySetter,
     }
 
     [PublicAPI, Flags]
@@ -199,7 +220,7 @@ namespace WasmScripting
         None = 0,
         Self = 1,
         Other = 2,
-        All = Self | Other
+        All = Self | Other,
     }
 
     [PublicAPI, Flags]
@@ -210,6 +231,6 @@ namespace WasmScripting
         ExternalContent = 2,
         GameInternal = 4,
         NotAvailable = 8,
-        All = Self | ExternalContent | GameInternal | NotAvailable
+        All = Self | ExternalContent | GameInternal | NotAvailable,
     }
 }

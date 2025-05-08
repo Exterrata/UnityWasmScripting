@@ -30,8 +30,10 @@ namespace WasmScripting
         {
             get
             {
-                if (_reversedSelection && _selectedIndex0 != -1) return _list.GetRange(_selectedIndex1, _selectedIndex0 - _selectedIndex1 + 1);
-                if (_selectedIndex1 != -1) return _list.GetRange(_selectedIndex0, _selectedIndex1 - _selectedIndex0 + 1);
+                if (_reversedSelection && _selectedIndex0 != -1)
+                    return _list.GetRange(_selectedIndex1, _selectedIndex0 - _selectedIndex1 + 1);
+                if (_selectedIndex1 != -1)
+                    return _list.GetRange(_selectedIndex0, _selectedIndex1 - _selectedIndex0 + 1);
                 return _list.GetRange(_selectedIndex0, 1);
             }
         }
@@ -107,7 +109,11 @@ namespace WasmScripting
             else
             {
                 float maxScroll = _list.Count * LineHeight - resolvedStyle.height;
-                _targetScroll = Mathf.Clamp(_targetScroll - evt.delta.y * ScrollSpeed, -maxScroll, 0);
+                _targetScroll = Mathf.Clamp(
+                    _targetScroll - evt.delta.y * ScrollSpeed,
+                    -maxScroll,
+                    0
+                );
             }
             MarkDirtyRepaint();
             evt.StopPropagation();
@@ -121,11 +127,15 @@ namespace WasmScripting
 
             for (int i = startLine; i <= endLine + 1; i++)
             {
-                if (i > _list.Count - 1) return;
+                if (i > _list.Count - 1)
+                    return;
                 float y = i * LineHeight + _currentScroll;
                 if (i == _selectedIndex0)
                 {
-                    ctx.DrawRect(new Rect(0, y - 2, resolvedStyle.width, LineHeight), new(0.35f, 0.35f, 0.35f));
+                    ctx.DrawRect(
+                        new Rect(0, y - 2, resolvedStyle.width, LineHeight),
+                        new(0.35f, 0.35f, 0.35f)
+                    );
                 }
                 else if (MultiSelect)
                 {
@@ -133,14 +143,20 @@ namespace WasmScripting
                     {
                         if (i >= _selectedIndex1 && i < _selectedIndex0)
                         {
-                            ctx.DrawRect(new Rect(0, y - 2, resolvedStyle.width, LineHeight), new(0.35f, 0.35f, 0.35f));
+                            ctx.DrawRect(
+                                new Rect(0, y - 2, resolvedStyle.width, LineHeight),
+                                new(0.35f, 0.35f, 0.35f)
+                            );
                         }
                     }
                     else
                     {
                         if (i > _selectedIndex0 && i <= _selectedIndex1)
                         {
-                            ctx.DrawRect(new Rect(0, y - 2, resolvedStyle.width, LineHeight), new(0.35f, 0.35f, 0.35f));
+                            ctx.DrawRect(
+                                new Rect(0, y - 2, resolvedStyle.width, LineHeight),
+                                new(0.35f, 0.35f, 0.35f)
+                            );
                         }
                     }
                 }
@@ -151,7 +167,8 @@ namespace WasmScripting
 
         private void Update()
         {
-            if (Math.Abs(_currentScroll - _targetScroll) < 0.01f) return;
+            if (Math.Abs(_currentScroll - _targetScroll) < 0.01f)
+                return;
             _currentScroll = Mathf.Lerp(_currentScroll, _targetScroll, ScrollSmoothing * 0.01f);
             MarkDirtyRepaint();
         }

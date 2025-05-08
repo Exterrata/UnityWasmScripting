@@ -20,7 +20,8 @@ namespace WasmScripting.Enums
         public static long ToggleEvent(long flags, UnityEvents @event) => flags ^ (long)@event;
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static long SetEvent(long flags, UnityEvents @event, bool value) => value ? AddEvent(flags, @event) : RemoveEvent(flags, @event);
+        public static long SetEvent(long flags, UnityEvents @event, bool value) =>
+            value ? AddEvent(flags, @event) : RemoveEvent(flags, @event);
     }
 
     [PublicAPI, Flags]

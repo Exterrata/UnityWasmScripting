@@ -9,7 +9,6 @@ namespace WasmScripting
     [DefaultExecutionOrder(50)] // Has to execute after WasmVM.
     public class WasmRuntimeBehaviour : MonoBehaviour
     {
-
         #region Versioning
 
         private const int LatestVersion = 1;
@@ -46,40 +45,55 @@ namespace WasmScripting
         // Unity Events
         private void Awake()
         {
-            if (UnityEventsUtils.HasEvent(definedEvents, UnityEvents.Awake)) VM.CallScriptEvent(this, ScriptEvent.Awake);
+            if (UnityEventsUtils.HasEvent(definedEvents, UnityEvents.Awake))
+                VM.CallScriptEvent(this, ScriptEvent.Awake);
         }
 
         private void Start()
         {
-            if (UnityEventsUtils.HasEvent(definedEvents, UnityEvents.Start)) VM.CallScriptEvent(this, ScriptEvent.Start);
+            if (UnityEventsUtils.HasEvent(definedEvents, UnityEvents.Start))
+                VM.CallScriptEvent(this, ScriptEvent.Start);
         }
 
         private void OnEnable()
         {
-            if (UnityEventsUtils.HasEvent(definedEvents, UnityEvents.OnEnable)) VM.CallScriptEvent(this, ScriptEvent.OnEnable);
+            if (UnityEventsUtils.HasEvent(definedEvents, UnityEvents.OnEnable))
+                VM.CallScriptEvent(this, ScriptEvent.OnEnable);
         }
 
         private void OnDisable()
         {
-            if (UnityEventsUtils.HasEvent(definedEvents, UnityEvents.OnDisable)) VM.CallScriptEvent(this, ScriptEvent.OnDisable);
+            if (UnityEventsUtils.HasEvent(definedEvents, UnityEvents.OnDisable))
+                VM.CallScriptEvent(this, ScriptEvent.OnDisable);
         }
 
         private void OnDestroy()
         {
-            if (UnityEventsUtils.HasEvent(definedEvents, UnityEvents.OnDestroy) && !VM.Disposed) VM.CallScriptEvent(this, ScriptEvent.OnDestroy);
+            if (UnityEventsUtils.HasEvent(definedEvents, UnityEvents.OnDestroy) && !VM.Disposed)
+                VM.CallScriptEvent(this, ScriptEvent.OnDestroy);
         }
 
         // Forwarded Events
         internal void ForwardedOnAnimatorIK(int layerIndex) { }
+
         internal void ForwardedOnAnimatorMove() { }
+
         internal void ForwardedOnAudioFilterRead(float[] data, int channels) { }
+
         internal void ForwardedOnCollisionStay2D(Collision2D collision) { }
+
         internal void ForwardedOnCollisionStay(Collision collision) { }
+
         internal void ForwardedOnParticleCollision(GameObject other) { }
+
         internal void ForwardedOnRenderImage(RenderTexture source, RenderTexture destination) { }
+
         internal void ForwardedOnRenderObject() { }
+
         internal void ForwardedOnTriggerStay2D(Collider2D other) { }
+
         internal void ForwardedOnTriggerStay(Collider other) { }
+
         internal void ForwardedOnWillRenderObject() { }
 
         #endregion Events

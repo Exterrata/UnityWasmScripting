@@ -17,7 +17,10 @@ namespace WasmScripting
         private void Awake()
         {
             Context = WasmVMContext.GameObject;
-            Behaviours = Context == WasmVMContext.Scene ? FindObjectsOfType<WasmRuntimeBehaviour>(true) : GetComponentsInChildren<WasmRuntimeBehaviour>(true);
+            Behaviours =
+                Context == WasmVMContext.Scene
+                    ? FindObjectsOfType<WasmRuntimeBehaviour>(true)
+                    : GetComponentsInChildren<WasmRuntimeBehaviour>(true);
             Setup();
         }
 
@@ -39,6 +42,6 @@ namespace WasmScripting
     public enum WasmVMContext
     {
         GameObject, // Avatars, Spawnables
-        Scene       // World (entire scene)
+        Scene, // World (entire scene)
     }
 }

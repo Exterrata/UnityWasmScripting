@@ -18,7 +18,8 @@ namespace WasmScripting
     /// </summary>
     public static class WasmBuilder
     {
-        private const string BuiltModulePath = @"bin\Release\net9.0\wasi-wasm\publish\WasmModule.wasm";
+        private const string BuiltModulePath =
+            @"bin\Release\net9.0\wasi-wasm\publish\WasmModule.wasm";
         private const string HashFilePath = "Library/WasmScripting/ScriptHashes.json";
 
         #region Public API
@@ -26,8 +27,7 @@ namespace WasmScripting
         public static void CompileWasmProgramForObject(GameObject go, bool force = false)
         {
             WasmVMAnchor vm = go.GetComponentInParent<WasmVMAnchor>(true);
-            if (vm == null
-                || vm.Context != WasmVMContext.GameObject)
+            if (vm == null || vm.Context != WasmVMContext.GameObject)
                 return;
 
             CompileWasmProgramForVM(vm, force);
@@ -67,8 +67,11 @@ namespace WasmScripting
                 if (!vm.gameObject.scene.IsValid())
                     continue; // Skip VMs not in active scene.
 
-                EditorUtility.DisplayProgressBar("Compiling WASM Programs",
-                    $"Compiling VM {current + 1}/{total}", (float)current / total);
+                EditorUtility.DisplayProgressBar(
+                    "Compiling WASM Programs",
+                    $"Compiling VM {current + 1}/{total}",
+                    (float)current / total
+                );
 
                 CompileWasmProgramForVM(vm);
                 current++;
@@ -108,7 +111,9 @@ namespace WasmScripting
                 return hashDict;
 
             string jsonContent = File.ReadAllText(HashFilePath);
-            ScriptHashCollection collection = JsonUtility.FromJson<ScriptHashCollection>(jsonContent);
+            ScriptHashCollection collection = JsonUtility.FromJson<ScriptHashCollection>(
+                jsonContent
+            );
 
             if (collection?.hashes == null)
                 return hashDict;
@@ -125,11 +130,7 @@ namespace WasmScripting
 
             foreach (KeyValuePair<string, string> pair in hashDict)
             {
-                collection.hashes.Add(new ScriptHash
-                {
-                    vmId = pair.Key,
-                    hash = pair.Value
-                });
+                collection.hashes.Add(new ScriptHash { vmId = pair.Key, hash = pair.Value });
             }
 
             string jsonContent = JsonUtility.ToJson(collection);
@@ -157,10 +158,17 @@ namespace WasmScripting
         private static string ComputeVMHash(WasmVMAnchor vm, WasmRuntimeBehaviour[] behaviours)
         {
             // Sort behaviours for consistent hashing
-            List<WasmRuntimeBehaviour> sortedBehaviours = new List<WasmRuntimeBehaviour>(behaviours);
-            sortedBehaviours.Sort((a, b) =>
-                string.Compare((a.script?.name ?? string.Empty),
-                    b.script?.name ?? string.Empty, StringComparison.Ordinal));
+            List<WasmRuntimeBehaviour> sortedBehaviours = new List<WasmRuntimeBehaviour>(
+                behaviours
+            );
+            sortedBehaviours.Sort(
+                (a, b) =>
+                    string.Compare(
+                        (a.script?.name ?? string.Empty),
+                        b.script?.name ?? string.Empty,
+                        StringComparison.Ordinal
+                    )
+            );
 
             using SHA256 sha256 = SHA256.Create();
 
@@ -245,7 +253,8 @@ namespace WasmScripting
             try
             {
                 // Clean and recreate Temp directory
-                if (Directory.Exists(tempPath)) Directory.Delete(tempPath, true);
+                if (Directory.Exists(tempPath))
+                    Directory.Delete(tempPath, true);
                 Directory.CreateDirectory(tempPath);
 
                 // Copy relevant scripts
@@ -261,12 +270,19 @@ namespace WasmScripting
 
                     // Copy the script to the Temp directory
                     string srcPath = AssetDatabase.GetAssetPath(script);
-                    string dstPath = Path.Combine(wasmProjectPath, "Temp", $"{behaviour.behaviourName}.cs");
+                    string dstPath = Path.Combine(
+                        wasmProjectPath,
+                        "Temp",
+                        $"{behaviour.behaviourName}.cs"
+                    );
                     File.Copy(srcPath, dstPath);
                 }
 
                 // Build the WASM module
-                Process buildCmd = CreateCmdProcess(wasmProjectPath, $"cd \"{wasmProjectPath}\" && build.bat");
+                Process buildCmd = CreateCmdProcess(
+                    wasmProjectPath,
+                    $"cd \"{wasmProjectPath}\" && build.bat"
+                );
                 buildCmd.Start();
                 buildCmd.WaitForExit();
 
@@ -304,14 +320,15 @@ namespace WasmScripting
 
             // Scene context
             List<WasmRuntimeBehaviour> sceneBehaviours = new List<WasmRuntimeBehaviour>();
-            WasmRuntimeBehaviour[] allBehaviours = Object.FindObjectsOfType<WasmRuntimeBehaviour>(true);
+            WasmRuntimeBehaviour[] allBehaviours = Object.FindObjectsOfType<WasmRuntimeBehaviour>(
+                true
+            );
 
             foreach (WasmRuntimeBehaviour behaviour in allBehaviours)
             {
                 // Check if this behaviour is not under any GameObject VM
                 WasmVMAnchor parentVM = behaviour.GetComponentInParent<WasmVMAnchor>(true);
-                if (parentVM == null
-                    || parentVM.Context != WasmVMContext.GameObject)
+                if (parentVM == null || parentVM.Context != WasmVMContext.GameObject)
                     sceneBehaviours.Add(behaviour);
             }
 
@@ -330,12 +347,13 @@ namespace WasmScripting
                     UseShellExecute = !hideWindow,
                     RedirectStandardOutput = hideWindow,
                     CreateNoWindow = hideWindow,
-                    WorkingDirectory = workingDirectory
-                }
+                    WorkingDirectory = workingDirectory,
+                },
             };
         }
 
-        private static BindingFlags BindingFlags => BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic;
+        private static BindingFlags BindingFlags =>
+            BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic;
 
         private static long ScanForUnityEvents(MonoScript script)
         {

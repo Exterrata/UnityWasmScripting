@@ -45,15 +45,15 @@ public static class UnityWasmScriptingSettingsManager
 
     public static string GetProjectRoot() =>
         string.IsNullOrEmpty(GetOrCreateSettings()?.projectRootOverride)
-            ? Application.dataPath : GetOrCreateSettings().projectRootOverride;
+            ? Application.dataPath
+            : GetOrCreateSettings().projectRootOverride;
 
     public static string GetWasmModulePath() =>
         string.IsNullOrEmpty(GetOrCreateSettings()?.wasmModulePathOverride)
             ? Path.Combine(GetProjectRoot(), DefaultWasmModulePath)
             : GetOrCreateSettings().wasmModulePathOverride;
 
-    public static bool GetHideCommandPrompt() =>
-        GetOrCreateSettings()?.hideCommandPrompt ?? false;
+    public static bool GetHideCommandPrompt() => GetOrCreateSettings()?.hideCommandPrompt ?? false;
 
     #endregion Settings Access
 }

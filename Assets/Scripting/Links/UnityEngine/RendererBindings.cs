@@ -9,28 +9,32 @@ namespace WasmScripting.UnityEngine
     {
         public static void BindMethods(Linker linker)
         {
-            linker.DefineFunction("unity", "renderer_getSharedMaterials", (Caller caller, long id, long outMaterialIds, long outMaterialsLength) =>
-            {
-                StoreData data = GetData(caller);
-
-                List<Material> materials = new();
-                Renderer renderer = IdTo<Renderer>(data, id);
-                renderer.GetSharedMaterials(materials);
-
-                int length = materials.Count;
-                int size = materials.Count * sizeof(long);
-
-                long address = data.Alloc(size);
-                Span<long> span = data.Memory.GetSpan<long>(address, size);
-
-                for (int i = 0; i < length; i++)
+            linker.DefineFunction(
+                "unity",
+                "renderer_getSharedMaterials",
+                (Caller caller, long id, long outMaterialIds, long outMaterialsLength) =>
                 {
-                    span[i] = IdFrom(data, materials[i]);
-                }
+                    StoreData data = GetData(caller);
 
-                data.Memory.WriteInt64(outMaterialIds, address);
-                data.Memory.WriteInt32(outMaterialsLength, length);
-            });
+                    List<Material> materials = new();
+                    Renderer renderer = IdTo<Renderer>(data, id);
+                    renderer.GetSharedMaterials(materials);
+
+                    int length = materials.Count;
+                    int size = materials.Count * sizeof(long);
+
+                    long address = data.Alloc(size);
+                    Span<long> span = data.Memory.GetSpan<long>(address, size);
+
+                    for (int i = 0; i < length; i++)
+                    {
+                        span[i] = IdFrom(data, materials[i]);
+                    }
+
+                    data.Memory.WriteInt64(outMaterialIds, address);
+                    data.Memory.WriteInt32(outMaterialsLength, length);
+                }
+            );
         }
     }
 }

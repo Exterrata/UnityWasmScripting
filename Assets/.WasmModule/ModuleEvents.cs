@@ -36,7 +36,11 @@ public static partial class Module
     {
         foreach (MonoBehaviour behaviour in UpdateSortedBehaviours.Values)
         {
-            if (Callbacks[behaviour.GetType()].TryGetValue(ScriptEvent.Update, out MethodInfo method)) method.Invoke(behaviour, null);
+            if (
+                Callbacks[behaviour.GetType()]
+                    .TryGetValue(ScriptEvent.Update, out MethodInfo method)
+            )
+                method.Invoke(behaviour, null);
         }
     }
 
@@ -45,7 +49,11 @@ public static partial class Module
     {
         foreach (MonoBehaviour behaviour in UpdateSortedBehaviours.Values)
         {
-            if (Callbacks[behaviour.GetType()].TryGetValue(ScriptEvent.LateUpdate, out MethodInfo method)) method.Invoke(behaviour, null);
+            if (
+                Callbacks[behaviour.GetType()]
+                    .TryGetValue(ScriptEvent.LateUpdate, out MethodInfo method)
+            )
+                method.Invoke(behaviour, null);
         }
     }
 
@@ -54,7 +62,11 @@ public static partial class Module
     {
         foreach (MonoBehaviour behaviour in UpdateSortedBehaviours.Values)
         {
-            if (Callbacks[behaviour.GetType()].TryGetValue(ScriptEvent.FixedUpdate, out MethodInfo method)) method.Invoke(behaviour, null);
+            if (
+                Callbacks[behaviour.GetType()]
+                    .TryGetValue(ScriptEvent.FixedUpdate, out MethodInfo method)
+            )
+                method.Invoke(behaviour, null);
         }
     }
 
@@ -70,7 +82,8 @@ public static partial class Module
     {
         Span<long> span = new(ids, count);
         Span<int> keys = stackalloc int[count];
-        for (int i = 0; i < count; i++) keys[i] = UpdateOrderByBehaviour[ids[i]];
+        for (int i = 0; i < count; i++)
+            keys[i] = UpdateOrderByBehaviour[ids[i]];
         keys.Sort(span);
     }
 }

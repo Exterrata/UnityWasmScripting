@@ -12,7 +12,10 @@ namespace WasmScripting
 
         private void Awake()
         {
-            Config = new Config().WithFuelConsumption(true).WithReferenceTypes(true).WithMultiValue(true);
+            Config = new Config()
+                .WithFuelConsumption(true)
+                .WithReferenceTypes(true)
+                .WithMultiValue(true);
             Engine = new(Config);
             Linker = new Linker(Engine);
 

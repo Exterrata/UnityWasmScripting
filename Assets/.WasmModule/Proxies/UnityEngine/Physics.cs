@@ -15,8 +15,22 @@ public static class Physics
 
     #region Implementation
 
-    public static bool Raycast(Vector3 origin, Vector3 direction, out RaycastHit hitInfo, float maxDistance = Mathf.Infinity, int layerMask = DefaultRaycastLayers, QueryTriggerInteraction queryTriggerInteraction = QueryTriggerInteraction.UseGlobal)
-        => internal_physics_func_raycast_vector3_vector3_raycasthit_float_int_querytriggerinteraction(origin, direction, out hitInfo, maxDistance, layerMask, queryTriggerInteraction);
+    public static bool Raycast(
+        Vector3 origin,
+        Vector3 direction,
+        out RaycastHit hitInfo,
+        float maxDistance = Mathf.Infinity,
+        int layerMask = DefaultRaycastLayers,
+        QueryTriggerInteraction queryTriggerInteraction = QueryTriggerInteraction.UseGlobal
+    ) =>
+        internal_physics_func_raycast_vector3_vector3_raycasthit_float_int_querytriggerinteraction(
+            origin,
+            direction,
+            out hitInfo,
+            maxDistance,
+            layerMask,
+            queryTriggerInteraction
+        );
 
     #endregion Implementation
 
@@ -33,14 +47,15 @@ public static class Physics
     )
     {
         hitInfo = default;
-        int result = physics_func_raycast_vector3_vector3_raycasthit_float_int_querytriggerinteraction(
-            (long)Unsafe.AsPointer(ref origin),
-            (long)Unsafe.AsPointer(ref direction),
-            (long)Unsafe.AsPointer(ref hitInfo),
-            maxDistance,
-            layerMask,
-            queryTriggerInteraction
-        );
+        int result =
+            physics_func_raycast_vector3_vector3_raycasthit_float_int_querytriggerinteraction(
+                (long)Unsafe.AsPointer(ref origin),
+                (long)Unsafe.AsPointer(ref direction),
+                (long)Unsafe.AsPointer(ref hitInfo),
+                maxDistance,
+                layerMask,
+                queryTriggerInteraction
+            );
         return Unsafe.As<int, bool>(ref result);
     }
 

@@ -2,8 +2,5 @@
 
 namespace WasmScripting
 {
-    public class WasmBehaviour : MonoBehaviour
-    {
-
-    }
+    public class WasmBehaviour : MonoBehaviour { }
 }

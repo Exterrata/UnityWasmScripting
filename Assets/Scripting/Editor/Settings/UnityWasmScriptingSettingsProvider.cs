@@ -11,12 +11,18 @@ public class UnityWasmScriptingSettingsProvider : SettingsProvider
 
     private SerializedObject m_Settings;
 
-    private UnityWasmScriptingSettingsProvider(string path, SettingsScope scope = SettingsScope.Project)
+    private UnityWasmScriptingSettingsProvider(
+        string path,
+        SettingsScope scope = SettingsScope.Project
+    )
         : base(path, scope) { }
 
     #region Settings Management
 
-    private SerializedObject GetSerializedSettings() => m_Settings ??= new SerializedObject(UnityWasmScriptingSettingsManager.GetOrCreateSettings());
+    private SerializedObject GetSerializedSettings() =>
+        m_Settings ??= new SerializedObject(
+            UnityWasmScriptingSettingsManager.GetOrCreateSettings()
+        );
 
     #endregion Settings Management
 
@@ -32,7 +38,9 @@ public class UnityWasmScriptingSettingsProvider : SettingsProvider
 
         EditorGUILayout.LabelField("Default Paths:", EditorStyles.boldLabel);
         EditorGUILayout.LabelField($"Project Root: {DefaultProjectRoot}");
-        EditorGUILayout.LabelField($"WASM Module Path: {DefaultProjectRoot}/{DefaultWasmModulePath}");
+        EditorGUILayout.LabelField(
+            $"WASM Module Path: {DefaultProjectRoot}/{DefaultWasmModulePath}"
+        );
         EditorGUILayout.Space();
 
         EditorGUILayout.LabelField("Path Overrides:", EditorStyles.boldLabel);
@@ -43,13 +51,14 @@ public class UnityWasmScriptingSettingsProvider : SettingsProvider
         {
             do
             {
-                if (prop.propertyPath == "m_Script") continue;
+                if (prop.propertyPath == "m_Script")
+                    continue;
                 EditorGUILayout.PropertyField(prop, true);
-            }
-            while (prop.NextVisible(false));
+            } while (prop.NextVisible(false));
         }
 
-        if (EditorGUI.EndChangeCheck()) settings.ApplyModifiedProperties();
+        if (EditorGUI.EndChangeCheck())
+            settings.ApplyModifiedProperties();
     }
 
     #endregion GUI Methods
@@ -62,7 +71,8 @@ public class UnityWasmScriptingSettingsProvider : SettingsProvider
         UnityWasmScriptingSettingsProvider provider = new($"Project/{ProjectName}")
         {
             keywords = GetSearchKeywordsFromSerializedObject(
-                new SerializedObject(UnityWasmScriptingSettingsManager.GetOrCreateSettings()))
+                new SerializedObject(UnityWasmScriptingSettingsManager.GetOrCreateSettings())
+            ),
         };
         return provider;
     }

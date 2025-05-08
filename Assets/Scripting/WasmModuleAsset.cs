@@ -1,8 +1,9 @@
-﻿#if UNITY_EDITOR
+﻿using UnityEngine;
+#if UNITY_EDITOR
 using System.IO;
 using UnityEditor.AssetImporters;
 #endif
-using UnityEngine;
+
 
 namespace WasmScripting
 {

@@ -13,7 +13,10 @@ namespace WasmScripting
             if (!GUILayout.Button("Build Wasm Module"))
                 return;
 
-            WasmBuilder.CompileWasmProgramForObject(((WasmRuntimeBehaviour)target).gameObject, true);
+            WasmBuilder.CompileWasmProgramForObject(
+                ((WasmRuntimeBehaviour)target).gameObject,
+                true
+            );
         }
     }
 }

@@ -3,6 +3,7 @@ using System.Runtime.InteropServices;
 using UnityEngine;
 
 namespace WasmModule;
+
 public static partial class Module
 {
     private static readonly Dictionary<long, MonoBehaviour> Behaviours = new();
@@ -25,12 +26,18 @@ public static partial class Module
         UpdateSortedBehaviours.Add(order, behaviour);
         UpdateOrderByBehaviour.Add(wrappedId, order);
 
-        if (Callbacks.ContainsKey(type)) return;
+        if (Callbacks.ContainsKey(type))
+            return;
 
         Dictionary<ScriptEvent, MethodInfo> callbacks = new();
-        foreach (MethodInfo method in type.GetMethods(BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic))
+        foreach (
+            MethodInfo method in type.GetMethods(
+                BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic
+            )
+        )
         {
-            if (Enum.TryParse(method.Name, out ScriptEvent unityEvent)) callbacks[unityEvent] = method;
+            if (Enum.TryParse(method.Name, out ScriptEvent unityEvent))
+                callbacks[unityEvent] = method;
         }
 
         Callbacks[type] = callbacks;

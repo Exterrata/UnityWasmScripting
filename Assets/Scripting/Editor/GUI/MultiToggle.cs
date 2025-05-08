@@ -20,26 +20,32 @@ namespace WasmScripting
 
         public MultiToggle(List<object> items)
         {
-            styleSheets.Add(StyleSheetBuilder.Build(b => b
-                .Add(".multi-toggle TextElement", s => s
-                    .Height(new Length(100, LengthUnit.Percent))
-                    .FlexGrow(1)
-                    .FlexBasis(0)
-                    .UnityTextAlign(TextAnchor.MiddleCenter)
-                    .MarginLeft(2)
-                    .BorderTopLeftRadius(4)
-                    .BorderTopRightRadius(4)
-                    .BorderBottomLeftRadius(4)
-                    .BorderBottomRightRadius(4)
-                    .BackgroundColor(new(0.345f, 0.345f, 0.345f))
+            styleSheets.Add(
+                StyleSheetBuilder.Build(b =>
+                    b.Add(
+                            ".multi-toggle TextElement",
+                            s =>
+                                s.Height(new Length(100, LengthUnit.Percent))
+                                    .FlexGrow(1)
+                                    .FlexBasis(0)
+                                    .UnityTextAlign(TextAnchor.MiddleCenter)
+                                    .MarginLeft(2)
+                                    .BorderTopLeftRadius(4)
+                                    .BorderTopRightRadius(4)
+                                    .BorderBottomLeftRadius(4)
+                                    .BorderBottomRightRadius(4)
+                                    .BackgroundColor(new(0.345f, 0.345f, 0.345f))
+                        )
+                        .Add(
+                            ".multi-toggle TextElement:hover",
+                            s => s.BackgroundColor(new(0.4f, 0.4f, 0.4f))
+                        )
+                        .Add(
+                            ".multi-toggle TextElement:checked",
+                            s => s.BackgroundColor(new(0.2f, 0.35f, 0.5f))
+                        )
                 )
-                .Add(".multi-toggle TextElement:hover", s => s
-                    .BackgroundColor(new(0.4f, 0.4f, 0.4f))
-                )
-                .Add(".multi-toggle TextElement:checked", s => s
-                    .BackgroundColor(new(0.2f, 0.35f, 0.5f))
-                )
-            ));
+            );
 
             AddToClassList("multi-toggle");
             style.alignItems = Align.Center;
@@ -79,8 +85,10 @@ namespace WasmScripting
 
         public void SetMixed(int index, bool mixed)
         {
-            if (mixed) _elements[index].text = _items[index].ToString() + '*';
-            else _elements[index].text = _items[index].ToString();
+            if (mixed)
+                _elements[index].text = _items[index].ToString() + '*';
+            else
+                _elements[index].text = _items[index].ToString();
         }
 
         public void SetValue(int index, bool value)

@@ -15,7 +15,11 @@ namespace WasmScripting
             _accessRoot = root;
         }
 
-        public WrappedObject ToWrapped(object obj) => _objectToWrapped.TryGetValue(obj, out WrappedObject wrapped) ? wrapped : CreateWrapped(obj);
+        public WrappedObject ToWrapped(object obj) =>
+            _objectToWrapped.TryGetValue(obj, out WrappedObject wrapped)
+                ? wrapped
+                : CreateWrapped(obj);
+
         public WrappedObject ToWrapped(long id) => _idToWrapped.GetValueOrDefault(id);
 
         private WrappedObject CreateWrapped(object obj)
@@ -32,6 +36,7 @@ namespace WasmScripting
     {
         public readonly object Target;
         public readonly long Id;
+
         // add context stuff here
 
         public WrappedObject(object target, long id)

@@ -24,26 +24,30 @@ namespace WasmScripting
 
         private void Update()
         {
-            if (IsCrashed) return;
+            if (IsCrashed)
+                return;
             _store.Fuel = fuelPerFrame;
             _callUpdate();
         }
 
         private void LateUpdate()
         {
-            if (IsCrashed) return;
+            if (IsCrashed)
+                return;
             _callLateUpdate();
         }
 
         private void FixedUpdate()
         {
-            if (IsCrashed) return;
+            if (IsCrashed)
+                return;
             _callFixedUpdate();
         }
 
         public void CallScriptEvent(WasmRuntimeBehaviour behaviour, ScriptEvent scriptEvent)
         {
-            if (IsCrashed) return;
+            if (IsCrashed)
+                return;
 
             StoreData data = (StoreData)_store.GetData()!;
             long id = data.AccessManager.ToWrapped(behaviour).Id;

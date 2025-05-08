@@ -34,7 +34,7 @@ public struct RaycastHit
     //
     // public float distance =>
     //
-    // public int triangleIndex => 
+    // public int triangleIndex =>
     //
     // public Vector2 textureCoord =>
     //

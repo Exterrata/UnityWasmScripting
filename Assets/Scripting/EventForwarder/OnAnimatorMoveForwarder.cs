@@ -2,7 +2,6 @@
 {
     public class OnAnimatorMoveForwarder : BaseEventForwarder
     {
-        private void OnAnimatorMove()
-            => targetRuntimeBehaviour.ForwardedOnAnimatorMove();
+        private void OnAnimatorMove() => targetRuntimeBehaviour.ForwardedOnAnimatorMove();
     }
 }

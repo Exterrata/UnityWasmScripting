@@ -3,7 +3,4 @@ using System.Runtime.InteropServices;
 
 namespace UnityEngine;
 
-public class SkinnedMeshRenderer(long id) : Renderer(id)
-{
-
-}
+public class SkinnedMeshRenderer(long id) : Renderer(id) { }

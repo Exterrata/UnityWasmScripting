@@ -16,7 +16,13 @@ namespace WasmScripting
         private const string WhitelistPath = @"Scripting\Links\Whitelist.json";
         private static ScriptingWhitelist ScriptingWhitelist;
         private static readonly List<string> AllSets = new() { "Avatar", "World", "Prop" };
-        private static readonly List<string> Assemblies = new() { "UnityEngine.CoreModule", "UnityEngine.PhysicsModule", "UnityEngine.AnimationModule", "UnityEngine.AudioModule" };
+        private static readonly List<string> Assemblies = new()
+        {
+            "UnityEngine.CoreModule",
+            "UnityEngine.PhysicsModule",
+            "UnityEngine.AnimationModule",
+            "UnityEngine.AudioModule",
+        };
         private static readonly List<Type> Types = new();
         private readonly List<string> _members = new();
         private readonly List<Type> _shownTypes = new();
@@ -25,7 +31,8 @@ namespace WasmScripting
         private Type _selectedType;
 
         [MenuItem("Wasm/BindingGenerator")]
-        public static void OpenWindow() => GetWindow<WasmBindingGenerator>("Wasm Binding Generator");
+        public static void OpenWindow() =>
+            GetWindow<WasmBindingGenerator>("Wasm Binding Generator");
 
         static WasmBindingGenerator()
         {
@@ -34,12 +41,19 @@ namespace WasmScripting
                 Assembly assembly = Assembly.Load(assemblyName);
                 foreach (Type type in assembly.GetTypes())
                 {
-                    if (type.IsPublic) Types.Add(type);
+                    if (type.IsPublic)
+                        Types.Add(type);
                 }
             }
 
-            FieldInfo info = typeof(EditorApplication).GetField("globalEventHandler", BindingFlags.Static | BindingFlags.NonPublic);
-            info!.SetValue(null, (EditorApplication.CallbackFunction)info!.GetValue(null) + SaveWhitelist);
+            FieldInfo info = typeof(EditorApplication).GetField(
+                "globalEventHandler",
+                BindingFlags.Static | BindingFlags.NonPublic
+            );
+            info!.SetValue(
+                null,
+                (EditorApplication.CallbackFunction)info!.GetValue(null) + SaveWhitelist
+            );
 
             LoadWhitelist();
         }
@@ -68,10 +82,14 @@ namespace WasmScripting
 
         public override void SaveChanges()
         {
-            if (!hasUnsavedChanges) return;
+            if (!hasUnsavedChanges)
+                return;
             string projectPath = UnityWasmScriptingSettingsManager.GetProjectRoot();
             string whitelistPath = Path.Combine(projectPath, WhitelistPath);
-            File.WriteAllText(whitelistPath, JsonConvert.SerializeObject(ScriptingWhitelist, Formatting.Indented));
+            File.WriteAllText(
+                whitelistPath,
+                JsonConvert.SerializeObject(ScriptingWhitelist, Formatting.Indented)
+            );
             base.SaveChanges();
         }
 
@@ -90,7 +108,8 @@ namespace WasmScripting
                 string json = File.ReadAllText(whitelistPath);
                 ScriptingWhitelist = JsonConvert.DeserializeObject<ScriptingWhitelist>(json);
             }
-            else File.Create(whitelistPath);
+            else
+                File.Create(whitelistPath);
             ScriptingWhitelist ??= new(Types, AllSets.ToArray());
         }
     }

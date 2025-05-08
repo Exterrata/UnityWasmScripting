@@ -45,7 +45,8 @@ namespace WasmScripting
 
         private void SetActiveBindingSet(ClickEvent evt)
         {
-            foreach (VisualElement element in _bindingSetTabList) element.SetChecked(false);
+            foreach (VisualElement element in _bindingSetTabList)
+                element.SetChecked(false);
             TextElement target = (TextElement)evt.target;
             target.SetChecked(true);
 
@@ -54,7 +55,8 @@ namespace WasmScripting
             {
                 _activeSets.AddRange(AllSets);
             }
-            else _activeSets.Add(target.text);
+            else
+                _activeSets.Add(target.text);
 
             UpdateMemberSettings();
         }
@@ -67,10 +69,15 @@ namespace WasmScripting
                 return;
             }
 
-            ScriptingWhitelist.ForEach(_activeSets, _selectedType, _memberListElement.SelectedItems, m =>
-            {
-                m.OverrideName = value.newValue;
-            });
+            ScriptingWhitelist.ForEach(
+                _activeSets,
+                _selectedType,
+                _memberListElement.SelectedItems,
+                m =>
+                {
+                    m.OverrideName = value.newValue;
+                }
+            );
 
             hasUnsavedChanges = true;
         }
@@ -87,10 +94,15 @@ namespace WasmScripting
             _bindingEnabledToggle.SetItems(new() { value ? "Enabled" : "Disabled" });
             _bindingEnabledToggle.SetValue(index, value);
 
-            ScriptingWhitelist.ForEach(_activeSets, _selectedType, _memberListElement.SelectedItems, m =>
-            {
-                m.IsBound = value;
-            });
+            ScriptingWhitelist.ForEach(
+                _activeSets,
+                _selectedType,
+                _memberListElement.SelectedItems,
+                m =>
+                {
+                    m.IsBound = value;
+                }
+            );
 
             _memberListElement.MarkDirtyRepaint();
             _typeListElement.MarkDirtyRepaint();
@@ -106,17 +118,22 @@ namespace WasmScripting
             }
 
             bool value = _ownerContextToggle.GetValue(index);
-            ScriptingWhitelist.ForEach(_activeSets, _selectedType, _memberListElement.SelectedItems, m =>
-            {
-                if (value)
+            ScriptingWhitelist.ForEach(
+                _activeSets,
+                _selectedType,
+                _memberListElement.SelectedItems,
+                m =>
                 {
-                    m.OwnerContext |= (OwnerContext)(1 << index);
+                    if (value)
+                    {
+                        m.OwnerContext |= (OwnerContext)(1 << index);
+                    }
+                    else
+                    {
+                        m.OwnerContext &= (OwnerContext)~(1 << index);
+                    }
                 }
-                else
-                {
-                    m.OwnerContext &= (OwnerContext)~(1 << index);
-                }
-            });
+            );
 
             hasUnsavedChanges = true;
         }
@@ -130,17 +147,22 @@ namespace WasmScripting
             }
 
             bool value = _scopeContextToggle.GetValue(index);
-            ScriptingWhitelist.ForEach(_activeSets, _selectedType, _memberListElement.SelectedItems, m =>
-            {
-                if (value)
+            ScriptingWhitelist.ForEach(
+                _activeSets,
+                _selectedType,
+                _memberListElement.SelectedItems,
+                m =>
                 {
-                    m.ScopeContext |= (ScopeContext)(1 << index);
+                    if (value)
+                    {
+                        m.ScopeContext |= (ScopeContext)(1 << index);
+                    }
+                    else
+                    {
+                        m.ScopeContext &= (ScopeContext)~(1 << index);
+                    }
                 }
-                else
-                {
-                    m.ScopeContext &= (ScopeContext)~(1 << index);
-                }
-            });
+            );
 
             hasUnsavedChanges = true;
         }
@@ -197,16 +219,23 @@ namespace WasmScripting
                 ScopeContext scopeOr = ScopeContext.None;
                 ScopeContext scopeAnd = ScopeContext.All;
                 BoundMember selected = null;
-                ScriptingWhitelist.ForEach(_activeSets, _selectedType, _memberListElement.SelectedItems, m =>
-                {
-                    if (m.IsBound) anyEnabled = true;
-                    else anyDisabled = true;
-                    ownerOr |= m.OwnerContext;
-                    ownerAnd &= m.OwnerContext;
-                    scopeOr |= m.ScopeContext;
-                    scopeAnd &= m.ScopeContext;
-                    selected ??= m;
-                });
+                ScriptingWhitelist.ForEach(
+                    _activeSets,
+                    _selectedType,
+                    _memberListElement.SelectedItems,
+                    m =>
+                    {
+                        if (m.IsBound)
+                            anyEnabled = true;
+                        else
+                            anyDisabled = true;
+                        ownerOr |= m.OwnerContext;
+                        ownerAnd &= m.OwnerContext;
+                        scopeOr |= m.ScopeContext;
+                        scopeAnd &= m.ScopeContext;
+                        selected ??= m;
+                    }
+                );
 
                 bool mixedEnabled = anyEnabled && anyDisabled;
                 OwnerContext mixedOwner = ownerOr ^ ownerAnd;
@@ -223,8 +252,14 @@ namespace WasmScripting
                 _ownerContextToggle.SetMixed(1, mixedOwner.HasFlag(OwnerContext.Other));
 
                 _scopeContextToggle.SetValue(0, selected.ScopeContext.HasFlag(ScopeContext.Self));
-                _scopeContextToggle.SetValue(1, selected.ScopeContext.HasFlag(ScopeContext.ExternalContent));
-                _scopeContextToggle.SetValue(2, selected.ScopeContext.HasFlag(ScopeContext.GameInternal));
+                _scopeContextToggle.SetValue(
+                    1,
+                    selected.ScopeContext.HasFlag(ScopeContext.ExternalContent)
+                );
+                _scopeContextToggle.SetValue(
+                    2,
+                    selected.ScopeContext.HasFlag(ScopeContext.GameInternal)
+                );
                 _scopeContextToggle.SetMixed(0, mixedScope.HasFlag(ScopeContext.Self));
                 _scopeContextToggle.SetMixed(1, mixedScope.HasFlag(ScopeContext.ExternalContent));
                 _scopeContextToggle.SetMixed(2, mixedScope.HasFlag(ScopeContext.GameInternal));
@@ -235,14 +270,24 @@ namespace WasmScripting
         {
             bool anyEnabled = false;
             bool anyDisabled = false;
-            IEnumerable<string> members = ScriptingWhitelist.Members("Avatar", item).Select(m => m.Name);
-            ScriptingWhitelist.ForEach(AllSets, item, members, m =>
-            {
-                if (m.IsBound) anyEnabled = true;
-                else anyDisabled = true;
-            });
+            IEnumerable<string> members = ScriptingWhitelist
+                .Members("Avatar", item)
+                .Select(m => m.Name);
+            ScriptingWhitelist.ForEach(
+                AllSets,
+                item,
+                members,
+                m =>
+                {
+                    if (m.IsBound)
+                        anyEnabled = true;
+                    else
+                        anyDisabled = true;
+                }
+            );
 
-            if (anyEnabled && anyDisabled) return PartialWhitelistColor;
+            if (anyEnabled && anyDisabled)
+                return PartialWhitelistColor;
             return anyEnabled ? WhitelistedColor : BlacklistedColor;
         }
 
@@ -250,13 +295,21 @@ namespace WasmScripting
         {
             bool anyEnabled = false;
             bool anyDisabled = false;
-            ScriptingWhitelist.ForEach(AllSets, _selectedType, new List<string> { item }, m =>
-            {
-                if (m.IsBound) anyEnabled = true;
-                else anyDisabled = true;
-            });
+            ScriptingWhitelist.ForEach(
+                AllSets,
+                _selectedType,
+                new List<string> { item },
+                m =>
+                {
+                    if (m.IsBound)
+                        anyEnabled = true;
+                    else
+                        anyDisabled = true;
+                }
+            );
 
-            if (anyEnabled && anyDisabled) return PartialWhitelistColor;
+            if (anyEnabled && anyDisabled)
+                return PartialWhitelistColor;
             return anyEnabled ? WhitelistedColor : BlacklistedColor;
         }
 
@@ -274,141 +327,233 @@ namespace WasmScripting
 
         private void BuildUI()
         {
-            rootVisualElement.styleSheets.Add(StyleSheetBuilder.Build(b => b
-                .Add(".tab-list TextElement:checked", s => s
-                    .BorderTopLeftRadius(3)
-                    .BorderTopRightRadius(3)
-                    .BackgroundColor(new(0.345f, 0.345f, 0.345f))
+            rootVisualElement.styleSheets.Add(
+                StyleSheetBuilder.Build(b =>
+                    b.Add(
+                            ".tab-list TextElement:checked",
+                            s =>
+                                s.BorderTopLeftRadius(3)
+                                    .BorderTopRightRadius(3)
+                                    .BackgroundColor(new(0.345f, 0.345f, 0.345f))
+                        )
+                        .Add(
+                            ".section-box",
+                            s =>
+                                s.Margin(2, 4)
+                                    .BorderTopLeftRadius(5)
+                                    .BorderTopRightRadius(5)
+                                    .BorderBottomLeftRadius(5)
+                                    .BorderBottomRightRadius(5)
+                                    .BackgroundColor(new(0.19f, 0.19f, 0.19f))
+                        )
+                        .Add(".unity-base-field__label", s => s.MinWidth(100).FlexShrink(1))
                 )
-                .Add(".section-box", s => s
-                    .Margin(2, 4)
-                    .BorderTopLeftRadius(5)
-                    .BorderTopRightRadius(5)
-                    .BorderBottomLeftRadius(5)
-                    .BorderBottomRightRadius(5)
-                    .BackgroundColor(new(0.19f, 0.19f, 0.19f))
-                )
-                .Add(".unity-base-field__label", s => s
-                    .MinWidth(100)
-                    .FlexShrink(1)
-                )
-            ));
+            );
 
-            rootVisualElement.Add(Element(
-                FlexDirection(FlexDirection.Row),
-                FlexGrow(1),
-                Element( // left side type list
-                    Width(new Length(25, LengthUnit.Percent)),
-                    BackgroundColor(Background1),
-                    Element( // type list header
-                        FlexDirection(FlexDirection.Row),
-                        PaddingTop(2),
-                        PaddingLeft(3),
-                        PaddingRight(3),
-                        PaddingBottom(2),
-                        BackgroundColor(Background0),
-                        Element<ToolbarSearchField>(
-                            Subscribe<ChangeEvent<string>>(SearchTypeList),
-                            MarginLeft(0),
-                            MarginRight(0),
-                            FlexShrink(1),
-                            Width(new Length(100, LengthUnit.Percent))
-                        )
-                    ),
-                    Element( // type list
-                        out VisualElement typeListElement,
-                        FlexGrow(1),
-                        PaddingLeft(2),
-                        PaddingRight(2),
-                        Element(
-                            FlexGrow(1),
-                            new TextListElement<Type>(SetTypeItemColor, SelectTypeListItem)
-                        )
-                    )
-                ),
-                Element( // center member list
+            rootVisualElement.Add(
+                Element(
+                    FlexDirection(FlexDirection.Row),
                     FlexGrow(1),
-                    BorderLeftWidth(1),
-                    BorderRightWidth(1),
-                    BorderLeftColor(Background0),
-                    BorderRightColor(Background0),
-                    BackgroundColor(Background2),
-                    Element( // member list header
-                        FlexDirection(FlexDirection.Row),
-                        PaddingTop(2),
-                        PaddingLeft(3),
-                        PaddingRight(3),
-                        PaddingBottom(2),
-                        BackgroundColor(Background0),
-                        Element(out _typeTitleElement),
-                        Element(FlexGrow(1)),
-                        Element(
-                            out _memberListSearchElement,
-                            Subscribe<ChangeEvent<string>>(SearchMemberList),
-                            MarginLeft(0),
-                            MarginRight(0),
-                            FlexShrink(1),
-                            Width(150)
-                        )
-                    ),
-                    Element( // member list
-                        out VisualElement memberListElement,
-                        FlexGrow(1),
-                        PaddingLeft(2),
-                        PaddingRight(2),
-                        Element(
+                    Element( // left side type list
+                        Width(new Length(25, LengthUnit.Percent)),
+                        BackgroundColor(Background1),
+                        Element( // type list header
+                            FlexDirection(FlexDirection.Row),
+                            PaddingTop(2),
+                            PaddingLeft(3),
+                            PaddingRight(3),
+                            PaddingBottom(2),
+                            BackgroundColor(Background0),
+                            Element<ToolbarSearchField>(
+                                Subscribe<ChangeEvent<string>>(SearchTypeList),
+                                MarginLeft(0),
+                                MarginRight(0),
+                                FlexShrink(1),
+                                Width(new Length(100, LengthUnit.Percent))
+                            )
+                        ),
+                        Element( // type list
+                            out VisualElement typeListElement,
                             FlexGrow(1),
-                            new TextListElement<string>(SetMemberItemColor, SelectMemberListItem) { MultiSelect = true }
+                            PaddingLeft(2),
+                            PaddingRight(2),
+                            Element(
+                                FlexGrow(1),
+                                new TextListElement<Type>(SetTypeItemColor, SelectTypeListItem)
+                            )
                         )
-                    )
-                ),
-                Element( // right side binding settings
-                    BackgroundColor(Background1),
-                    Width(new Length(30, LengthUnit.Percent)),
-                    Element(
-                        out VisualElement bindingSetTabList,
-                        AddClass("tab-list"),
-                        FlexDirection(FlexDirection.Row),
-                        BackgroundColor(Background0),
-                        Height(24),
-                        new TextElement { text = "All", style = { flexGrow = 1, flexBasis = 0, unityTextAlign = TextAnchor.MiddleCenter } },
-                        new TextElement { text = "Avatar", style = { flexGrow = 1, flexBasis = 0, unityTextAlign = TextAnchor.MiddleCenter } },
-                        new TextElement { text = "World", style = { flexGrow = 1, flexBasis = 0, unityTextAlign = TextAnchor.MiddleCenter } },
-                        new TextElement { text = "Prop", style = { flexGrow = 1, flexBasis = 0, unityTextAlign = TextAnchor.MiddleCenter } }
                     ),
-                    Element(
-                        out VisualElement bindingOverrideIdField,
-                        AddClass("section-box"),
-                        MarginTop(4),
-                        PaddingTop(2),
-                        PaddingBottom(2),
-                        new TextField("Override ID:")
-                        {
-                            style = {
-                            flexGrow = 1
-                        }
-                        }
+                    Element( // center member list
+                        FlexGrow(1),
+                        BorderLeftWidth(1),
+                        BorderRightWidth(1),
+                        BorderLeftColor(Background0),
+                        BorderRightColor(Background0),
+                        BackgroundColor(Background2),
+                        Element( // member list header
+                            FlexDirection(FlexDirection.Row),
+                            PaddingTop(2),
+                            PaddingLeft(3),
+                            PaddingRight(3),
+                            PaddingBottom(2),
+                            BackgroundColor(Background0),
+                            Element(out _typeTitleElement),
+                            Element(FlexGrow(1)),
+                            Element(
+                                out _memberListSearchElement,
+                                Subscribe<ChangeEvent<string>>(SearchMemberList),
+                                MarginLeft(0),
+                                MarginRight(0),
+                                FlexShrink(1),
+                                Width(150)
+                            )
+                        ),
+                        Element( // member list
+                            out VisualElement memberListElement,
+                            FlexGrow(1),
+                            PaddingLeft(2),
+                            PaddingRight(2),
+                            Element(
+                                FlexGrow(1),
+                                new TextListElement<string>(
+                                    SetMemberItemColor,
+                                    SelectMemberListItem
+                                )
+                                {
+                                    MultiSelect = true,
+                                }
+                            )
+                        )
                     ),
-                    Element(
-                        AddClass("section-box"),
-                        FlexDirection(FlexDirection.Row),
-                        new Label("Binding Enabled:") { style = { unityTextAlign = TextAnchor.MiddleCenter, marginLeft = 4, minWidth = 100 } },
-                        Element(out VisualElement bindingEnabledToggle, Height(24), FlexGrow(1), new MultiToggle(new() { "Disabled" }) { OnToggle = ToggleSelectedMember })
-                    ),
-                    Element(
-                        AddClass("section-box"),
-                        FlexDirection(FlexDirection.Row),
-                        new Label("Owner Context:") { style = { unityTextAlign = TextAnchor.MiddleCenter, marginLeft = 4, minWidth = 100 } },
-                        Element(out VisualElement ownerContextToggle, Height(24), FlexGrow(1), new MultiToggle(new() { "Self", "Other" }) { OnToggle = SetOwnerContext })
-                    ),
-                    Element(
-                        AddClass("section-box"),
-                        FlexDirection(FlexDirection.Row),
-                        new Label("Scope Context:") { style = { unityTextAlign = TextAnchor.MiddleCenter, marginLeft = 4, minWidth = 100 } },
-                        Element(out VisualElement scopeContextToggle, Height(24), FlexGrow(1), new MultiToggle(new() { "Self", "External Content", "Game Internal" }) { OnToggle = SetScopeContext })
+                    Element( // right side binding settings
+                        BackgroundColor(Background1),
+                        Width(new Length(30, LengthUnit.Percent)),
+                        Element(
+                            out VisualElement bindingSetTabList,
+                            AddClass("tab-list"),
+                            FlexDirection(FlexDirection.Row),
+                            BackgroundColor(Background0),
+                            Height(24),
+                            new TextElement
+                            {
+                                text = "All",
+                                style =
+                                {
+                                    flexGrow = 1,
+                                    flexBasis = 0,
+                                    unityTextAlign = TextAnchor.MiddleCenter,
+                                },
+                            },
+                            new TextElement
+                            {
+                                text = "Avatar",
+                                style =
+                                {
+                                    flexGrow = 1,
+                                    flexBasis = 0,
+                                    unityTextAlign = TextAnchor.MiddleCenter,
+                                },
+                            },
+                            new TextElement
+                            {
+                                text = "World",
+                                style =
+                                {
+                                    flexGrow = 1,
+                                    flexBasis = 0,
+                                    unityTextAlign = TextAnchor.MiddleCenter,
+                                },
+                            },
+                            new TextElement
+                            {
+                                text = "Prop",
+                                style =
+                                {
+                                    flexGrow = 1,
+                                    flexBasis = 0,
+                                    unityTextAlign = TextAnchor.MiddleCenter,
+                                },
+                            }
+                        ),
+                        Element(
+                            out VisualElement bindingOverrideIdField,
+                            AddClass("section-box"),
+                            MarginTop(4),
+                            PaddingTop(2),
+                            PaddingBottom(2),
+                            new TextField("Override ID:") { style = { flexGrow = 1 } }
+                        ),
+                        Element(
+                            AddClass("section-box"),
+                            FlexDirection(FlexDirection.Row),
+                            new Label("Binding Enabled:")
+                            {
+                                style =
+                                {
+                                    unityTextAlign = TextAnchor.MiddleCenter,
+                                    marginLeft = 4,
+                                    minWidth = 100,
+                                },
+                            },
+                            Element(
+                                out VisualElement bindingEnabledToggle,
+                                Height(24),
+                                FlexGrow(1),
+                                new MultiToggle(new() { "Disabled" })
+                                {
+                                    OnToggle = ToggleSelectedMember,
+                                }
+                            )
+                        ),
+                        Element(
+                            AddClass("section-box"),
+                            FlexDirection(FlexDirection.Row),
+                            new Label("Owner Context:")
+                            {
+                                style =
+                                {
+                                    unityTextAlign = TextAnchor.MiddleCenter,
+                                    marginLeft = 4,
+                                    minWidth = 100,
+                                },
+                            },
+                            Element(
+                                out VisualElement ownerContextToggle,
+                                Height(24),
+                                FlexGrow(1),
+                                new MultiToggle(new() { "Self", "Other" })
+                                {
+                                    OnToggle = SetOwnerContext,
+                                }
+                            )
+                        ),
+                        Element(
+                            AddClass("section-box"),
+                            FlexDirection(FlexDirection.Row),
+                            new Label("Scope Context:")
+                            {
+                                style =
+                                {
+                                    unityTextAlign = TextAnchor.MiddleCenter,
+                                    marginLeft = 4,
+                                    minWidth = 100,
+                                },
+                            },
+                            Element(
+                                out VisualElement scopeContextToggle,
+                                Height(24),
+                                FlexGrow(1),
+                                new MultiToggle(
+                                    new() { "Self", "External Content", "Game Internal" }
+                                )
+                                {
+                                    OnToggle = SetScopeContext,
+                                }
+                            )
+                        )
                     )
                 )
-            ));
+            );
 
             foreach (VisualElement element in bindingSetTabList.Children())
             {

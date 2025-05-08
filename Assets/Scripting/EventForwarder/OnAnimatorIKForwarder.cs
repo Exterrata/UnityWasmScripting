@@ -2,7 +2,7 @@
 {
     public class OnAnimatorIKForwarder : BaseEventForwarder
     {
-        private void OnAnimatorIK(int layerIndex)
-            => targetRuntimeBehaviour.ForwardedOnAnimatorIK(layerIndex);
+        private void OnAnimatorIK(int layerIndex) =>
+            targetRuntimeBehaviour.ForwardedOnAnimatorIK(layerIndex);
     }
 }

@@ -8,10 +8,10 @@ namespace WasmScripting.Proxies
     /// </summary>
     public abstract class BaseEventForwarder : MonoBehaviour
     {
-
         public WasmRuntimeBehaviour targetRuntimeBehaviour;
 
-        public static T Create<T>(GameObject targetGO, WasmRuntimeBehaviour targetBehaviour) where T : BaseEventForwarder
+        public static T Create<T>(GameObject targetGO, WasmRuntimeBehaviour targetBehaviour)
+            where T : BaseEventForwarder
         {
             T forwarder = targetGO.AddComponent<T>();
             forwarder.targetRuntimeBehaviour = targetBehaviour;
