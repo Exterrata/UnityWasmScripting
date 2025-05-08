@@ -1,13 +1,13 @@
-name: Validate PR
+name: Format PR
 on:
   pull_request:
     branches: [ main ]
 jobs:
   check_formatting:
     runs-on: ubuntu-latest
-    name: Check Formatting
+    name: Apply Formatting
     steps:
       - uses: actions/checkout@v2
       - run: |
           dotnet tool restore
-          dotnet csharpier check .
+          dotnet csharpier format .
