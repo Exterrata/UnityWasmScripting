@@ -13,7 +13,7 @@ jobs:
     steps:
       - uses: actions/checkout@v3
       - name: Run Csharpier
-      - run: |
+        run: |
           dotnet tool restore
           dotnet csharpier format .
       - name: Check for modified files
