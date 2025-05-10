@@ -1,6 +1,7 @@
 ﻿namespace WasmModule.Proxies;
 
-public class ProxyObject(long id) {
+public class ProxyObject(long id)
+{
 	/// <summary>
 	/// The ID assigned by the WasmAccessManager.
 	/// </summary>
