@@ -2,7 +2,7 @@
 
 public enum QueryTriggerInteraction
 {
-    UseGlobal,
-    Ignore,
-    Collide,
+	UseGlobal,
+	Ignore,
+	Collide,
 }

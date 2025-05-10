@@ -1,7 +1,7 @@
 ﻿namespace WasmScripting.Proxies
 {
-    public class OnAnimatorMoveForwarder : BaseEventForwarder
-    {
-        private void OnAnimatorMove() => targetRuntimeBehaviour.ForwardedOnAnimatorMove();
-    }
+	public class OnAnimatorMoveForwarder : BaseEventForwarder
+	{
+		private void OnAnimatorMove() => targetRuntimeBehaviour.ForwardedOnAnimatorMove();
+	}
 }
