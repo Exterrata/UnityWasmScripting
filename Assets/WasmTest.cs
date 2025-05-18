@@ -27,7 +27,7 @@ public class WasmTest : MonoBehaviour
 		Debug.Log(sharedMaterials.Length);
 		Debug.Log(sharedMaterials[0].ToString());
 		renderer.sharedMaterials = sharedMaterials;
-		
+
 		string[] keywords = sharedMaterials[0].shaderKeywords;
 		Debug.Log("Shader Keywords:");
 		Debug.Log(keywords.Length);
@@ -49,7 +49,6 @@ public class WasmTest : MonoBehaviour
 		{
 			Debug.Log(hits[i].collider.ToString());
 		}
-		
 	}
 
 	private void Update()
