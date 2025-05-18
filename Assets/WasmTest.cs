@@ -34,6 +34,12 @@ public class WasmTest : MonoBehaviour
 		Debug.Log(keywords[0]);
 		//sharedMaterials[0].shaderKeywords = keywords;
 
+		string[] keywords = sharedMaterials[0].shaderKeywords;
+		Debug.Log("Shader Keywords:");
+		Debug.Log(keywords.Length);
+		Debug.Log(keywords[0]);
+		//sharedMaterials[0].shaderKeywords = keywords;
+
 		RaycastHit[] hits = new RaycastHit[8];
 		int count = Physics.SphereCastNonAlloc(new(0, 0, 0), 1, new(0, -1, 0), hits, 5, Physics.DefaultRaycastLayers, QueryTriggerInteraction.UseGlobal);
 
