@@ -18,6 +18,7 @@ namespace WasmScripting
 			ColliderBindings.BindMethods(linker);
 			RaycastHitBindings.BindMethods(linker);
 			RendererBindings.BindMethods(linker);
+			MaterialBindings.BindMethods(linker);
 		}
 
 		/// <summary>
