@@ -3,7 +3,9 @@ using System.Runtime.InteropServices;
 using WasmModule;
 
 namespace UnityEngine;
-public class Component(long id) : Object(id) {
+
+public class Component(long id) : Object(id)
+{
 	#region Implementation
 
 	public GameObject gameObject => new(component_gameObject_get(WrappedId));
