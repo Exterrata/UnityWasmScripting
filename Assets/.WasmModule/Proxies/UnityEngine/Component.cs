@@ -3,7 +3,6 @@ using System.Runtime.InteropServices;
 using WasmModule;
 
 namespace UnityEngine;
-
 public class Component(long id) : Object(id) {
 	#region Implementation
 

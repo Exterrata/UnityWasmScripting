@@ -4,7 +4,9 @@ using WasmModule.Proxies;
 
 namespace UnityEngine;
 
-public class Object(long id) : ProxyObject(id) {
+public class Object(long id) : IProxyObject {
+	public long WrappedId { get; set; } = id;
+	
 	#region Implementation
 
 	public string name {
@@ -71,4 +73,5 @@ public class Object(long id) : ProxyObject(id) {
 	private static extern void object_instantiate(long id);
 
 	#endregion Imports
+
 }
