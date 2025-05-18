@@ -9,7 +9,8 @@ public class Component(long id) : Object(id) {
 	public GameObject gameObject => new(component_gameObject_get(WrappedId));
 	public Transform transform => new(component_transform_get(WrappedId));
 
-	public string tag {
+	public string tag
+	{
 		get => internal_component_tag_get(WrappedId);
 		set => internal_component_tag_set(WrappedId, value);
 	}
@@ -26,21 +27,26 @@ public class Component(long id) : Object(id) {
 	#region Marshaling
 
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
-	private static unsafe string internal_component_tag_get(long id) {
+	private static unsafe string internal_component_tag_get(long id)
+	{
 		long strPtr = component_tag_get(id);
 		return new((char*)strPtr);
 	}
 
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
-	private static unsafe void internal_component_tag_set(long id, string name) {
-		fixed (char* str = name) {
+	private static unsafe void internal_component_tag_set(long id, string name)
+	{
+		fixed (char* str = name)
+		{
 			component_tag_set(id, (long)str, name.Length * sizeof(char));
 		}
 	}
 
-	private static unsafe Component internal_component_getComponent_string(long wrappedId, string name) {
+	private static unsafe Component internal_component_getComponent_string(long wrappedId, string name)
+	{
 		int componentType = default;
-		fixed (char* str = name) {
+		fixed (char* str = name)
+		{
 			long id = component_getComponent_string(wrappedId, (long)str, name.Length * sizeof(char), (long)&componentType);
 
 			Component component = RuntimeHelpers.GetUninitializedObject(TypeMap.GetType(componentType)) as Component;
@@ -50,7 +56,8 @@ public class Component(long id) : Object(id) {
 		}
 	}
 
-	private static unsafe Component internal_component_getComponent_type(long wrappedId, Type type) {
+	private static unsafe Component internal_component_getComponent_type(long wrappedId, Type type)
+	{
 		int componentType = default;
 		long id = component_getComponent_type(wrappedId, TypeMap.GetId(type), (long)&componentType);
 

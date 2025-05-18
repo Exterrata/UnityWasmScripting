@@ -1,8 +1,10 @@
 ﻿using UnityEngine;
 using UnityEngine.UIElements;
 
-namespace Koneko.UIBuilder {
-	public class StyleHolder : IStyle {
+namespace Koneko.UIBuilder
+{
+	public class StyleHolder : IStyle
+	{
 		public StyleEnum<Align> alignContent { get; set; } = new(StyleKeyword.Null);
 		public StyleEnum<Align> alignItems { get; set; } = new(StyleKeyword.Null);
 		public StyleEnum<Align> alignSelf { get; set; } = new(StyleKeyword.Null);
