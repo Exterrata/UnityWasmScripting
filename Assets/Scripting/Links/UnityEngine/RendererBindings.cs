@@ -3,13 +3,17 @@ using System.Collections.Generic;
 using UnityEngine;
 using Wasmtime;
 
-namespace WasmScripting.UnityEngine {
-	public class RendererBindings : WasmBinding {
-		public static void BindMethods(Linker linker) {
+namespace WasmScripting.UnityEngine
+{
+	public class RendererBindings : WasmBinding
+	{
+		public static void BindMethods(Linker linker)
+		{
 			linker.DefineFunction(
 				"unity",
 				"Renderer_func_GetSharedMaterials",
-				(Caller caller, long id, long outMaterialIds, long outMaterialsLength) => {
+				(Caller caller, long id, long outMaterialIds, long outMaterialsLength) =>
+				{
 					StoreData data = GetData(caller);
 
 					Renderer renderer = IdTo<Renderer>(data, id);
@@ -22,7 +26,8 @@ namespace WasmScripting.UnityEngine {
 					long address = data.Alloc(size);
 					Span<long> span = data.Memory.GetSpan<long>(address, size);
 
-					for (int i = 0; i < length; i++) {
+					for (int i = 0; i < length; i++)
+					{
 						span[i] = IdFrom(data, materials[i]);
 					}
 
@@ -34,7 +39,8 @@ namespace WasmScripting.UnityEngine {
 			linker.DefineFunction(
 				"unity",
 				"Renderer_get_SharedMaterials",
-				(Caller caller, long id, long outMaterialIds, long outMaterialsLength) => {
+				(Caller caller, long id, long outMaterialIds, long outMaterialsLength) =>
+				{
 					StoreData data = GetData(caller);
 
 					Renderer renderer = IdTo<Renderer>(data, id);
@@ -46,7 +52,8 @@ namespace WasmScripting.UnityEngine {
 					long address = data.Alloc(size);
 					Span<long> span = data.Memory.GetSpan<long>(address, size);
 
-					for (int i = 0; i < length; i++) {
+					for (int i = 0; i < length; i++)
+					{
 						span[i] = IdFrom(data, materials[i]);
 					}
 
@@ -58,11 +65,13 @@ namespace WasmScripting.UnityEngine {
 			linker.DefineFunction(
 				"unity",
 				"Renderer_set_SharedMaterials",
-				(Caller caller, long id, long ptrMaterialIds, int materialsLength) => {
+				(Caller caller, long id, long ptrMaterialIds, int materialsLength) =>
+				{
 					StoreData data = GetData(caller);
 
 					Material[] materials = new Material[materialsLength];
-					for (int i = 0; i < materialsLength; i++) {
+					for (int i = 0; i < materialsLength; i++)
+					{
 						long materialsId = data.Memory.ReadInt64(ptrMaterialIds + i * sizeof(long));
 						materials[i] = IdTo<Material>(data, materialsId);
 					}
