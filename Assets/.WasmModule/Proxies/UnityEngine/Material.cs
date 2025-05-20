@@ -1,5 +1,6 @@
 ﻿using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
+using UnityEngine.Rendering;
 
 namespace UnityEngine;
 
@@ -9,13 +10,11 @@ public class Material(long id) : Object(id) {
 		set => internal_set_shaderKeywords(WrappedId, value);
 	}
 
-	public void EnableKeyword(LocalKeyword keyword) => internal_func_EnableKeyword(keyword.wrappedId) {
-
-	}
+	public void EnableKeyword(LocalKeyword keyword) => internal_func_EnableKeyword(keyword.WrappedId);
 
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
-	private static unsafe string[] internal_func_EnableKeyword(long wrappedId) {
-		UnityEngineMaterial__func__EnableKeyword(WrappedId);
+	private static unsafe void internal_func_EnableKeyword(long wrappedId) {
+		UnityEngineMaterial__func__EnableKeyword(wrappedId);
 	}
 
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
