@@ -2,10 +2,8 @@
 using UnityEngine;
 using UnityEngine.UIElements;
 
-namespace Koneko.UIBuilder
-{
-	public static partial class UIElementBuilder
-	{
+namespace Koneko.UIBuilder {
+	public static partial class UIElementBuilder {
 		public static StyleStruct AlignContent(Align value) => new(StyleType.AlignContent) { Align = value };
 
 		public static StyleStruct AlignItems(Align value) => new(StyleType.AlignItems) { Align = value };
@@ -162,11 +160,9 @@ namespace Koneko.UIBuilder
 
 		public static StyleStruct WordSpacing(Length value) => new(StyleType.WordSpacing) { Length = value };
 
-		private static void ApplyStyle(VisualElement element, StyleStruct styleStruct)
-		{
+		private static void ApplyStyle(VisualElement element, StyleStruct styleStruct) {
 			IStyle style = element.style;
-			switch (styleStruct.Type)
-			{
+			switch (styleStruct.Type) {
 				case StyleType.AlignContent:
 					style.alignContent = styleStruct.Align;
 					break;

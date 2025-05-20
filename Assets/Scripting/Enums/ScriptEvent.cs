@@ -1,10 +1,8 @@
 ﻿using JetBrains.Annotations;
 
-namespace WasmScripting.Enums
-{
+namespace WasmScripting.Enums {
 	[PublicAPI]
-	public enum ScriptEvent
-	{
+	public enum ScriptEvent {
 		Awake,
 		Start,
 		Update,

@@ -1,17 +1,13 @@
 ﻿using UnityEngine;
 using Wasmtime;
 
-namespace WasmScripting.UnityEngine
-{
-	public class TransformBindings : WasmBinding
-	{
-		public static void BindMethods(Linker linker)
-		{
+namespace WasmScripting.UnityEngine {
+	public class TransformBindings : WasmBinding {
+		public static void BindMethods(Linker linker) {
 			linker.DefineFunction(
 				"unity",
 				"transform_position_get",
-				(Caller caller, long objectId, long positionPtr) =>
-				{
+				(Caller caller, long objectId, long positionPtr) => {
 					StoreData data = GetData(caller);
 					Vector3 position = IdTo<Transform>(data, objectId).position;
 					data.Memory.Write(positionPtr, position);
@@ -21,8 +17,7 @@ namespace WasmScripting.UnityEngine
 			linker.DefineFunction(
 				"unity",
 				"transform_position_set",
-				(Caller caller, long objectId, long positionPtr) =>
-				{
+				(Caller caller, long objectId, long positionPtr) => {
 					StoreData data = GetData(caller);
 					Transform transform = IdTo<Transform>(data, objectId);
 					transform.position = data.Memory.Read<Vector3>(positionPtr);

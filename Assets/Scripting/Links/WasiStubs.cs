@@ -2,12 +2,9 @@
 using System.Diagnostics;
 using Wasmtime;
 
-namespace WasmScripting
-{
-	public static class WasiStubs
-	{
-		public static void DefineWasiFunctions(Linker linker)
-		{
+namespace WasmScripting {
+	public static class WasiStubs {
+		public static void DefineWasiFunctions(Linker linker) {
 			linker.DefineFunction("wasi_snapshot_preview1", "environ_get", (int _, int _) => 0);
 			linker.DefineFunction("wasi_snapshot_preview1", "environ_sizes_get", (int environcPtr, int environsPtr) => 0);
 			linker.DefineFunction("wasi_snapshot_preview1", "fd_prestat_get", (int fd, int prestatPtr) => 8);
@@ -34,11 +31,9 @@ namespace WasmScripting
 			linker.DefineFunction(
 				"wasi_snapshot_preview1",
 				"clock_time_get",
-				(Caller caller, int clockId, long precision, int timePtr) =>
-				{
+				(Caller caller, int clockId, long precision, int timePtr) => {
 					long timestamp;
-					switch (clockId)
-					{
+					switch (clockId) {
 						case 0:
 							timestamp = DateTimeOffset.UtcNow.ToUnixTimeMilliseconds() * 1_000_000;
 							break;
@@ -64,15 +59,13 @@ namespace WasmScripting
 			linker.DefineFunction(
 				"wasi_snapshot_preview1",
 				"random_get",
-				(Caller caller, int bufPtr, int bufLen) =>
-				{
+				(Caller caller, int bufPtr, int bufLen) => {
 					Random random = new();
 					byte[] randomBytes = new byte[bufLen];
 					random.NextBytes(randomBytes);
 
 					Memory memory = caller.GetMemory("memory")!;
-					for (int i = 0; i < bufLen; i++)
-					{
+					for (int i = 0; i < bufLen; i++) {
 						memory.WriteByte(bufPtr + i, randomBytes[i]);
 					}
 					return 0;

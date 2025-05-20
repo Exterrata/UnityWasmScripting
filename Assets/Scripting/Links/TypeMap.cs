@@ -2,10 +2,8 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-namespace WasmScripting
-{
-	public static class TypeMap
-	{
+namespace WasmScripting {
+	public static class TypeMap {
 		private static readonly Dictionary<int, Type> IdToType = new()
 		{
 			{ 0, typeof(Component) },

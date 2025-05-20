@@ -1,7 +1,6 @@
 ﻿namespace UnityEngine;
 
-public class MonoBehaviour(long id) : Component(id)
-{
+public class MonoBehaviour(long id) : Component(id) {
 	#region Implementation
 
 	public MonoBehaviour()

@@ -4,11 +4,9 @@ using UnityEditor;
 using UnityEngine;
 using WasmScripting.Enums;
 
-namespace WasmScripting
-{
+namespace WasmScripting {
 	[DefaultExecutionOrder(50)] // Has to execute after WasmVM.
-	public class WasmRuntimeBehaviour : MonoBehaviour
-	{
+	public class WasmRuntimeBehaviour : MonoBehaviour {
 		#region Versioning
 
 		private const int LatestVersion = 1;
@@ -16,8 +14,7 @@ namespace WasmScripting
 		[SerializeField, HideInInspector]
 		private int version;
 
-		private void Reset()
-		{
+		private void Reset() {
 			// Assign latest version if added in inspector / reset
 			version = LatestVersion;
 		}
@@ -43,32 +40,27 @@ namespace WasmScripting
 		#region Events
 
 		// Unity Events
-		private void Awake()
-		{
+		private void Awake() {
 			if (UnityEventsUtils.HasEvent(definedEvents, UnityEvents.Awake))
 				VM.CallScriptEvent(this, ScriptEvent.Awake);
 		}
 
-		private void Start()
-		{
+		private void Start() {
 			if (UnityEventsUtils.HasEvent(definedEvents, UnityEvents.Start))
 				VM.CallScriptEvent(this, ScriptEvent.Start);
 		}
 
-		private void OnEnable()
-		{
+		private void OnEnable() {
 			if (UnityEventsUtils.HasEvent(definedEvents, UnityEvents.OnEnable))
 				VM.CallScriptEvent(this, ScriptEvent.OnEnable);
 		}
 
-		private void OnDisable()
-		{
+		private void OnDisable() {
 			if (UnityEventsUtils.HasEvent(definedEvents, UnityEvents.OnDisable))
 				VM.CallScriptEvent(this, ScriptEvent.OnDisable);
 		}
 
-		private void OnDestroy()
-		{
+		private void OnDestroy() {
 			if (UnityEventsUtils.HasEvent(definedEvents, UnityEvents.OnDestroy) && !VM.Disposed)
 				VM.CallScriptEvent(this, ScriptEvent.OnDestroy);
 		}
@@ -100,8 +92,7 @@ namespace WasmScripting
 	}
 
 	[Serializable]
-	public struct WasmVariable<T>
-	{
+	public struct WasmVariable<T> {
 		public string name;
 		public T value;
 	}

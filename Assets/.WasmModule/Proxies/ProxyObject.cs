@@ -1,7 +1,6 @@
 ﻿namespace WasmModule.Proxies;
 
-public interface IProxyObject
-{
+public interface IProxyObject {
 	/// <summary>
 	/// The ID assigned by the WasmAccessManager.
 	/// </summary>

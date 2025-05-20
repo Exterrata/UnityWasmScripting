@@ -1,13 +1,10 @@
 ﻿using UnityEditor;
 using UnityEngine;
 
-namespace WasmScripting
-{
+namespace WasmScripting {
 	[CustomEditor(typeof(WasmRuntimeBehaviour))]
-	public class WasmBehaviourInspector : Editor
-	{
-		public override void OnInspectorGUI()
-		{
+	public class WasmBehaviourInspector : Editor {
+		public override void OnInspectorGUI() {
 			base.OnInspectorGUI();
 
 			if (!GUILayout.Button("Build Wasm Module"))

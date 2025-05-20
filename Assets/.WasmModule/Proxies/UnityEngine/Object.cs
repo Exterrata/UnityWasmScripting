@@ -4,14 +4,12 @@ using WasmModule.Proxies;
 
 namespace UnityEngine;
 
-public class Object(long id) : IProxyObject
-{
+public class Object(long id) : IProxyObject {
 	public long WrappedId { get; set; } = id;
 
 	#region Implementation
 
-	public string name
-	{
+	public string name {
 		get => internal_object_name_get(WrappedId);
 		set => internal_object_name_set(WrappedId, value);
 	}
@@ -27,8 +25,7 @@ public class Object(long id) : IProxyObject
 	#region Marshaling
 
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
-	private static unsafe string internal_object_name_get(long id)
-	{
+	private static unsafe string internal_object_name_get(long id) {
 		char* outString = default;
 		int outSize = default;
 
@@ -39,17 +36,14 @@ public class Object(long id) : IProxyObject
 	}
 
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
-	private static unsafe void internal_object_name_set(long id, string name)
-	{
-		fixed (char* str = name)
-		{
+	private static unsafe void internal_object_name_set(long id, string name) {
+		fixed (char* str = name) {
 			object_name_set(id, (long)str, name.Length * sizeof(char));
 		}
 	}
 
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
-	private static unsafe string internal_object_toString(long id)
-	{
+	private static unsafe string internal_object_toString(long id) {
 		char* strPtr = default;
 		int strSize = default;
 
