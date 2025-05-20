@@ -1,5 +1,6 @@
 ﻿using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
+using UnityEngine.Rendering;
 
 namespace UnityEngine;
 
@@ -9,6 +10,14 @@ public class Material(long id) : Object(id)
 	{
 		get => internal_get_shaderKeywords(WrappedId);
 		set => internal_set_shaderKeywords(WrappedId, value);
+	}
+
+	public void EnableKeyword(LocalKeyword keyword) => internal_func_EnableKeyword(keyword.WrappedId);
+
+	[MethodImpl(MethodImplOptions.AggressiveInlining)]
+	private static unsafe void internal_func_EnableKeyword(long wrappedId)
+	{
+		UnityEngineMaterial__func__EnableKeyword(wrappedId);
 	}
 
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
@@ -53,6 +62,9 @@ public class Material(long id) : Object(id)
 		Marshal.FreeHGlobal((IntPtr)keywords);
 		Marshal.FreeHGlobal((IntPtr)lengths);
 	}
+
+	[WasmImportLinkage, DllImport("UnityEngine")]
+	private static extern void UnityEngineMaterial__func__EnableKeyword(long wrappedId);
 
 	[WasmImportLinkage, DllImport("UnityEngine")]
 	private static extern unsafe void UnityEngineMaterial__get__shaderKeywords(
