@@ -1,5 +1,3 @@
 namespace UnityEngine;
 
-public class Shader(long id) : Object(id) {
-
-}
+public class Shader(long id) : Object(id) { }
