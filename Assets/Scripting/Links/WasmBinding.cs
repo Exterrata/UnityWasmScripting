@@ -10,8 +10,12 @@ namespace WasmScripting
 		protected static StoreData GetData(Caller caller) => (StoreData)caller.Store.GetData()!;
 
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
-		protected static T IdTo<T>(StoreData data, long id)
-			where T : class => data.AccessManager.ToWrapped(id).Target as T;
+		protected static T IdToClass<T>(StoreData data, long id)
+			where T : class => (T)data.AccessManager.ToWrapped(id).Target;
+
+		[MethodImpl(MethodImplOptions.AggressiveInlining)]
+		protected static ref T IdToStruct<T>(StoreData data, long id)
+			where T : struct => ref Unsafe.Unbox<T>(data.AccessManager.ToWrapped(id).Target);
 
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
 		protected static long IdFrom(StoreData data, object obj) => obj == null ? 0 : data.AccessManager.ToWrapped(obj).Id;

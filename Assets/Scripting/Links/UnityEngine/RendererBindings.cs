@@ -16,7 +16,7 @@ namespace WasmScripting.UnityEngine
 				{
 					StoreData data = GetData(caller);
 
-					Renderer renderer = IdTo<Renderer>(data, id);
+					Renderer renderer = IdToClass<Renderer>(data, id);
 					List<Material> materials = new();
 					renderer.GetSharedMaterials(materials);
 
@@ -43,7 +43,7 @@ namespace WasmScripting.UnityEngine
 				{
 					StoreData data = GetData(caller);
 
-					Renderer renderer = IdTo<Renderer>(data, id);
+					Renderer renderer = IdToClass<Renderer>(data, id);
 					Material[] materials = renderer.sharedMaterials;
 
 					int length = materials.Length;
@@ -73,10 +73,10 @@ namespace WasmScripting.UnityEngine
 					for (int i = 0; i < materialsLength; i++)
 					{
 						long materialsId = data.Memory.ReadInt64(ptrMaterialIds + i * sizeof(long));
-						materials[i] = IdTo<Material>(data, materialsId);
+						materials[i] = IdToClass<Material>(data, materialsId);
 					}
 
-					Renderer renderer = IdTo<Renderer>(data, id);
+					Renderer renderer = IdToClass<Renderer>(data, id);
 					renderer.sharedMaterials = materials;
 				}
 			);
