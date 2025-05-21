@@ -11,7 +11,7 @@ namespace WasmScripting.UnityEngine {
 				"UnityEngineMaterial__get__shaderKeywords",
 				(Caller caller, long wrappedId, int shaderKeywordsPointerPointerLengthsPointer, int shaderKeywordsPointerPointerPointer, int shaderKeywordsLengthsPointer) => {
 					StoreData data = GetData(caller);
-					Material selfObject = IdTo<Material>(data, wrappedId);
+					Material selfObject = IdToClass<Material>(data, wrappedId);
 					string[] keywords = selfObject.shaderKeywords;
 
 					int length = keywords.Length;
@@ -37,7 +37,7 @@ namespace WasmScripting.UnityEngine {
 				"UnityEngineMaterial__set__shaderKeywords",
 				(Caller caller, long wrappedId, long shaderKeywordsPointerPointer, long shaderKeywordsPointerPointerLengths, int shaderKeywordsLength) => {
 					StoreData data = GetData(caller);
-					Material selfObject = IdTo<Material>(data, wrappedId);
+					Material selfObject = IdToClass<Material>(data, wrappedId);
 
 					Span<long> shaderKeywordsPointerSpan = data.Memory.GetSpan<long>(shaderKeywordsPointerPointer, shaderKeywordsLength);
 					Span<int> shaderKeywordsLengthsSpan = data.Memory.GetSpan<int>(shaderKeywordsPointerPointerLengths, shaderKeywordsLength);

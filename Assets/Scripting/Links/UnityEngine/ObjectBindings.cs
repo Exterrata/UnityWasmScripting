@@ -10,7 +10,7 @@ namespace WasmScripting.UnityEngine {
 				"object_name_get",
 				(Caller caller, long objectId, long outString, long outSize) => {
 					StoreData data = GetData(caller);
-					string str = IdTo<Object>(data, objectId).name;
+					string str = IdToClass<Object>(data, objectId).name;
 					long address = data.Alloc(str.Length * sizeof(char));
 					data.Memory.WriteString(address, str, Encoding.Unicode);
 					data.Memory.WriteInt64(outString, address);
@@ -24,7 +24,7 @@ namespace WasmScripting.UnityEngine {
 				(Caller caller, long objectId, long strPtr, int strSize) => {
 					StoreData data = GetData(caller);
 					string str = data.Memory.ReadString(strPtr, strSize, Encoding.Unicode);
-					IdTo<Object>(data, objectId).name = str;
+					IdToClass<Object>(data, objectId).name = str;
 				}
 			);
 
@@ -33,7 +33,7 @@ namespace WasmScripting.UnityEngine {
 				"object_toString",
 				(Caller caller, long objectId, long outString, long outSize) => {
 					StoreData data = GetData(caller);
-					string str = IdTo<Object>(data, objectId).ToString();
+					string str = IdToClass<Object>(data, objectId).ToString();
 					long address = data.Alloc(str.Length * sizeof(char));
 					data.Memory.WriteString(address, str, Encoding.Unicode);
 					data.Memory.WriteInt64(outString, address);
@@ -46,7 +46,7 @@ namespace WasmScripting.UnityEngine {
 				"object_destroy",
 				(Caller caller, long objectId) => {
 					StoreData data = GetData(caller);
-					Object.Destroy(IdTo<Object>(data, objectId));
+					Object.Destroy(IdToClass<Object>(data, objectId));
 				}
 			);
 
@@ -55,7 +55,7 @@ namespace WasmScripting.UnityEngine {
 				"object_instantiate",
 				(Caller caller, long objectId) => {
 					StoreData data = GetData(caller);
-					Object.Instantiate(IdTo<Object>(data, objectId));
+					Object.Instantiate(IdToClass<Object>(data, objectId));
 				}
 			);
 		}

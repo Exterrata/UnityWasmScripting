@@ -30,7 +30,7 @@ namespace WasmScripting.UnityEngine {
 				"gameObject_activeInHierarchy_get",
 				(Caller caller, long objectId) => {
 					StoreData data = GetData(caller);
-					return IdTo<GameObject>(data, objectId).activeInHierarchy ? 1 : 0;
+					return IdToClass<GameObject>(data, objectId).activeInHierarchy ? 1 : 0;
 				}
 			);
 
@@ -39,7 +39,7 @@ namespace WasmScripting.UnityEngine {
 				"gameObject_activeSelf_get",
 				(Caller caller, long objectId) => {
 					StoreData data = GetData(caller);
-					return IdTo<GameObject>(data, objectId).activeSelf ? 1 : 0;
+					return IdToClass<GameObject>(data, objectId).activeSelf ? 1 : 0;
 				}
 			);
 
@@ -48,7 +48,7 @@ namespace WasmScripting.UnityEngine {
 				"gameObject_isStatic_get",
 				(Caller caller, long objectId) => {
 					StoreData data = GetData(caller);
-					return IdTo<GameObject>(data, objectId).isStatic ? 1 : 0;
+					return IdToClass<GameObject>(data, objectId).isStatic ? 1 : 0;
 				}
 			);
 
@@ -57,7 +57,7 @@ namespace WasmScripting.UnityEngine {
 				"gameObject_isStatic_set",
 				(Caller caller, long objectId, int isStatic) => {
 					StoreData data = GetData(caller);
-					IdTo<GameObject>(data, objectId).isStatic = isStatic != 0;
+					IdToClass<GameObject>(data, objectId).isStatic = isStatic != 0;
 				}
 			);
 
@@ -66,7 +66,7 @@ namespace WasmScripting.UnityEngine {
 				"gameObject_layer_get",
 				(Caller caller, long objectId) => {
 					StoreData data = GetData(caller);
-					return IdTo<GameObject>(data, objectId).layer;
+					return IdToClass<GameObject>(data, objectId).layer;
 				}
 			);
 
@@ -75,7 +75,7 @@ namespace WasmScripting.UnityEngine {
 				"gameObject_layer_set",
 				(Caller caller, long objectId, int layer) => {
 					StoreData data = GetData(caller);
-					IdTo<GameObject>(data, objectId).layer = layer;
+					IdToClass<GameObject>(data, objectId).layer = layer;
 				}
 			);
 
@@ -84,7 +84,7 @@ namespace WasmScripting.UnityEngine {
 				"gameObject_scene_get",
 				(Caller caller, long objectId) => {
 					StoreData data = GetData(caller);
-					return IdFrom(data, IdTo<GameObject>(data, objectId).scene);
+					return IdFrom(data, IdToClass<GameObject>(data, objectId).scene);
 				}
 			);
 
@@ -93,7 +93,7 @@ namespace WasmScripting.UnityEngine {
 				"gameObject_sceneCullingMask_get",
 				(Caller caller, long objectId) => {
 					StoreData data = GetData(caller);
-					ulong sceneCullingMask = IdTo<GameObject>(data, objectId).sceneCullingMask;
+					ulong sceneCullingMask = IdToClass<GameObject>(data, objectId).sceneCullingMask;
 					return UnsafeUtility.As<ulong, long>(ref sceneCullingMask);
 				}
 			);
@@ -103,7 +103,7 @@ namespace WasmScripting.UnityEngine {
 				"gameObject_tag_get",
 				(Caller caller, long objectId) => {
 					StoreData data = GetData(caller);
-					string str = IdTo<GameObject>(data, objectId).tag;
+					string str = IdToClass<GameObject>(data, objectId).tag;
 					return WriteString(data, str);
 				}
 			);
@@ -114,7 +114,7 @@ namespace WasmScripting.UnityEngine {
 				(Caller caller, long objectId, long strPtr, int strSize) => {
 					StoreData data = GetData(caller);
 					string str = data.Memory.ReadString(strPtr, strSize, Encoding.Unicode);
-					IdTo<GameObject>(data, objectId).tag = str;
+					IdToClass<GameObject>(data, objectId).tag = str;
 				}
 			);
 
@@ -123,7 +123,7 @@ namespace WasmScripting.UnityEngine {
 				"gameObject_transform_get",
 				(Caller caller, long objectId) => {
 					StoreData data = GetData(caller);
-					return IdFrom(data, IdTo<GameObject>(data, objectId).transform);
+					return IdFrom(data, IdToClass<GameObject>(data, objectId).transform);
 				}
 			);
 		}

@@ -9,7 +9,7 @@ namespace WasmScripting.UnityEngine {
 				"transform_position_get",
 				(Caller caller, long objectId, long positionPtr) => {
 					StoreData data = GetData(caller);
-					Vector3 position = IdTo<Transform>(data, objectId).position;
+					Vector3 position = IdToClass<Transform>(data, objectId).position;
 					data.Memory.Write(positionPtr, position);
 				}
 			);
@@ -19,7 +19,7 @@ namespace WasmScripting.UnityEngine {
 				"transform_position_set",
 				(Caller caller, long objectId, long positionPtr) => {
 					StoreData data = GetData(caller);
-					Transform transform = IdTo<Transform>(data, objectId);
+					Transform transform = IdToClass<Transform>(data, objectId);
 					transform.position = data.Memory.Read<Vector3>(positionPtr);
 				}
 			);
