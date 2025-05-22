@@ -3,13 +3,17 @@ using System.Text;
 using UnityEngine;
 using Wasmtime;
 
-namespace WasmScripting.UnityEngine {
-	public class ComponentBindings : WasmBinding {
-		public static void BindMethods(Linker linker) {
+namespace WasmScripting.UnityEngine
+{
+	public class ComponentBindings : WasmBinding
+	{
+		public static void BindMethods(Linker linker)
+		{
 			linker.DefineFunction(
 				"unity",
 				"component_tag_get",
-				(Caller caller, long wrappedId) => {
+				(Caller caller, long wrappedId) =>
+				{
 					StoreData data = GetData(caller);
 					string str = IdToClass<Component>(data, wrappedId).tag;
 					return WriteString(data, str);
@@ -19,7 +23,8 @@ namespace WasmScripting.UnityEngine {
 			linker.DefineFunction(
 				"unity",
 				"component_tag_set",
-				(Caller caller, long wrappedId, long strPtr, int strSize) => {
+				(Caller caller, long wrappedId, long strPtr, int strSize) =>
+				{
 					StoreData data = GetData(caller);
 					string str = data.Memory.ReadString(strPtr, strSize, Encoding.Unicode);
 					IdToClass<Component>(data, wrappedId).tag = str;
@@ -29,7 +34,8 @@ namespace WasmScripting.UnityEngine {
 			linker.DefineFunction(
 				"unity",
 				"component_transform_get",
-				(Caller caller, long wrappedId) => {
+				(Caller caller, long wrappedId) =>
+				{
 					StoreData data = GetData(caller);
 					return IdFrom(data, IdToClass<Component>(data, wrappedId).transform);
 				}
@@ -38,7 +44,8 @@ namespace WasmScripting.UnityEngine {
 			linker.DefineFunction(
 				"unity",
 				"component_gameObject_get",
-				(Caller caller, long wrappedId) => {
+				(Caller caller, long wrappedId) =>
+				{
 					StoreData data = GetData(caller);
 					return IdFrom(data, IdToClass<Component>(data, wrappedId).gameObject);
 				}
@@ -47,7 +54,8 @@ namespace WasmScripting.UnityEngine {
 			linker.DefineFunction(
 				"unity",
 				"component_getComponent_string",
-				(Caller caller, long wrappedId, long componentStr, int componentStrLength, long outComponentType) => {
+				(Caller caller, long wrappedId, long componentStr, int componentStrLength, long outComponentType) =>
+				{
 					StoreData data = GetData(caller);
 					Component component = IdToClass<Component>(data, wrappedId);
 
@@ -62,7 +70,8 @@ namespace WasmScripting.UnityEngine {
 			linker.DefineFunction(
 				"unity",
 				"component_getComponent_type",
-				(Caller caller, long wrappedId, int componentTypeId, long outComponentType) => {
+				(Caller caller, long wrappedId, int componentTypeId, long outComponentType) =>
+				{
 					StoreData data = GetData(caller);
 					Component component = IdToClass<Component>(data, wrappedId);
 

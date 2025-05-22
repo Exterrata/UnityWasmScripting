@@ -2,8 +2,10 @@
 using System.Text;
 using Wasmtime;
 
-namespace WasmScripting {
-	public abstract class WasmBinding {
+namespace WasmScripting
+{
+	public abstract class WasmBinding
+	{
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
 		protected static StoreData GetData(Caller caller) => (StoreData)caller.Store.GetData()!;
 
@@ -22,7 +24,8 @@ namespace WasmScripting {
 		/// Writes a null terminated string
 		/// </summary>
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
-		protected static long WriteString(StoreData data, string str) {
+		protected static long WriteString(StoreData data, string str)
+		{
 			long strPtr = data.Alloc((str.Length + 1) * sizeof(char));
 			data.Memory.WriteString(strPtr, str, Encoding.Unicode);
 			data.Memory.WriteInt16(strPtr + str.Length * 2, 0);

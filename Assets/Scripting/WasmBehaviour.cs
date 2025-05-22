@@ -1,5 +1,6 @@
 ﻿using UnityEngine;
 
-namespace WasmScripting {
+namespace WasmScripting
+{
 	public class WasmBehaviour : MonoBehaviour { }
 }

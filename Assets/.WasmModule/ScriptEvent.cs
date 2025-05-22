@@ -1,6 +1,7 @@
 ﻿namespace WasmModule;
 
-public enum ScriptEvent {
+public enum ScriptEvent
+{
 	Awake,
 	Start,
 	Update,
