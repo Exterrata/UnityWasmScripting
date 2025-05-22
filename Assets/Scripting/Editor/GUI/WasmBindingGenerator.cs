@@ -11,10 +11,8 @@ using static Koneko.UIBuilder.UIElementBuilder;
 using Color = UnityEngine.Color;
 using FlexDirection = UnityEngine.UIElements.FlexDirection;
 
-namespace WasmScripting
-{
-	public partial class WasmBindingGenerator : EditorWindow
-	{
+namespace WasmScripting {
+	public partial class WasmBindingGenerator : EditorWindow {
 		private readonly List<VisualElement> _bindingSetTabList = new();
 		private ToolbarSearchField _memberListSearchElement;
 		private TextListElement<Type> _typeListElement;
@@ -35,36 +33,30 @@ namespace WasmScripting
 
 		private bool ValidSelection => _selectedType != null && _memberListElement.HasSelection;
 
-		public void CreateGUI()
-		{
+		public void CreateGUI() {
 			BuildUI();
 			_typeListElement.SetList(Types);
 			_shownTypes.AddRange(Types);
 			SetActiveBindingSet(new ClickEvent { target = _bindingSetTabList[0] });
 		}
 
-		private void SetActiveBindingSet(ClickEvent evt)
-		{
+		private void SetActiveBindingSet(ClickEvent evt) {
 			foreach (VisualElement element in _bindingSetTabList)
 				element.SetChecked(false);
 			TextElement target = (TextElement)evt.target;
 			target.SetChecked(true);
 
 			_activeSets.Clear();
-			if (target.text == "All")
-			{
+			if (target.text == "All") {
 				_activeSets.AddRange(AllSets);
-			}
-			else
+			} else
 				_activeSets.Add(target.text);
 
 			UpdateMemberSettings();
 		}
 
-		private void SetOverrideId(ChangeEvent<string> value)
-		{
-			if (!ValidSelection)
-			{
+		private void SetOverrideId(ChangeEvent<string> value) {
+			if (!ValidSelection) {
 				_bindingOverrideIdField.value = "";
 				return;
 			}
@@ -73,8 +65,7 @@ namespace WasmScripting
 				_activeSets,
 				_selectedType,
 				_memberListElement.SelectedItems,
-				m =>
-				{
+				m => {
 					m.OverrideName = value.newValue;
 				}
 			);
@@ -82,10 +73,8 @@ namespace WasmScripting
 			hasUnsavedChanges = true;
 		}
 
-		private void ToggleSelectedMember(object context, int index)
-		{
-			if (!ValidSelection)
-			{
+		private void ToggleSelectedMember(object context, int index) {
+			if (!ValidSelection) {
 				_bindingEnabledToggle.SetValue(index, false);
 				return;
 			}
@@ -98,8 +87,7 @@ namespace WasmScripting
 				_activeSets,
 				_selectedType,
 				_memberListElement.SelectedItems,
-				m =>
-				{
+				m => {
 					m.IsBound = value;
 				}
 			);
@@ -109,10 +97,8 @@ namespace WasmScripting
 			hasUnsavedChanges = true;
 		}
 
-		private void SetOwnerContext(object context, int index)
-		{
-			if (!ValidSelection)
-			{
+		private void SetOwnerContext(object context, int index) {
+			if (!ValidSelection) {
 				_ownerContextToggle.SetValue(index, false);
 				return;
 			}
@@ -122,14 +108,10 @@ namespace WasmScripting
 				_activeSets,
 				_selectedType,
 				_memberListElement.SelectedItems,
-				m =>
-				{
-					if (value)
-					{
+				m => {
+					if (value) {
 						m.OwnerContext |= (OwnerContext)(1 << index);
-					}
-					else
-					{
+					} else {
 						m.OwnerContext &= (OwnerContext)~(1 << index);
 					}
 				}
@@ -138,10 +120,8 @@ namespace WasmScripting
 			hasUnsavedChanges = true;
 		}
 
-		private void SetScopeContext(object context, int index)
-		{
-			if (!ValidSelection)
-			{
+		private void SetScopeContext(object context, int index) {
+			if (!ValidSelection) {
 				_scopeContextToggle.SetValue(index, false);
 				return;
 			}
@@ -151,14 +131,10 @@ namespace WasmScripting
 				_activeSets,
 				_selectedType,
 				_memberListElement.SelectedItems,
-				m =>
-				{
-					if (value)
-					{
+				m => {
+					if (value) {
 						m.ScopeContext |= (ScopeContext)(1 << index);
-					}
-					else
-					{
+					} else {
 						m.ScopeContext &= (ScopeContext)~(1 << index);
 					}
 				}
@@ -167,14 +143,12 @@ namespace WasmScripting
 			hasUnsavedChanges = true;
 		}
 
-		private void SelectTypeListItem(Type type, int index)
-		{
+		private void SelectTypeListItem(Type type, int index) {
 			_selectedType = type;
 
 			_members.Clear();
 			_shownMembers.Clear();
-			if (_selectedType != null)
-			{
+			if (_selectedType != null) {
 				_members.AddRange(ScriptingWhitelist.Members("Avatar", type).Select(m => m.Name));
 				_shownMembers.AddRange(_members);
 			}
@@ -191,10 +165,8 @@ namespace WasmScripting
 			_scopeContextToggle.SetValue(2, false);
 		}
 
-		private void SelectMemberListItem(string item, int index)
-		{
-			if (item == null)
-			{
+		private void SelectMemberListItem(string item, int index) {
+			if (item == null) {
 				_bindingOverrideIdField.value = "";
 				_bindingEnabledToggle.SetItems(new() { "Disabled" });
 				_ownerContextToggle.SetValue(0, false);
@@ -208,10 +180,8 @@ namespace WasmScripting
 			UpdateMemberSettings();
 		}
 
-		private void UpdateMemberSettings()
-		{
-			if (ValidSelection)
-			{
+		private void UpdateMemberSettings() {
+			if (ValidSelection) {
 				bool anyEnabled = false;
 				bool anyDisabled = false;
 				OwnerContext ownerOr = OwnerContext.None;
@@ -223,8 +193,7 @@ namespace WasmScripting
 					_activeSets,
 					_selectedType,
 					_memberListElement.SelectedItems,
-					m =>
-					{
+					m => {
 						if (m.IsBound)
 							anyEnabled = true;
 						else
@@ -260,8 +229,7 @@ namespace WasmScripting
 			}
 		}
 
-		private Color SetTypeItemColor(Type item, int index)
-		{
+		private Color SetTypeItemColor(Type item, int index) {
 			bool anyEnabled = false;
 			bool anyDisabled = false;
 			IEnumerable<string> members = ScriptingWhitelist.Members("Avatar", item).Select(m => m.Name);
@@ -269,8 +237,7 @@ namespace WasmScripting
 				AllSets,
 				item,
 				members,
-				m =>
-				{
+				m => {
 					if (m.IsBound)
 						anyEnabled = true;
 					else
@@ -283,16 +250,14 @@ namespace WasmScripting
 			return anyEnabled ? WhitelistedColor : BlacklistedColor;
 		}
 
-		private Color SetMemberItemColor(string item, int index)
-		{
+		private Color SetMemberItemColor(string item, int index) {
 			bool anyEnabled = false;
 			bool anyDisabled = false;
 			ScriptingWhitelist.ForEach(
 				AllSets,
 				_selectedType,
 				new List<string> { item },
-				m =>
-				{
+				m => {
 					if (m.IsBound)
 						anyEnabled = true;
 					else
@@ -305,30 +270,18 @@ namespace WasmScripting
 			return anyEnabled ? WhitelistedColor : BlacklistedColor;
 		}
 
-		private void SearchTypeList(ChangeEvent<string> value)
-		{
+		private void SearchTypeList(ChangeEvent<string> value) {
 			SearchList(Types, _shownTypes, value.newValue);
 			_typeListElement.SetList(_shownTypes);
 		}
 
-		private void SearchMemberList(ChangeEvent<string> value)
-		{
+		private void SearchMemberList(ChangeEvent<string> value) {
 			SearchList(_members, _shownMembers, value.newValue);
 			_memberListElement.SetList(_shownMembers);
 		}
 
-		private void BuildUI()
-		{
-			rootVisualElement.styleSheets.Add(
-				StyleSheetBuilder.Build(b =>
-					b.Add(".tab-list TextElement:checked", s => s.BorderTopLeftRadius(3).BorderTopRightRadius(3).BackgroundColor(new(0.345f, 0.345f, 0.345f)))
-						.Add(
-							".section-box",
-							s => s.Margin(2, 4).BorderTopLeftRadius(5).BorderTopRightRadius(5).BorderBottomLeftRadius(5).BorderBottomRightRadius(5).BackgroundColor(new(0.19f, 0.19f, 0.19f))
-						)
-						.Add(".unity-base-field__label", s => s.MinWidth(100).FlexShrink(1))
-				)
-			);
+		private void BuildUI() {
+			rootVisualElement.styleSheets.Add(StyleSheetBuilder.Build(b => b.Add(".tab-list TextElement:checked", s => s.BorderTopLeftRadius(3).BorderTopRightRadius(3).BackgroundColor(new(0.345f, 0.345f, 0.345f))).Add(".section-box", s => s.Margin(2, 4).BorderTopLeftRadius(5).BorderTopRightRadius(5).BorderBottomLeftRadius(5).BorderBottomRightRadius(5).BackgroundColor(new(0.19f, 0.19f, 0.19f))).Add(".unity-base-field__label", s => s.MinWidth(100).FlexShrink(1))));
 
 			rootVisualElement.Add(
 				Element(
@@ -389,8 +342,7 @@ namespace WasmScripting
 							FlexDirection(FlexDirection.Row),
 							BackgroundColor(Background0),
 							Height(24),
-							new TextElement
-							{
+							new TextElement {
 								text = "All",
 								style =
 								{
@@ -399,8 +351,7 @@ namespace WasmScripting
 									unityTextAlign = TextAnchor.MiddleCenter,
 								},
 							},
-							new TextElement
-							{
+							new TextElement {
 								text = "Avatar",
 								style =
 								{
@@ -409,8 +360,7 @@ namespace WasmScripting
 									unityTextAlign = TextAnchor.MiddleCenter,
 								},
 							},
-							new TextElement
-							{
+							new TextElement {
 								text = "World",
 								style =
 								{
@@ -419,8 +369,7 @@ namespace WasmScripting
 									unityTextAlign = TextAnchor.MiddleCenter,
 								},
 							},
-							new TextElement
-							{
+							new TextElement {
 								text = "Prop",
 								style =
 								{
@@ -430,19 +379,11 @@ namespace WasmScripting
 								},
 							}
 						),
-						Element(
-							out VisualElement bindingOverrideIdField,
-							AddClass("section-box"),
-							MarginTop(4),
-							PaddingTop(2),
-							PaddingBottom(2),
-							new TextField("Override ID:") { style = { flexGrow = 1 } }
-						),
+						Element(out VisualElement bindingOverrideIdField, AddClass("section-box"), MarginTop(4), PaddingTop(2), PaddingBottom(2), new TextField("Override ID:") { style = { flexGrow = 1 } }),
 						Element(
 							AddClass("section-box"),
 							FlexDirection(FlexDirection.Row),
-							new Label("Binding Enabled:")
-							{
+							new Label("Binding Enabled:") {
 								style =
 								{
 									unityTextAlign = TextAnchor.MiddleCenter,
@@ -455,8 +396,7 @@ namespace WasmScripting
 						Element(
 							AddClass("section-box"),
 							FlexDirection(FlexDirection.Row),
-							new Label("Owner Context:")
-							{
+							new Label("Owner Context:") {
 								style =
 								{
 									unityTextAlign = TextAnchor.MiddleCenter,
@@ -469,8 +409,7 @@ namespace WasmScripting
 						Element(
 							AddClass("section-box"),
 							FlexDirection(FlexDirection.Row),
-							new Label("Scope Context:")
-							{
+							new Label("Scope Context:") {
 								style =
 								{
 									unityTextAlign = TextAnchor.MiddleCenter,
@@ -478,19 +417,13 @@ namespace WasmScripting
 									minWidth = 100,
 								},
 							},
-							Element(
-								out VisualElement scopeContextToggle,
-								Height(24),
-								FlexGrow(1),
-								new MultiToggle(new() { "Self", "External Content", "Game Internal" }) { OnToggle = SetScopeContext }
-							)
+							Element(out VisualElement scopeContextToggle, Height(24), FlexGrow(1), new MultiToggle(new() { "Self", "External Content", "Game Internal" }) { OnToggle = SetScopeContext })
 						)
 					)
 				)
 			);
 
-			foreach (VisualElement element in bindingSetTabList.Children())
-			{
+			foreach (VisualElement element in bindingSetTabList.Children()) {
 				element.RegisterCallback<ClickEvent>(SetActiveBindingSet);
 				_bindingSetTabList.Add(element);
 			}

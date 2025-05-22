@@ -3,11 +3,9 @@ using System.Text;
 using UnityEngine;
 using Wasmtime;
 
-namespace WasmScripting
-{
+namespace WasmScripting {
 	[DefaultExecutionOrder(0)]
-	public partial class WasmVM : MonoBehaviour
-	{
+	public partial class WasmVM : MonoBehaviour {
 		private Store _store;
 		private Module _module;
 		private Instance _instance;
@@ -18,8 +16,7 @@ namespace WasmScripting
 		public bool IsCrashed { get; private set; }
 		public bool Disposed { get; private set; }
 
-		internal void Setup(WasmModuleAsset moduleAsset, WasmRuntimeBehaviour[] behaviours)
-		{
+		internal void Setup(WasmModuleAsset moduleAsset, WasmRuntimeBehaviour[] behaviours) {
 			_module = Module.FromBytes(WasmManager.Engine, "Scripting", moduleAsset.bytes);
 			_store = new(WasmManager.Engine);
 
@@ -35,38 +32,30 @@ namespace WasmScripting
 
 			_store.SetData(new StoreData(gameObject, _instance));
 
-			foreach (WasmRuntimeBehaviour behaviour in behaviours)
-			{
+			foreach (WasmRuntimeBehaviour behaviour in behaviours) {
 				CreateInstance(behaviour);
 			}
 		}
 
-		private void CreateInstance(WasmRuntimeBehaviour behaviour)
-		{
+		private void CreateInstance(WasmRuntimeBehaviour behaviour) {
 			StoreData data = (StoreData)_store.GetData()!;
 			string name = behaviour.behaviourName;
 			int strLength = name.Length;
 			long strPtr = data.Alloc(strLength * sizeof(char));
 			data.Memory.WriteString(strPtr, name, Encoding.Unicode);
 
-			try
-			{
+			try {
 				_createInstance(data.AccessManager.ToWrapped(behaviour).Id, strPtr, strLength);
-			}
-			catch (TrapException e)
-			{
+			} catch (TrapException e) {
 				Debug.LogError($"WasmVM threw a trap exception: {e.Message}");
 				IsCrashed = true;
 				enabled = false;
-			}
-			catch (Exception e)
-			{
+			} catch (Exception e) {
 				Debug.LogError($"WasmVM threw an exception: {e.Message}");
 			}
 		}
 
-		private void OnDestroy()
-		{
+		private void OnDestroy() {
 			Disposed = true;
 			_store.Dispose();
 			_module.Dispose();

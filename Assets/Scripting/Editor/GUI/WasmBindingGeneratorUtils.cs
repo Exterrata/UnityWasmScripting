@@ -8,11 +8,9 @@ using Newtonsoft.Json;
 using UnityEditor;
 using UnityEngine;
 
-namespace WasmScripting
-{
+namespace WasmScripting {
 	[InitializeOnLoad]
-	public partial class WasmBindingGenerator
-	{
+	public partial class WasmBindingGenerator {
 		private const string WhitelistPath = @"Scripting\Links\Whitelist.json";
 		private static ScriptingWhitelist ScriptingWhitelist;
 		private static readonly List<string> AllSets = new() { "Avatar", "World", "Prop" };
@@ -27,13 +25,10 @@ namespace WasmScripting
 		[MenuItem("Wasm/BindingGenerator")]
 		public static void OpenWindow() => GetWindow<WasmBindingGenerator>("Wasm Binding Generator");
 
-		static WasmBindingGenerator()
-		{
-			foreach (string assemblyName in Assemblies)
-			{
+		static WasmBindingGenerator() {
+			foreach (string assemblyName in Assemblies) {
 				Assembly assembly = Assembly.Load(assemblyName);
-				foreach (Type type in assembly.GetTypes())
-				{
+				foreach (Type type in assembly.GetTypes()) {
 					if (type.IsPublic)
 						Types.Add(type);
 				}
@@ -45,11 +40,9 @@ namespace WasmScripting
 			LoadWhitelist();
 		}
 
-		private static void SearchList<T>(IEnumerable<T> all, List<T> matching, string pattern)
-		{
+		private static void SearchList<T>(IEnumerable<T> all, List<T> matching, string pattern) {
 			matching.Clear();
-			if (string.IsNullOrEmpty(pattern))
-			{
+			if (string.IsNullOrEmpty(pattern)) {
 				matching.AddRange(all);
 				return;
 			}
@@ -58,8 +51,7 @@ namespace WasmScripting
 			matching.AddRange(all.Where(item => regex.IsMatch(item.ToString())));
 		}
 
-		private static void SaveWhitelist()
-		{
+		private static void SaveWhitelist() {
 			if (!Event.current.control || Event.current.keyCode != KeyCode.S)
 				return;
 
@@ -67,8 +59,7 @@ namespace WasmScripting
 				GetWindow<WasmBindingGenerator>().SaveChanges();
 		}
 
-		public override void SaveChanges()
-		{
+		public override void SaveChanges() {
 			if (!hasUnsavedChanges)
 				return;
 			string projectPath = UnityWasmScriptingSettingsManager.GetProjectRoot();
@@ -77,22 +68,18 @@ namespace WasmScripting
 			base.SaveChanges();
 		}
 
-		public override void DiscardChanges()
-		{
+		public override void DiscardChanges() {
 			LoadWhitelist();
 			base.DiscardChanges();
 		}
 
-		private static void LoadWhitelist()
-		{
+		private static void LoadWhitelist() {
 			string projectPath = UnityWasmScriptingSettingsManager.GetProjectRoot();
 			string whitelistPath = Path.Combine(projectPath, WhitelistPath);
-			if (File.Exists(whitelistPath))
-			{
+			if (File.Exists(whitelistPath)) {
 				string json = File.ReadAllText(whitelistPath);
 				ScriptingWhitelist = JsonConvert.DeserializeObject<ScriptingWhitelist>(json);
-			}
-			else
+			} else
 				File.Create(whitelistPath);
 			ScriptingWhitelist ??= new(Types, AllSets.ToArray());
 		}

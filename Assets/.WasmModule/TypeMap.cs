@@ -1,9 +1,7 @@
 ﻿using UnityEngine;
 
-namespace WasmModule
-{
-	public static class TypeMap
-	{
+namespace WasmModule {
+	public static class TypeMap {
 		private static readonly Dictionary<int, Type> IdToType = new()
 		{
 			{ 0, typeof(Component) },

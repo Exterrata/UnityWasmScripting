@@ -1,7 +1,6 @@
 ﻿namespace UnityEngine;
 
-public struct Mathf
-{
+public struct Mathf {
 	#region Constants
 
 	/// <summary>
