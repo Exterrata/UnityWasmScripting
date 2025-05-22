@@ -43,20 +43,19 @@ public class Material(long id) : Object(id)
 	private static unsafe void internal_set_shaderKeywords(long wrappedId, string[] value)
 	{
 		int length = value.Length;
-		long* keywords = (long*)Marshal.AllocHGlobal(length * sizeof(long));
+		char** keywords = (char**)Marshal.AllocHGlobal(length * sizeof(long));
 		int* lengths = (int*)Marshal.AllocHGlobal(length * sizeof(int));
 
 		for (int i = 0; i < length; i++)
 		{
-			keywords![i] = (long)Marshal.StringToHGlobalUni(value[i]);
+			keywords![i] = (char*)Marshal.StringToHGlobalUni(value[i]);
 			lengths![i] = value[i].Length;
 		}
 
-		UnityEngineMaterial__set__shaderKeywords(wrappedId, (long)keywords, (long)lengths, length);
+		UnityEngineMaterial__set__shaderKeywords(wrappedId, (long)lengths, (long)keywords, length);
 
 		for (int i = 0; i < length; i++)
 		{
-			value[i] = new string((char*)keywords![i], 0, lengths![i]);
 			Marshal.FreeHGlobal((IntPtr)keywords![i]);
 		}
 		Marshal.FreeHGlobal((IntPtr)keywords);
@@ -75,5 +74,5 @@ public class Material(long id) : Object(id)
 	);
 
 	[WasmImportLinkage, DllImport("UnityEngine")]
-	private static extern void UnityEngineMaterial__set__shaderKeywords(long wrappedId, long shaderKeywordsPointerPointer, long shaderKeywordsPointerPointerLengths, int shaderKeywordsLength);
+	private static extern void UnityEngineMaterial__set__shaderKeywords(long wrappedId, long shaderKeywordsPointerPointerLengths, long shaderKeywordsPointerPointer, int shaderKeywordsLength);
 }

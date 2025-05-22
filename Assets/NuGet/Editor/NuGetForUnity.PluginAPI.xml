@@ -166,6 +166,10 @@
 
 				
 
+                
+
+				
+
 				
 
                 
@@ -184,6 +188,10 @@
 
          is normalized to <b
 				>1.0.0</b>
+
+				
+
+                
 
 				
 
@@ -340,6 +348,10 @@
 
 				
 
+                
+
+				
+
 				
 
                 
@@ -373,6 +385,10 @@
 
 				
 
+                
+
+				
+
 				
 
                 
@@ -392,6 +408,10 @@
         . This is a alternative to using a URL
                 <see
 				 cref="P:NugetForUnity.PluginAPI.Models.INuspecFile.IconUrl" />
+
+				
+
+                
 
 				
 
