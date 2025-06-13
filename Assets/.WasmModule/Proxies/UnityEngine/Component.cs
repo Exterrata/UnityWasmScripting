@@ -21,7 +21,8 @@ public class Component(long id) : Object(id)
 
 	public Component GetComponent(Type type) => internal_component_getComponent_type(this);
 
-	public T GetComponent<T>() where T : Component => internal_component_getComponent_T<T>(this);
+	public T GetComponent<T>()
+		where T : Component => internal_component_getComponent_T<T>(this);
 
 	#endregion Implementation
 
@@ -57,7 +58,8 @@ public class Component(long id) : Object(id)
 		}
 	}
 
-	private static unsafe Component internal_component_getComponent_type(Component component) {
+	private static unsafe Component internal_component_getComponent_type(Component component)
+	{
 		int componentType = default;
 		long id = component_getComponent_type(component.WrappedId, TypeMap.GetId(component.GetType()), (long)&componentType);
 
@@ -67,7 +69,9 @@ public class Component(long id) : Object(id)
 		return ret;
 	}
 
-	private static unsafe T internal_component_getComponent_T<T>(Component component) where T : Component {
+	private static unsafe T internal_component_getComponent_T<T>(Component component)
+		where T : Component
+	{
 		int componentType = default;
 		long id = component_getComponent_type(component.WrappedId, TypeMap.GetId(component.GetType()), (long)&componentType);
 

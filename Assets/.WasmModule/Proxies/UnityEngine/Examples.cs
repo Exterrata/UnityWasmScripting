@@ -24,7 +24,7 @@ public class Examples
 		}
 
 		Buffer.MemoryCopy(unmanagedStrings, originalStrings, length * sizeof(long), length * sizeof(long));
-		
+
 		ArrayWriteBackExample((long)unmanagedLengths, (long)unmanagedStrings, length);
 
 		for (int i = 0; i < length; i++)

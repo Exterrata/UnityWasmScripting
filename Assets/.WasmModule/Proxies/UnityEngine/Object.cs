@@ -20,13 +20,16 @@ public class Object(long id) : IProxyObject
 
 	public static void Destroy(Object obj) => object_destroy(obj.WrappedId);
 
-	public static Object Instantiate(Object obj) {
+	public static Object Instantiate(Object obj)
+	{
 		Object ret = (Object)RuntimeHelpers.GetUninitializedObject(obj.GetType());
 		ret.WrappedId = object_instantiate(obj.WrappedId);
 		return ret;
 	}
 
-	public static T Instantiate<T>(T obj) where T : Object {
+	public static T Instantiate<T>(T obj)
+		where T : Object
+	{
 		T ret = (T)RuntimeHelpers.GetUninitializedObject(obj.GetType());
 		ret.WrappedId = object_instantiate(obj.WrappedId);
 		return ret;
