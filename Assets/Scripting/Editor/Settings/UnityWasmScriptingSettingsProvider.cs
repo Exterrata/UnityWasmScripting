@@ -3,7 +3,8 @@
 /// <summary>
 /// Creates the settings provider so the user can modify the settings via the Unity Project Settings window.
 /// </summary>
-public class UnityWasmScriptingSettingsProvider : SettingsProvider {
+public class UnityWasmScriptingSettingsProvider : SettingsProvider
+{
 	private const string ProjectName = "UnityWasmScripting";
 	private const string DefaultProjectRoot = "Assets";
 	private const string DefaultWasmModulePath = ".WasmModule";
@@ -21,7 +22,8 @@ public class UnityWasmScriptingSettingsProvider : SettingsProvider {
 
 	#region GUI Methods
 
-	public override void OnGUI(string searchContext) {
+	public override void OnGUI(string searchContext)
+	{
 		SerializedObject settings = GetSerializedSettings();
 
 		EditorGUILayout.Space();
@@ -37,8 +39,10 @@ public class UnityWasmScriptingSettingsProvider : SettingsProvider {
 		EditorGUI.BeginChangeCheck();
 
 		SerializedProperty prop = settings.GetIterator();
-		if (prop.NextVisible(true)) {
-			do {
+		if (prop.NextVisible(true))
+		{
+			do
+			{
 				if (prop.propertyPath == "m_Script")
 					continue;
 				EditorGUILayout.PropertyField(prop, true);
@@ -54,8 +58,12 @@ public class UnityWasmScriptingSettingsProvider : SettingsProvider {
 	#region Provider Registration
 
 	[SettingsProvider]
-	public static SettingsProvider CreateSettingsProvider() {
-		UnityWasmScriptingSettingsProvider provider = new($"Project/{ProjectName}") { keywords = GetSearchKeywordsFromSerializedObject(new SerializedObject(UnityWasmScriptingSettingsManager.GetOrCreateSettings())) };
+	public static SettingsProvider CreateSettingsProvider()
+	{
+		UnityWasmScriptingSettingsProvider provider = new($"Project/{ProjectName}")
+		{
+			keywords = GetSearchKeywordsFromSerializedObject(new SerializedObject(UnityWasmScriptingSettingsManager.GetOrCreateSettings())),
+		};
 		return provider;
 	}
 

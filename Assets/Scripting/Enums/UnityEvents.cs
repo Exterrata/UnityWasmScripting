@@ -2,9 +2,11 @@
 using System.Runtime.CompilerServices;
 using JetBrains.Annotations;
 
-namespace WasmScripting.Enums {
+namespace WasmScripting.Enums
+{
 	[PublicAPI]
-	public static class UnityEventsUtils {
+	public static class UnityEventsUtils
+	{
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
 		public static bool HasEvent(long flags, UnityEvents @event) => (flags & (long)@event) != 0;
 
@@ -22,7 +24,8 @@ namespace WasmScripting.Enums {
 	}
 
 	[PublicAPI, Flags]
-	public enum UnityEvents : long {
+	public enum UnityEvents : long
+	{
 		Awake = 1L << 0,
 		Start = 1L << 1,
 		Update = 1L << 2,

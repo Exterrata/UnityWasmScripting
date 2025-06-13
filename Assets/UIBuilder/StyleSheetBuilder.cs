@@ -3,11 +3,14 @@ using Koneko.UIBuilder.InternalBridge;
 using UnityEngine;
 using UnityEngine.UIElements;
 
-namespace Koneko.UIBuilder {
-	public class StyleSheetBuilder {
+namespace Koneko.UIBuilder
+{
+	public class StyleSheetBuilder
+	{
 		private readonly CustomStyleSheetBuilder _builder = new();
 
-		public static StyleSheet Build(Action<StyleSheetBuilder> builder) {
+		public static StyleSheet Build(Action<StyleSheetBuilder> builder)
+		{
 			StyleSheetBuilder styleSheetBuilder = new();
 			builder(styleSheetBuilder);
 			StyleSheet sheet = ScriptableObject.CreateInstance<StyleSheet>();
@@ -15,7 +18,8 @@ namespace Koneko.UIBuilder {
 			return sheet;
 		}
 
-		public StyleSheetBuilder Add(string selector, Action<StyleBuilder> style) {
+		public StyleSheetBuilder Add(string selector, Action<StyleBuilder> style)
+		{
 			StyleHolder holder = new();
 			StyleBuilder styleBuilder = new(holder);
 			style(styleBuilder);

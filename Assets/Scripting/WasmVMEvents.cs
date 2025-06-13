@@ -1,8 +1,10 @@
 ﻿using System;
 using WasmScripting.Enums;
 
-namespace WasmScripting {
-	public partial class WasmVM {
+namespace WasmScripting
+{
+	public partial class WasmVM
+	{
 		private Action<long, int> _callEvent;
 		private Action<long, int> _callAwake;
 		private Action<long, int> _callStart;
@@ -10,7 +12,8 @@ namespace WasmScripting {
 		private Action _callLateUpdate;
 		private Action _callFixedUpdate;
 
-		private void InitializeEvents() {
+		private void InitializeEvents()
+		{
 			_callEvent = _instance.GetAction<long, int>("scripting_call_event")!;
 			_callAwake = _instance.GetAction<long, int>("scripting_call_awake")!;
 			_callStart = _instance.GetAction<long, int>("scripting_call_start")!;
@@ -19,26 +22,30 @@ namespace WasmScripting {
 			_callFixedUpdate = _instance.GetAction("scripting_call_fixed_update")!;
 		}
 
-		private void Update() {
+		private void Update()
+		{
 			if (IsCrashed)
 				return;
 			_store.Fuel = fuelPerFrame;
 			_callUpdate();
 		}
 
-		private void LateUpdate() {
+		private void LateUpdate()
+		{
 			if (IsCrashed)
 				return;
 			_callLateUpdate();
 		}
 
-		private void FixedUpdate() {
+		private void FixedUpdate()
+		{
 			if (IsCrashed)
 				return;
 			_callFixedUpdate();
 		}
 
-		public void CallScriptEvent(WasmRuntimeBehaviour behaviour, ScriptEvent scriptEvent) {
+		public void CallScriptEvent(WasmRuntimeBehaviour behaviour, ScriptEvent scriptEvent)
+		{
 			if (IsCrashed)
 				return;
 

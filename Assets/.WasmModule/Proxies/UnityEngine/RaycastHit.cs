@@ -3,7 +3,8 @@ using System.Runtime.InteropServices;
 
 namespace UnityEngine;
 
-public struct RaycastHit {
+public struct RaycastHit
+{
 	#region Implementation
 
 	internal Vector3 m_Point;
@@ -17,12 +18,14 @@ public struct RaycastHit {
 
 	public int colliderInstanceID => m_Collider;
 
-	public Vector3 point {
+	public Vector3 point
+	{
 		get => this.m_Point;
 		set => this.m_Point = value;
 	}
 
-	public Vector3 normal {
+	public Vector3 normal
+	{
 		get => this.m_Normal;
 		set => this.m_Normal = value;
 	}
@@ -49,7 +52,8 @@ public struct RaycastHit {
 
 	#region Marshaling
 
-	private static unsafe Collider internal_raycast_collider_get(RaycastHit hit) {
+	private static unsafe Collider internal_raycast_collider_get(RaycastHit hit)
+	{
 		return new(raycast_get_collider((long)Unsafe.AsPointer(ref hit)));
 	}
 

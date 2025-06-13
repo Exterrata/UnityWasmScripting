@@ -11,17 +11,20 @@ using WasmScripting.Enums;
 using Debug = UnityEngine.Debug;
 using Object = UnityEngine.Object;
 
-namespace WasmScripting {
+namespace WasmScripting
+{
 	/// <summary>
 	/// Builds the WASM asset for the provided GameObject, Scene, or all VMs.
 	/// </summary>
-	public static class WasmBuilder {
+	public static class WasmBuilder
+	{
 		private const string BuiltModulePath = @"bin\Release\net9.0\wasi-wasm\publish\WasmModule.wasm";
 		private const string HashFilePath = "Library/WasmScripting/ScriptHashes.json";
 
 		#region Public API
 
-		public static void CompileWasmProgramForObject(GameObject go, bool force = false) {
+		public static void CompileWasmProgramForObject(GameObject go, bool force = false)
+		{
 			WasmVMAnchor vm = go.GetComponentInParent<WasmVMAnchor>(true);
 			if (vm == null || vm.Context != WasmVMContext.GameObject)
 				return;
@@ -29,11 +32,13 @@ namespace WasmScripting {
 			CompileWasmProgramForVM(vm, force);
 		}
 
-		public static void CompileWasmProgramForScene(bool force = false) {
+		public static void CompileWasmProgramForScene(bool force = false)
+		{
 			WasmVMAnchor sceneVM = null;
 			WasmVMAnchor[] allVMs = Object.FindObjectsOfType<WasmVMAnchor>(true);
 
-			foreach (WasmVMAnchor vm in allVMs) {
+			foreach (WasmVMAnchor vm in allVMs)
+			{
 				if (vm.Context != WasmVMContext.Scene)
 					continue;
 
@@ -47,7 +52,8 @@ namespace WasmScripting {
 			CompileWasmProgramForVM(sceneVM, force);
 		}
 
-		public static void CompileAllWasmPrograms() {
+		public static void CompileAllWasmPrograms()
+		{
 			WasmVMAnchor[] allVMs = Object.FindObjectsOfType<WasmVMAnchor>(true);
 			if (allVMs.Length == 0)
 				return;
@@ -55,7 +61,8 @@ namespace WasmScripting {
 			int current = 0;
 			int total = allVMs.Length;
 
-			foreach (WasmVMAnchor vm in allVMs) {
+			foreach (WasmVMAnchor vm in allVMs)
+			{
 				if (!vm.gameObject.scene.IsValid())
 					continue; // Skip VMs not in active scene.
 
@@ -73,17 +80,20 @@ namespace WasmScripting {
 		#region Hashing System
 
 		[Serializable]
-		private class ScriptHash {
+		private class ScriptHash
+		{
 			public string vmId;
 			public string hash;
 		}
 
 		[Serializable]
-		private class ScriptHashCollection {
+		private class ScriptHashCollection
+		{
 			public List<ScriptHash> hashes = new();
 		}
 
-		private static Dictionary<string, string> LoadScriptHashes() {
+		private static Dictionary<string, string> LoadScriptHashes()
+		{
 			Dictionary<string, string> hashDict = new Dictionary<string, string>();
 
 			// Ensure directory exists
@@ -107,10 +117,12 @@ namespace WasmScripting {
 			return hashDict;
 		}
 
-		private static void SaveScriptHashes(Dictionary<string, string> hashDict) {
+		private static void SaveScriptHashes(Dictionary<string, string> hashDict)
+		{
 			ScriptHashCollection collection = new();
 
-			foreach (KeyValuePair<string, string> pair in hashDict) {
+			foreach (KeyValuePair<string, string> pair in hashDict)
+			{
 				collection.hashes.Add(new ScriptHash { vmId = pair.Key, hash = pair.Value });
 			}
 
@@ -118,7 +130,8 @@ namespace WasmScripting {
 			File.WriteAllText(HashFilePath, jsonContent);
 		}
 
-		private static string GetScriptFileHash(string filePath) {
+		private static string GetScriptFileHash(string filePath)
+		{
 			if (!File.Exists(filePath))
 				return string.Empty;
 
@@ -135,7 +148,8 @@ namespace WasmScripting {
 			return BitConverter.ToString(hashBytes).Replace("-", "").ToLowerInvariant();
 		}
 
-		private static string ComputeVMHash(WasmVMAnchor vm, WasmRuntimeBehaviour[] behaviours) {
+		private static string ComputeVMHash(WasmVMAnchor vm, WasmRuntimeBehaviour[] behaviours)
+		{
 			// Sort behaviours for consistent hashing
 			List<WasmRuntimeBehaviour> sortedBehaviours = new List<WasmRuntimeBehaviour>(behaviours);
 			sortedBehaviours.Sort((a, b) => string.Compare((a.script?.name ?? string.Empty), b.script?.name ?? string.Empty, StringComparison.Ordinal));
@@ -152,7 +166,8 @@ namespace WasmScripting {
 			// Process each behaviour script
 			HashSet<string> processedPaths = new HashSet<string>();
 
-			foreach (WasmRuntimeBehaviour behaviour in sortedBehaviours) {
+			foreach (WasmRuntimeBehaviour behaviour in sortedBehaviours)
+			{
 				if (behaviour.script == null)
 					continue;
 
@@ -175,7 +190,8 @@ namespace WasmScripting {
 			return BitConverter.ToString(hashBytes).Replace("-", "").ToLowerInvariant();
 		}
 
-		private static bool HasScriptsChanged(WasmVMAnchor vm, WasmRuntimeBehaviour[] behaviours) {
+		private static bool HasScriptsChanged(WasmVMAnchor vm, WasmRuntimeBehaviour[] behaviours)
+		{
 			if (behaviours.Length == 0)
 				return false;
 
@@ -197,7 +213,8 @@ namespace WasmScripting {
 
 		#region Private Methods
 
-		private static void CompileWasmProgramForVM(WasmVMAnchor vm, bool force = false) {
+		private static void CompileWasmProgramForVM(WasmVMAnchor vm, bool force = false)
+		{
 			if (vm == null)
 				return;
 
@@ -206,7 +223,8 @@ namespace WasmScripting {
 				return;
 
 			// Check if scripts have changed before compiling
-			if (!force && !HasScriptsChanged(vm, behaviours)) {
+			if (!force && !HasScriptsChanged(vm, behaviours))
+			{
 				// Skip compilation if no changes detected
 				Debug.Log($"No changes detected for VM {vm.name}. Skipping compilation.");
 				return;
@@ -216,7 +234,8 @@ namespace WasmScripting {
 			string wasmProjectPath = UnityWasmScriptingSettingsManager.GetWasmModulePath();
 			string tempPath = Path.Combine(wasmProjectPath, "Temp");
 
-			try {
+			try
+			{
 				// Clean and recreate Temp directory
 				if (Directory.Exists(tempPath))
 					Directory.Delete(tempPath, true);
@@ -224,7 +243,8 @@ namespace WasmScripting {
 
 				// Copy relevant scripts
 				HashSet<string> scriptNames = new HashSet<string>();
-				foreach (WasmRuntimeBehaviour behaviour in behaviours) {
+				foreach (WasmRuntimeBehaviour behaviour in behaviours)
+				{
 					MonoScript script = behaviour.script;
 					behaviour.behaviourName = script.GetClass().FullName;
 					behaviour.definedEvents = ScanForUnityEvents(script);
@@ -252,19 +272,26 @@ namespace WasmScripting {
 				const string modulePath = "Assets/WasmModule.wasm";
 				AssetDatabase.ImportAsset(modulePath);
 				vm.moduleAsset = AssetDatabase.LoadAssetAtPath<WasmModuleAsset>(modulePath);
-			} finally {
+			}
+			finally
+			{
 				// Clean up temp directory
-				if (Directory.Exists(tempPath)) {
-					try {
+				if (Directory.Exists(tempPath))
+				{
+					try
+					{
 						Directory.Delete(tempPath, true);
-					} catch (Exception) {
+					}
+					catch (Exception)
+					{
 						// Swallow exception as this is cleanup code
 					}
 				}
 			}
 		}
 
-		private static WasmRuntimeBehaviour[] GetRelevantBehaviours(WasmVMAnchor vm) {
+		private static WasmRuntimeBehaviour[] GetRelevantBehaviours(WasmVMAnchor vm)
+		{
 			if (vm.Context == WasmVMContext.GameObject)
 				return vm.GetComponentsInChildren<WasmRuntimeBehaviour>(true);
 
@@ -272,7 +299,8 @@ namespace WasmScripting {
 			List<WasmRuntimeBehaviour> sceneBehaviours = new List<WasmRuntimeBehaviour>();
 			WasmRuntimeBehaviour[] allBehaviours = Object.FindObjectsOfType<WasmRuntimeBehaviour>(true);
 
-			foreach (WasmRuntimeBehaviour behaviour in allBehaviours) {
+			foreach (WasmRuntimeBehaviour behaviour in allBehaviours)
+			{
 				// Check if this behaviour is not under any GameObject VM
 				WasmVMAnchor parentVM = behaviour.GetComponentInParent<WasmVMAnchor>(true);
 				if (parentVM == null || parentVM.Context != WasmVMContext.GameObject)
@@ -282,10 +310,13 @@ namespace WasmScripting {
 			return sceneBehaviours.ToArray();
 		}
 
-		private static Process CreateCmdProcess(string workingDirectory, string arguments) {
+		private static Process CreateCmdProcess(string workingDirectory, string arguments)
+		{
 			bool hideWindow = UnityWasmScriptingSettingsManager.GetHideCommandPrompt();
-			return new Process {
-				StartInfo = new ProcessStartInfo {
+			return new Process
+			{
+				StartInfo = new ProcessStartInfo
+				{
 					FileName = @"C:\Windows\System32\cmd.exe",
 					Arguments = $"{(hideWindow ? "/c" : "/k")} {arguments}",
 					UseShellExecute = !hideWindow,
@@ -298,13 +329,15 @@ namespace WasmScripting {
 
 		private static BindingFlags BindingFlags => BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic;
 
-		private static long ScanForUnityEvents(MonoScript script) {
+		private static long ScanForUnityEvents(MonoScript script)
+		{
 			Type scriptType = script.GetClass();
 
 			// Go through all the UnityEvents enum and check if there is a method using reflection
 
 			long unityEvents = 0;
-			foreach (UnityEvents flag in Enum.GetValues(typeof(UnityEvents))) {
+			foreach (UnityEvents flag in Enum.GetValues(typeof(UnityEvents)))
+			{
 				// TODO: this also needs to check full signature, not just name
 				MethodInfo method = scriptType.GetMethod(flag.ToString(), BindingFlags);
 				unityEvents = UnityEventsUtils.SetEvent(unityEvents, flag, method != null);

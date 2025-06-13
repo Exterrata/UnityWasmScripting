@@ -3,42 +3,51 @@ using System.Runtime.InteropServices;
 using UnityEngine;
 using UnityEngine.UIElements;
 
-namespace Koneko.UIBuilder {
-	public struct UIOperation {
+namespace Koneko.UIBuilder
+{
+	public struct UIOperation
+	{
 		public OperationType Type { get; }
 		public object Value { get; }
 
-		private UIOperation(VisualElement element) {
+		private UIOperation(VisualElement element)
+		{
 			Type = OperationType.Element;
 			Value = element;
 		}
 
-		private UIOperation(StyleStruct style) {
+		private UIOperation(StyleStruct style)
+		{
 			Type = OperationType.Style;
 			Value = style;
 		}
 
-		private UIOperation(SetName name) {
+		private UIOperation(SetName name)
+		{
 			Type = OperationType.Name;
 			Value = name;
 		}
 
-		private UIOperation(SetEnabled enabled) {
+		private UIOperation(SetEnabled enabled)
+		{
 			Type = OperationType.Enabled;
 			Value = enabled;
 		}
 
-		private UIOperation(SetFocusable focusable) {
+		private UIOperation(SetFocusable focusable)
+		{
 			Type = OperationType.Focusable;
 			Value = focusable;
 		}
 
-		private UIOperation(AddClass @class) {
+		private UIOperation(AddClass @class)
+		{
 			Type = OperationType.AddClass;
 			Value = @class.Class;
 		}
 
-		private UIOperation(Subscribe subscribe) {
+		private UIOperation(Subscribe subscribe)
+		{
 			Type = OperationType.Subscribe;
 			Value = subscribe;
 		}
@@ -58,7 +67,8 @@ namespace Koneko.UIBuilder {
 		public static implicit operator UIOperation(Subscribe callback) => new(callback);
 	}
 
-	public enum OperationType {
+	public enum OperationType
+	{
 		Element,
 		Style,
 		Name,
@@ -68,48 +78,59 @@ namespace Koneko.UIBuilder {
 		Subscribe,
 	}
 
-	public struct SetName {
+	public struct SetName
+	{
 		public string Name;
 	}
 
-	public struct SetEnabled {
+	public struct SetEnabled
+	{
 		public bool Enabled;
 	}
 
-	public struct SetFocusable {
+	public struct SetFocusable
+	{
 		public bool Focusable;
 	}
 
-	public struct AddClass {
+	public struct AddClass
+	{
 		public string Class;
 	}
 
-	public struct Subscribe {
+	public struct Subscribe
+	{
 		public IUICallback Callback;
 	}
 
 	public readonly struct UICallback<TEvent> : IUICallback
-		where TEvent : EventBase<TEvent>, new() {
+		where TEvent : EventBase<TEvent>, new()
+	{
 		private EventCallback<TEvent> Handler { get; }
 		private TrickleDown TrickleDown { get; }
 
-		public UICallback(EventCallback<TEvent> handler, TrickleDown trickleDown = TrickleDown.NoTrickleDown) {
+		public UICallback(EventCallback<TEvent> handler, TrickleDown trickleDown = TrickleDown.NoTrickleDown)
+		{
 			Handler = handler;
 			TrickleDown = trickleDown;
 		}
 
-		public void Register(VisualElement element) {
+		public void Register(VisualElement element)
+		{
 			element.RegisterCallback(Handler, TrickleDown);
 		}
 	}
 
-	public interface IUICallback {
+	public interface IUICallback
+	{
 		void Register(VisualElement element);
 	}
 
 	[StructLayout(LayoutKind.Explicit)]
-	public struct StyleStruct {
-		public StyleStruct(StyleType type) {
+	public struct StyleStruct
+	{
+		public StyleStruct(StyleType type)
+		{
 			Type = type;
 			Length = default;
 			Color = default;
@@ -241,7 +262,8 @@ namespace Koneko.UIBuilder {
 		public StyleList<EasingFunction> EasingFunction;
 	}
 
-	public enum StyleType : byte {
+	public enum StyleType : byte
+	{
 		AlignContent,
 		AlignItems,
 		AlignSelf,
