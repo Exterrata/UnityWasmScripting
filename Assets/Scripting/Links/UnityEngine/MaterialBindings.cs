@@ -35,7 +35,7 @@ namespace WasmScripting.UnityEngine {
 			linker.DefineFunction(
 				"UnityEngine",
 				"UnityEngineMaterial__set__shaderKeywords",
-				(Caller caller, long wrappedId, long shaderKeywordsPointerPointer, long shaderKeywordsPointerPointerLengths, int shaderKeywordsLength) => {
+				(Caller caller, long wrappedId, long shaderKeywordsPointerPointerLengths, long shaderKeywordsPointerPointer, int shaderKeywordsLength) => {
 					StoreData data = GetData(caller);
 					Material selfObject = IdToClass<Material>(data, wrappedId);
 

@@ -22,7 +22,7 @@ public class Examples {
 		
 		Buffer.MemoryCopy(unmanagedStrings, originalStrings, length * sizeof(long), length * sizeof(long));
 		
-		ArrayWriteBackResizeExample((long)unmanagedLengths, (long)unmanagedStrings, length);
+		ArrayWriteBackExample((long)unmanagedLengths, (long)unmanagedStrings, length);
 
 		for (int i = 0; i < length; i++) {
 			strings[i] = new(unmanagedStrings![i], 0, unmanagedLengths![i]);

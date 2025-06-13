@@ -18,7 +18,17 @@ public class Object(long id) : IProxyObject {
 
 	public static void Destroy(Object obj) => object_destroy(obj.WrappedId);
 
-	public static void Instantiate(Object obj) => object_instantiate(obj.WrappedId);
+	public static Object Instantiate(Object obj) {
+		Object ret = (Object)RuntimeHelpers.GetUninitializedObject(obj.GetType());
+		ret.WrappedId = object_instantiate(obj.WrappedId);
+		return ret;
+	}
+
+	public static T Instantiate<T>(T obj) where T : Object {
+		T ret = (T)RuntimeHelpers.GetUninitializedObject(obj.GetType());
+		ret.WrappedId = object_instantiate(obj.WrappedId);
+		return ret;
+	}
 
 	#endregion Implementation
 
@@ -70,7 +80,7 @@ public class Object(long id) : IProxyObject {
 	private static extern void object_destroy(long id);
 
 	[WasmImportLinkage, DllImport("unity")]
-	private static extern void object_instantiate(long id);
+	private static extern long object_instantiate(long id);
 
 	#endregion Imports
 }
