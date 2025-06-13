@@ -8,16 +8,20 @@ namespace WasmScripting
 	{
 		private static readonly Dictionary<int, Type> IdToType = new()
 		{
-			{ 0, typeof(Component) },
-			{ 1, typeof(Renderer) },
-			{ 2, typeof(MeshRenderer) },
+			#region IdToType
+			{ 0, typeof(global::UnityEngine.Component) },
+			{ 1, typeof(global::UnityEngine.Renderer) },
+			{ 2, typeof(global::UnityEngine.MeshRenderer) },
+			#endregion IdToType
 		};
 
 		private static readonly Dictionary<Type, int> TypeToId = new()
 		{
-			{ typeof(Component), 0 },
-			{ typeof(Renderer), 1 },
-			{ typeof(MeshRenderer), 2 },
+			#region TypeToId
+			{ typeof(global::UnityEngine.Component), 0 },
+			{ typeof(global::UnityEngine.Renderer), 1 },
+			{ typeof(global::UnityEngine.MeshRenderer), 2 },
+			#endregion TypeToId
 		};
 
 		public static Type GetType(int id) => IdToType[id];
